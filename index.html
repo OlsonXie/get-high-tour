@@ -590,13 +590,13 @@ $("#searchBtn").onclick=()=>{$("#searchBox").classList.toggle("on");if($("#searc
 $("#q").oninput=e=>{query=e.target.value.trim().toLowerCase();renderList()};
 $("#favBtn").onclick=()=>{onlyFav=!onlyFav;$("#favBtn").style.background=onlyFav?"var(--accent)":"";renderList()};
 // lavin per region till korten + väderchip
-[...new Set(Object.values(REGION).map(x=>x.id))].forEach(id=>fetchAv(id,todayISO(),false).then(a=>{regionAv[id]=a}).catch(()=>{regionAv[id]=null}).finally(()=>{if(!cur)renderList()}));
+[...new Set(Object.values(REGION).map(x=>x.id))].forEach(id=>fetchAv(id,todayISO(),false).then(a=>{regionAv[id]=a}).catch(()=>{regionAv[id]=null}).finally(()=>{document.querySelectorAll(".card").forEach(el=>{const r=ROUTES.find(x=>x.id===el.dataset.id);if(REGION[r.region].id!==id)return;const pills=el.querySelectorAll(".pill");if(pills[1])pills[1].outerHTML=avPill(r)})}));
 fetch("https://api.open-meteo.com/v1/forecast?latitude=69.576&longitude=20.219&current=temperature_2m,weather_code&timezone=Europe%2FOslo").then(r=>r.json()).then(w=>{$("#wxtxt").textContent=Math.round(w.current.temperature_2m)+"°C · Lyngen"}).catch(()=>{$("#wxtxt").textContent="Lyngen"});
 
 /* =========================================================
    DETAIL + 3D-KARTA
    ========================================================= */
-let map=null,cur=null,spinning=false,spinRAF=null;
+let map=null,cur=null,spinning=false,spinRAF=null,mapReady=false;
 const STYLE={version:8,
   glyphs:"https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
   sources:{
@@ -618,6 +618,8 @@ const STYLE={version:8,
 function initMap(){
   map=new maplibregl.Map({container:"map",style:STYLE,center:[20.1,69.6],zoom:11,pitch:62,maxPitch:80,attributionControl:{compact:true}});
   map.on("load",()=>{
+    mapReady=true;
+    const at=document.querySelector(".maplibregl-ctrl-attrib");if(at)at.classList.remove("maplibregl-compact-show");
     map.addSource("route",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
     map.addSource("gpx",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
     map.addLayer({id:"route-casing",type:"line",source:"route",paint:{"line-color":"#11161d","line-width":6,"line-opacity":.35}});
@@ -631,7 +633,7 @@ function initMap(){
 let markers=[];
 function mk(html){const el=document.createElement("div");el.innerHTML=html;return el.firstChild}
 async function showOnMap(r){
-  if(!map||!map.isStyleLoaded()||!map.getSource("route"))return;
+  if(!map||!mapReady||!map.getSource("route"))return;
   let d;try{d=await derive(r)}catch(e){return}if(cur!==r.id)return;
   markers.forEach(m=>m.remove());markers=[];
   const top=[d.top[1],d.top[0]],st=[r.t[1],r.t[0]];
