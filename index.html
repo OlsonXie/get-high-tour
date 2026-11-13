@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Get High Tour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<style>
+:root{
+  --bg:#eef0f3;--surface:#f7f8fa;--card:#fff;--ink:#11161d;--muted:#6a7380;--line:#e2e5ea;
+  --dark:#14181d;--accent:#3b97d6;--accent-ink:#1f5f8b;
+  --g:#2f8a57;--gbg:#e3f3ea;--y:#a07400;--ybg:#fbf0d2;--o:#c4561c;--obg:#fbe4d6;--r:#b3261e;--rbg:#f9dedb;--n:#6a7380;--nbg:#e8ebef;
+  --radius:26px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Montserrat,system-ui,sans-serif;font-size:15px;line-height:1.45}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+a{color:var(--accent-ink)}
+.app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--surface);position:relative;overflow-x:hidden}
+@media(min-width:560px){.app{margin:24px auto;min-height:calc(100vh - 48px);border-radius:36px;box-shadow:0 30px 80px rgba(20,30,45,.18);overflow:hidden}}
+.view{display:none}.view.on{display:block}
+svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ---------- HOME ---------- */
+.top{display:flex;align-items:center;gap:8px;padding:calc(18px + env(safe-area-inset-top)) 20px 6px}
+.chip-dark{background:var(--dark);color:#fff;border-radius:16px;height:48px;display:flex;align-items:center;gap:8px;padding:0 14px;font-weight:600;font-size:14px}
+.sq{width:48px;padding:0;justify-content:center}
+.spacer{flex:1}
+.brand{padding:18px 20px 2px}
+.brand .wm{font-weight:800;letter-spacing:.32em;font-size:12px;color:var(--muted)}
+.brand h1{margin:6px 0 0;font-size:30px;line-height:1.08;letter-spacing:-.02em;font-weight:700;color:#1d4f78}
+.brand p{margin:6px 0 0;color:var(--muted);font-size:13.5px}
+.search{margin:12px 20px 0;display:none}
+.search.on{display:block}
+.search input{width:100%;height:46px;border-radius:14px;border:1px solid var(--line);background:#fff;padding:0 16px;font:inherit}
+.filters{display:flex;gap:8px;overflow-x:auto;padding:14px 20px 4px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filters button{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600}
+.filters button.on{background:var(--dark);border-color:var(--dark);color:#fff}
+.list{padding:10px 20px 40px;display:grid;gap:18px}
+.card{position:relative;border-radius:var(--radius);overflow:hidden;background:#cfd6df;height:360px;cursor:pointer;box-shadow:0 10px 30px rgba(20,30,45,.12);transition:transform .15s}
+.card:active{transform:scale(.985)}
+.card canvas,.card .ph{position:absolute;inset:0;width:100%;height:100%;display:block}
+.card .ph{background:linear-gradient(160deg,#dfe5ec,#aebbc9)}
+.card .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,22,34,.55) 0%,rgba(14,22,34,0) 34%,rgba(14,22,34,0) 52%,rgba(14,22,34,.82) 100%)}
+.card .head{position:absolute;left:20px;right:64px;top:18px;color:#fff}
+.card .head h3{margin:0;font-size:21px;font-weight:700;letter-spacing:-.01em;line-height:1.15}
+.card .head .loc{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:500;margin-top:5px;opacity:.95}
+.card .head .loc svg{width:15px;height:15px}
+.heart{position:absolute;top:14px;right:14px;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff}
+.heart svg{width:24px;height:24px}
+.heart.on svg{fill:#fff}
+.card .foot{position:absolute;left:16px;right:16px;bottom:14px;color:#fff}
+.card .desc{font-size:13px;line-height:1.4;margin:0 4px 10px;opacity:.95;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:12px;padding:7px 10px;font-size:12px;font-weight:700;background:rgba(255,255,255,.16);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff}
+.pill .dot{width:9px;height:9px;border-radius:50%;background:#c9d1da}
+.pill.av1 .dot{background:#56c27c}.pill.av2 .dot{background:#ffd23f}.pill.av3 .dot{background:#ff8a2b}.pill.av4 .dot,.pill.av5 .dot{background:#ff3b30}
+.fitbar{display:inline-flex;gap:3px}
+.fitbar i{width:14px;height:5px;border-radius:3px;background:rgba(255,255,255,.3)}
+.fitbar i.on{background:#fff}
+.grouph{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:10px 4px -6px}
+.empty{color:var(--muted);text-align:center;padding:30px}
+.foot-note{padding:0 24px 40px;color:var(--muted);font-size:12px}
+
+/* ---------- DETAIL ---------- */
+.mapwrap{position:relative;height:58vh;min-height:380px;background:#c9d2dc;border-radius:0 0 34px 34px;overflow:hidden}
+#map{position:absolute;inset:0}
+.mapbtn{position:absolute;z-index:3;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:14px;height:44px;min-width:44px;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.15);color:var(--dark);font-weight:700;font-size:13px}
+.mapbtn.back{top:calc(14px + env(safe-area-inset-top));left:14px}
+.mapbtn.fav{top:calc(14px + env(safe-area-inset-top));right:14px}
+.mapbtn.fav.on svg{fill:var(--dark)}
+.mapctl{position:absolute;right:14px;bottom:44px;z-index:3;display:flex;flex-direction:column;gap:8px}
+.mapctl .mapbtn{position:static;padding:0 10px}
+.mapctl .mapbtn.on{background:var(--dark);color:#fff}
+.layers{position:absolute;left:14px;bottom:44px;z-index:3;display:flex;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:14px;padding:4px;gap:2px;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.layers button{padding:8px 10px;border-radius:10px;font-size:12px;font-weight:700;color:#3a4350}
+.layers button.on{background:var(--dark);color:#fff}
+.maplegend{position:absolute;left:14px;bottom:96px;z-index:3;background:rgba(255,255,255,.92);border-radius:10px;padding:6px 9px;font-size:11px;font-weight:600;display:none;gap:8px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.maplegend.on{display:flex}
+.maplegend span{display:inline-flex;align-items:center;gap:4px}
+.maplegend b{width:12px;height:8px;border-radius:2px;display:inline-block}
+.mapnote{position:absolute;top:calc(68px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:3;background:rgba(17,22,29,.72);color:#fff;font-size:11px;font-weight:600;padding:5px 10px;border-radius:999px;white-space:nowrap}
+.maplibregl-ctrl-attrib{font-size:10px}
+.sheet{padding:22px 22px 60px}
+.sheet h2{margin:0;font-size:26px;line-height:1.1;font-weight:700;letter-spacing:-.02em}
+.sheet .loc{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13.5px;font-weight:500;margin-top:6px}
+.sheet .loc svg{width:16px;height:16px;color:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:20px 0 6px}
+.stat{text-align:center}
+.stat .lab{display:flex;align-items:center;justify-content:center;gap:5px;font-size:11.5px;color:var(--muted);font-weight:600}
+.stat .lab svg{width:16px;height:16px;color:var(--accent)}
+.stat .val{font-size:19px;font-weight:600;margin-top:3px;letter-spacing:-.01em}
+.calc{font-size:11px;color:var(--muted);text-align:center;margin-bottom:6px}
+.sec{margin-top:24px}
+.sec h4{margin:0 0 10px;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.box{background:#fff;border-radius:20px;padding:16px;border:1px solid var(--line)}
+.box+.box{margin-top:10px}
+.p{margin:0;font-size:14.5px}
+.fitrow{display:flex;align-items:center;gap:12px}
+.fitbig{display:flex;gap:4px}
+.fitbig i{width:22px;height:8px;border-radius:4px;background:#dfe3e8}
+.fitbig i.on{background:var(--accent)}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.tag{font-size:12px;font-weight:700;border-radius:8px;padding:4px 9px}
+.tg{background:var(--gbg);color:var(--g)}.ty{background:var(--ybg);color:var(--y)}.tr{background:var(--rbg);color:var(--r)}.tn{background:var(--nbg);color:var(--n)}
+.btn{text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:52px;border-radius:16px;background:var(--accent);color:#fff;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13.5px}
+.btn.dark{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:1px solid var(--line)}
+.btn.sm{height:42px;font-size:12px;border-radius:13px}
+.btnrow{display:flex;gap:8px;margin-top:10px}
+.status{display:flex;gap:14px;align-items:flex-start}
+.lvl{width:58px;height:58px;border-radius:16px;display:grid;place-items:center;font-size:28px;font-weight:800;flex:none;color:#fff;background:#9aa4b1}
+.lvl.l1{background:#56b56f}.lvl.l2{background:#f2c200;color:#1b1b1b}.lvl.l3{background:#f07f1a}.lvl.l4,.lvl.l5{background:#e0261b}
+.status h5{margin:0;font-size:15px}
+.status .meta{font-size:12px;color:var(--muted);margin-top:2px}
+.verdict{margin-top:12px;border-radius:14px;padding:12px 14px;font-size:13.5px;font-weight:500}
+.verdict b{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+.v-g{background:var(--gbg);color:#1d5a37}.v-y{background:var(--ybg);color:#6b4e00}.v-r{background:var(--rbg);color:#7a1a14}.v-n{background:var(--nbg);color:#3d4652}
+.prob{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.prob:first-of-type{border-top:0}
+.prob .t{font-size:13.5px;font-weight:600}
+.prob .s{font-size:12px;color:var(--muted)}
+.prob .m{font-size:11.5px;font-weight:700;margin-top:3px}
+.rose{width:54px;height:54px;flex:none}
+.wx{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.wx .d{background:var(--surface);border-radius:14px;padding:10px;text-align:center}
+.wx .d .dn{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:capitalize}
+.wx .d .tt{font-size:18px;font-weight:600;margin:4px 0}
+.wx .d .mi{font-size:11.5px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+.small{font-size:12px;color:var(--muted)}
+.disc{font-size:12px;color:var(--muted);margin-top:10px}
+.src a{font-weight:600}
+.rate{display:grid;gap:14px}
+.scale{display:flex;gap:6px}
+.scale button{flex:1;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-weight:700}
+.scale button.on{background:var(--dark);color:#fff;border-color:var(--dark)}
+.rate label{font-size:12.5px;font-weight:700}
+.rate input[type=text],.rate textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:14px;background:var(--surface)}
+.rate textarea{min-height:70px;resize:vertical}
+.rv{padding:12px 0;border-top:1px solid var(--line);font-size:13.5px}
+.rv .who{font-weight:700}
+.rv .sc{font-size:12px;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:12px 18px;border-radius:14px;font-size:13px;font-weight:600;opacity:0;transition:.25s;z-index:50;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.spin{width:18px;height:18px;border:2.5px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:#fff;font-size:13px}
+.netwarn{display:none;margin:12px 20px 0;background:#fff3cd;color:#5c4400;border-radius:16px;padding:12px 14px;font-size:13px;font-weight:500}
+.netwarn.on{display:block}
+.netwarn b{display:block;font-size:13.5px;margin-bottom:2px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ================= HOME ================= -->
+<section class="view on" id="home">
+  <div class="top">
+    <div class="chip-dark" id="wxchip" title="Just nu vid Lyngseidet">
+      <svg class="i" viewBox="0 0 24 24"><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg>
+      <span id="wxtxt">–</span>
+    </div>
+    <div class="spacer"></div>
+    <button class="chip-dark sq" id="searchBtn" aria-label="Sök"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+    <button class="chip-dark sq" id="favBtn" aria-label="Favoriter"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8 3.3 4.5 7 4.5c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.7 0 6 3.5 4.5 7.2C19.5 16.4 12 21 12 21z"/></svg></button>
+  </div>
+  <div class="netwarn" id="netwarn"><b>Kartor och data blockeras här</b>Du verkar ha öppnat filen i en förhandsvisning som stoppar externa anslutningar. Ladda ner filen och öppna den i Chrome eller Safari, så laddas reliefbilder, höjddata, 3D-karta och lavinläge.</div>
+  <div class="brand">
+    <div class="wm">GET HIGH TOUR</div>
+    <h1>Upptäck</h1>
+    <p>Lyngen &amp; Tromsø · 11–21 mars 2027</p>
+  </div>
+  <div class="search" id="searchBox"><input id="q" type="text" placeholder="Sök topp eller område…" autocomplete="off"></div>
+  <div class="filters" id="filters">
+    <button data-f="all" class="on">Alla</button>
+    <button data-f="lyngen">Lyngen</button>
+    <button data-f="ost">Kåfjord</button>
+    <button data-f="kvaloya">Kvaløya</button>
+    <button data-f="fit">Passar oss bäst</button>
+    <button data-f="lag">Låg exponering</button>
+    <button data-f="board">Board-vänlig</button>
+    <button data-f="storm">Stormdag</button>
+  </div>
+  <div class="list" id="list"></div>
+  <p class="foot-note">Reliefbilderna ritas från höjddata (Mapzen/AWS Terrain Tiles). Siffror och bedömningar är utkast – kolla alltid karta, guidebok och Varsom.</p>
+</section>
+
+<!-- ================= DETAIL ================= -->
+<section class="view" id="detail">
+  <div class="netwarn" id="netwarn2" style="margin:0;border-radius:0"><b>Kartan kan inte laddas här</b>Öppna filen i Chrome eller Safari i stället för i en förhandsvisning.</div>
+  <div class="mapwrap">
+    <div id="map"></div>
+    <button class="mapbtn back" id="backBtn" aria-label="Tillbaka"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button class="mapbtn fav" id="dFav" aria-label="Favorit"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8 3.3 4.5 7 4.5c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.7 0 6 3.5 4.5 7.2C19.5 16.4 12 21 12 21z"/></svg></button>
+    <div class="mapnote" id="mapnote">Streckad linje = fågelvägen, inte spåret</div>
+    <div class="maplegend" id="legend"><span>NVE bratthet:</span><span><b style="background:#f7e04b"></b>27–29°</span><span><b style="background:#f39a25"></b>30–34°</span><span><b style="background:#e3342a"></b>35–39°</span><span><b style="background:#9b3fb5"></b>40°+</span></div>
+    <div class="layers" id="layers">
+      <button data-l="sat" class="on">Satellit</button>
+      <button data-l="topo">Topo</button>
+      <button data-l="slope">Bratthet</button>
+    </div>
+    <div class="mapctl">
+      <button class="mapbtn on" id="b3d">3D</button>
+      <button class="mapbtn" id="bSpin" aria-label="Flyg runt"><svg class="i" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
+      <button class="mapbtn" id="bFit" aria-label="Visa hela"><svg class="i" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    </div>
+  </div>
+
+  <div class="sheet">
+    <h2 id="dName"></h2>
+    <div class="loc"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span id="dArea"></span></div>
+
+    <div class="stats">
+      <div class="stat"><div class="lab"><svg class="i" viewBox="0 0 24 24"><path d="M3 20l6-10 4 6 3-4 5 8z"/></svg>Topp</div><div class="val" id="sTop">–</div></div>
+      <div class="stat"><div class="lab"><svg class="i" viewBox="0 0 24 24"><path d="M4 18l6-6 4 4 6-8"/><path d="M15 8h5v5"/></svg>Höjdm.</div><div class="val" id="sGain">–</div></div>
+      <div class="stat"><div class="lab"><svg class="i" viewBox="0 0 24 24"><path d="M4 12h16M4 8v8M20 8v8"/></svg>Längd</div><div class="val" id="sLen">–</div></div>
+      <div class="stat"><div class="lab"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3l2.5 9L12 21l-2.5-9z"/></svg>Sida</div><div class="val" id="sAsp">–</div></div>
+    </div>
+    <div class="calc" id="sCalc"></div>
+
+    <div class="sec">
+      <h4>Passar oss</h4>
+      <div class="box">
+        <div class="fitrow"><div class="fitbig" id="dFit"></div><b id="dFitTxt"></b></div>
+        <p class="p" id="dFitWhy" style="margin-top:10px"></p>
+        <div class="tags" id="dTags"></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h4>Om turen</h4>
+      <div class="box"><p class="p" id="dDesc"></p><p class="small src" id="dSrc" style="margin:10px 0 0"></p></div>
+    </div>
+
+    <div class="sec">
+      <h4>Lavinläge</h4>
+      <div class="box" id="avBox"></div>
+      <div class="box" id="savedStatus" style="display:none"></div>
+    </div>
+
+    <div class="sec">
+      <h4>Väder på toppen</h4>
+      <div class="box" id="wxBox"></div>
+    </div>
+
+    <div class="sec">
+      <h4>Spår (GPX)</h4>
+      <div class="box">
+        <p class="p small" id="gpxInfo">Inget riktigt spår ännu. Ladda upp en GPX från Strava, Garmin eller FATMAP så ritas den i 3D-kartan.</p>
+        <div class="btnrow">
+          <label class="btn ghost sm" style="cursor:pointer"><input type="file" accept=".gpx,application/gpx+xml" id="gpxIn" hidden>Ladda upp GPX</label>
+          <button class="btn ghost sm" id="gpxClear" style="display:none">Ta bort</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h4>Betyg efter turen</h4>
+      <div class="box rate" id="rateBox">
+        <div><label>Snö &amp; åkning</label><div class="scale" data-k="snow"></div></div>
+        <div><label>Uppstigning &amp; utsikt</label><div class="scale" data-k="up"></div></div>
+        <div><label>Kommentar</label><textarea id="rTxt" placeholder="Hur var snön, vilken variant åkte ni, något att tänka på?"></textarea></div>
+        <div><label>Namn</label><input type="text" id="rWho" placeholder="Ditt namn"></div>
+        <button class="btn dark" id="rSave">Spara betyg</button>
+        <div id="rList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* =========================================================
+   DATA – startlista (utkast). s = topp, t = ungefärlig start.
+   Höjdmeter, längd och sida räknas fram från höjddata.
+   ========================================================= */
+const ROUTES=[
+ {id:"tafeltinden",name:"Tafeltinden",area:"Koppangen, norra Lyngen",region:"lyngen",s:[69.6933,20.0896],t:[69.6792,20.2635],fit:3,exp:"y",board:"ok",storm:false,
+  desc:"Den stora klassikern: lång, måttlig glaciärtur från havet med en av Lyngens längsta sammanhängande nedfarter. Mestadels 25–30°, men sista branten mot toppen är lavinterräng.",
+  boardNote:"Kort flackt parti i början vid Koppangen, annars fallinje.",
+  src:[["FATMAP","https://fatmap.com/discover/route/norway/troms/ski-touring/tafeltinden-1395/3079631"]]},
+ {id:"fugldalsfjellet",name:"Fugldalsfjellet",area:"Fugldalen, Lyngsalpernas västsida",region:"lyngen",s:[69.5185,19.836],t:[69.5052,19.777],snap:500,unsure:true,fit:3,exp:"y",board:"ok",storm:false,
+  desc:"En lång och stor tur upp till en bred snökupol med utsikt mot Jiehkkevárri och Holmbukttind. Passar en lång, fin dag när det är stabilt.",
+  boardNote:"Lång dalgång in och ut – kolla hur flack den nedre delen är.",
+  src:[["Gulliver","https://www.gulliver.it/?p=331871"]]},
+ {id:"daltinden",name:"Daltinden",area:"Furuflaten, södra Lyngen",region:"lyngen",s:[69.4279,20.0513],t:[69.4413,20.154],fit:2,exp:"y",board:"bra",storm:false,
+  desc:"En av de populäraste topparna i södra Lyngen, med en stor nordostvänd nedfart. Bra när de nordliga sidorna har den bästa snön.",
+  boardNote:"Ser ut att gå i fallinje, men behöver verifieras.",
+  src:[["Gulliver","https://www.gulliver.it/?p=522280"]]},
+ {id:"rornestinden",name:"Rørnestinden",area:"Lyngseidet",region:"lyngen",s:[69.5733,20.112],t:[69.5763,20.2191],fit:3,exp:"y",board:"bra",storm:false,
+  desc:"Går direkt från Lyngseidet med utsikt över både Lyngenfjorden och Kjosen. Medelsvår med några brantare partier runt 30°. Kan kombineras med Goalsevárri.",
+  boardNote:"Splitboardrutt finns beskriven. Kort skogsväg i början.",
+  src:[["Splitboarding.eu","https://www.splitboarding.eu/en/routes/rornestinden-or-kavringtinden/"]]},
+ {id:"goalsevarri",name:"Goalsevárri / Kavringtinden",area:"Lyngseidet",region:"lyngen",s:[69.547,20.1242],t:[69.565,20.205],fit:2,exp:"y",board:"ok",storm:false,
+  desc:"Pålitlig topp nära Lyngseidet längs nordostryggen. Inte störst, men fungerar även när snön är tunn.",
+  boardNote:"Sista delen längs ryggen kan bli gång med brädan på ryggen.",
+  src:[["ut.no","https://ut.no/turforslag/115352"]]},
+ {id:"fastdalstinden",name:"Fastdalstinden",area:"Lyngen, norr om Lyngseidet",region:"lyngen",s:[69.6293,20.168],t:[69.628,20.255],fit:2,exp:"y",board:"?",storm:false,
+  desc:"Bland guidebolagens favoriter. Behöver mer research: höjdmeter, aspekter och spår.",
+  boardNote:"Okänt än.",
+  src:[["Explore-Share","https://www.explore-share.com/trip/Guided-ski-touring-tromso-Lyngen/"]]},
+ {id:"rundfjellet",name:"Rundfjellet",area:"Sør-Lenangen, norra Lyngen",region:"lyngen",s:[69.8355,20.0978],t:[69.8197,20.0269],fit:2,exp:"g",board:"ok",storm:true,
+  desc:"En bra och säker introduktion till Lyngen. Passar en dag med förhöjd lavinfara eller som uppvärmning dag 1.",
+  boardNote:"Mjuk terräng, så det kan finnas flacka partier.",
+  src:[["Visit Norway","https://www.visitnorway.com/things-to-do/outdoor-activities/skiing/ski-touring/top-6-ski-touring-hot-spots"]]},
+ {id:"russelvfjellet",name:"Russelvfjellet",area:"Nordspetsen av Lyngen",region:"lyngen",s:[69.948,20.258],t:[69.9475,20.2221],fit:2,exp:"g",board:"jobbig",storm:true,
+  desc:"Klassisk ryggtraversering längst ut på halvön, med öppna snöfält ner mot fjorden. Tips när lavinläget är dåligt. Enskilda partier upp till ~44°.",
+  boardNote:"Traverstur med många upp- och nedgångar, alltså mycket växling.",
+  src:[["FATMAP","https://fatmap.com/discover/route/ski-touring/russelvfjellet-traverse/2933927"]]},
+ {id:"sorbmegaisa",name:"Sorbmegáisá",area:"Kåfjord, östra sidan",region:"ost",s:[69.7286,20.6157],t:[69.733,20.52],fit:3,exp:"y",board:"bra",storm:false,
+  desc:"Kallas den klassiska och bästa toppturen i Kåfjord. Måttlig svårighet och en fin nedfart med utsikt över Lyngsalperna från andra hållet.",
+  boardNote:"Måttlig och rak tur, ser board-vänlig ut.",
+  src:[["FATMAP","https://fatmap.com/discover/route/ski-touring/sorbmegaisa-1288-m/197188"]]},
+ {id:"storhaugen",name:"Storhaugen",area:"Kåfjord, östra sidan",region:"ost",s:[69.7419,20.6053],t:[69.745,20.52],fit:2,exp:"g",board:"ok",storm:true,
+  desc:"Lätt att nå med fin utsikt över halvön. Låg lutning och minimal lavinfara – ett känt alternativ på stormdagar.",
+  boardNote:"Låg lutning ger risk för flacka partier.",
+  src:[["FATMAP","https://fatmap.com/discover/route/ski-touring/storhaugen/3268896"]]},
+ {id:"lille-blamannen",name:"Lille Blåmannen",area:"Håkøybotn, Kvaløya",region:"kvaloya",s:[69.6441,18.5985],t:[69.655,18.705],fit:3,exp:"g",board:"bra",storm:true,
+  desc:"Den mest åkta fjällsidan i Tromsø. Normalvägen går via en bred, mjuk östrygg och räknas som säker – brantare varianter finns.",
+  boardNote:"Kort flackt parti genom skogen vid starten.",
+  src:[["FATMAP","https://fatmap.com/discover/route/norway/troms/ski-touring/lille-blamannen/31532"]]},
+ {id:"skittentinden",name:"Skittentinden",area:"Kattfjordeidet, Kvaløya",region:"kvaloya",s:[69.6757,18.4425],t:[69.655,18.47],fit:3,exp:"y",board:"bra",storm:false,
+  desc:"Den mest ikoniska toppen på Kvaløya, med en lång nedfart samma väg ner mot Kattfjordvatnet.",
+  boardNote:"Upp och ner samma väg i fallinje.",
+  src:[["FATMAP","https://fatmap.com/discover/route/norway/troms/ski-touring/skittentinden-1042m/436511"]]},
+ {id:"middagstinden",name:"Middagstinden",area:"Kattfjordeidet, Kvaløya",region:"kvaloya",s:[69.676,18.4066],t:[69.6362,18.4457],fit:2,exp:"y",board:"ok",storm:false,
+  desc:"Klassisk Kvaløya-tur med ett litet alpint parti om man vill hela vägen upp.",
+  boardNote:"Toppartiet kan kräva gång.",
+  src:[["FATMAP","https://fatmap.com/discover/route/norway/troms/ski-touring/tverrfjellet/1211720"]]},
+ {id:"rodtinden",name:"Rødtinden",area:"Kaldfjord, närmast Tromsø",region:"kvaloya",s:[69.7015,18.7526],t:[69.6852,18.7408],fit:1,exp:"g",board:"ok",storm:true,
+  desc:"Relativt lavinsäker och nära staden. Passar en resdag eller när allt annat är stängt.",
+  boardNote:"Kort tur.",
+  src:[["Tromsø Outdoor","https://www.tromsooutdoor.no/articles/where-to-go-ski-touring-in-tromso-area"]]},
+ {id:"store-lenangstind",name:"Store Lenangstind",area:"Jægervatnet, norra Lyngen",region:"lyngen",s:[69.7101,20.0861],t:[69.716,19.955],fit:1,exp:"r",board:"jobbig",storm:false,
+  desc:"Det högsta berget i norra Lyngen och ett riktigt äventyr – graderad som severe. Mycket lång dag, bara vid riktigt stabilt läge.",
+  boardNote:"Lång inflygning, räkna med transportsträckor.",
+  src:[["FATMAP","https://fatmap.com/discover/norway/troms/lyngen/routes/7"]]},
+ {id:"store-jaegervasstind",name:"Store Jægervasstinden",area:"Jægervatnet, norra Lyngen",region:"lyngen",s:[69.7027,20.043],t:[69.716,19.955],fit:1,exp:"r",board:"ok",storm:false,
+  desc:"Lång och vild tur i ett av Lyngens vackraste hörn, med ravin- och skålpartier på 30–38°. De flesta vänder vid västtoppen. Isyxa och stegjärn.",
+  boardNote:"Fin fallinje i skålen, men brant.",
+  src:[["FATMAP","https://fatmap.com/discover/route/norway/troms/ski-touring/store-jaegervasstinden/31515"]]},
+ {id:"store-lakselvtinden",name:"Tomas Couloir / Store Lakselvtinden",area:"Lakselvbukt",region:"lyngen",s:[69.4053,19.7336],t:[69.4333,19.647],fit:1,exp:"r",board:"ok",storm:false,
+  desc:"Två fina, ganska branta raviner i en av norra Norges vackraste dalar. Sydvända ravinen upp till toppen går man till fots. Bara vid låg faregrad och stabil snö.",
+  boardNote:"Bra åkning i ravinen, men dalen ut kan vara flack.",
+  src:[["FATMAP","https://fatmap.com/discover/route/norway/troms/ski-touring/tomas-couloir-and-store-lakselvtinden/31511"]]}
+];
+/* Statuskollar som Claude skriver in (Check status for route). Tomt tills vi kör en. */
+const SAVED_STATUS={};
+
+const REGION={lyngen:{id:3010,name:"Lyngen",varsom:"Lyngen"},ost:{id:3010,name:"Lyngen",varsom:"Lyngen"},kvaloya:{id:3011,name:"Tromsø",varsom:"Tromsø"}};
+const AREA_NAME={lyngen:"Lyngen",ost:"Kåfjord",kvaloya:"Kvaløya"};
+const EXP={g:["Låg exponering","tg"],y:["Medel exponering","ty"],r:["Hög exponering","tr"]};
+const BOARD={bra:["Board: bra","tg"],ok:["Board: ok","ty"],jobbig:["Board: jobbig","tr"],"?":["Board: okänt","tn"]};
+const ASP=["N","NO","O","SO","S","SV","V","NV"];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const store={get(k,d){try{return JSON.parse(localStorage.getItem("ght-"+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem("ght-"+k,JSON.stringify(v))}catch(e){}}};
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("on"),2600)}
+const todayISO=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+
+/* =========================================================
+   HÖJDDATA (Terrarium-tiles) – används för relief, höjdmeter m.m.
+   ========================================================= */
+const DEMZ=12, tileCache=new Map();
+const lon2x=(lon,z)=>(lon+180)/360*2**z;
+const lat2y=(lat,z)=>{const r=lat*Math.PI/180;return (1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*2**z};
+const x2lon=(x,z)=>x/2**z*360-180;
+const y2lat=(y,z)=>{const n=Math.PI-2*Math.PI*y/2**z;return 180/Math.PI*Math.atan(Math.sinh(n))};
+function loadTile(z,x,y){
+  const k=z+"/"+x+"/"+y;
+  if(!tileCache.has(k))tileCache.set(k,new Promise((res)=>{
+    const img=new Image();img.crossOrigin="anonymous";
+    img.onload=()=>{const c=document.createElement("canvas");c.width=c.height=256;const g=c.getContext("2d",{willReadFrequently:true});g.drawImage(img,0,0);
+      const d=g.getImageData(0,0,256,256).data,e=new Float32Array(65536);for(let i=0;i<65536;i++)e[i]=d[i*4]*256+d[i*4+1]+d[i*4+2]/256-32768;res(e)};
+    img.onerror=()=>res(null);
+    img.src=`https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`;
+  }));
+  return tileCache.get(k);
+}
+async function elevAt(lat,lon,z=DEMZ){
+  const fx=lon2x(lon,z),fy=lat2y(lat,z),tx=Math.floor(fx),ty=Math.floor(fy);
+  const t=await loadTile(z,tx,ty);if(!t)return null;
+  const px=Math.min(255,Math.floor((fx-tx)*256)),py=Math.min(255,Math.floor((fy-ty)*256));
+  return t[py*256+px];
+}
+function hav(a,b){const R=6371e3,r=Math.PI/180,dl=(b[0]-a[0])*r,dn=(b[1]-a[1])*r;const h=Math.sin(dl/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+function bearing(a,b){const r=Math.PI/180,y=Math.sin((b[1]-a[1])*r)*Math.cos(b[0]*r),x=Math.cos(a[0]*r)*Math.sin(b[0]*r)-Math.sin(a[0]*r)*Math.cos(b[0]*r)*Math.cos((b[1]-a[1])*r);return (Math.atan2(y,x)/r+360)%360}
+
+/* Räkna fram toppens läge (högsta punkten nära angiven koordinat), höjder och huvudsida */
+const derived={};
+async function derive(r){
+  if(derived[r.id])return derived[r.id];
+  const p=(async()=>{
+    const rad=r.snap||450,steps=14;let best={e:-1e9,ll:r.s};
+    const dLat=rad/111320,dLon=rad/(111320*Math.cos(r.s[0]*Math.PI/180));
+    const jobs=[];
+    for(let i=-steps;i<=steps;i++)for(let j=-steps;j<=steps;j++){if(i*i+j*j>steps*steps)continue;const ll=[r.s[0]+dLat*i/steps,r.s[1]+dLon*j/steps];jobs.push(elevAt(...ll).then(e=>{if(e!=null&&e>best.e)best={e,ll}}))}
+    await Promise.all(jobs);
+    if(best.e<-1e8)throw new Error("Ingen höjddata");
+    const top=best.ll,topE=Math.round(best.e);
+    let startE=await elevAt(...r.t);startE=Math.max(0,Math.round(startE??0));
+    // profil längs fågelvägen: summera stigning
+    let gain=0,prev=startE;const N=60;
+    for(let k=1;k<=N;k++){const f=k/N;const e=await elevAt(r.t[0]+(top[0]-r.t[0])*f,r.t[1]+(top[1]-r.t[1])*f);if(e!=null){if(e>prev)gain+=e-prev;prev=e}}
+    const dist=hav(r.t,top);
+    const aspDeg=bearing(top,r.t); // nedfarten pekar från toppen mot start
+    return {top,topE,startE,gain:Math.max(gain,topE-startE),dist,asp:ASP[Math.round(aspDeg/45)%8],aspIdx:Math.round(aspDeg/45)%8};
+  })();
+  derived[r.id]=p;return p;
+}
+
+/* Reliefbild till korten: snöig hillshade ritad från höjddata */
+async function relief(r,canvas){
+  const dpr=Math.min(2,devicePixelRatio||1);
+  const W=canvas.width=Math.round(canvas.clientWidth*dpr),H=canvas.height=Math.round(canvas.clientHeight*dpr);
+  const d=await derive(r);
+  const cLat=d.top[0]*0.6+r.t[0]*0.4,cLon=d.top[1]*0.6+r.t[1]*0.4;
+  // skala i z12-pixlar per canvas-pixel, så att topp och start får plats
+  const sx=Math.abs(lon2x(d.top[1],12)-lon2x(r.t[1],12))*256,sy=Math.abs(lat2y(d.top[0],12)-lat2y(r.t[0],12))*256;
+  const s12=Math.max(sx/(W*0.6),sy/(H*0.36),0.3);
+  const z=Math.max(11,Math.min(14,12+Math.floor(Math.log2(1/s12))+1)),scale=s12*2**(z-12);
+  const cx=lon2x(cLon,z)*256,cy=lat2y(cLat,z)*256,x0=cx-W*scale/2,y0=cy-H*scale/2+H*scale*0.07;
+  const tx0=Math.floor(x0/256),ty0=Math.floor(y0/256),tx1=Math.floor((x0+W*scale)/256),ty1=Math.floor((y0+H*scale)/256),nx=tx1-tx0+1;
+  const tiles={};await Promise.all([...Array(nx*(ty1-ty0+1)).keys()].map(async i=>{const x=tx0+i%nx,y=ty0+Math.floor(i/nx);tiles[x+","+y]=await loadTile(z,x,y)}));
+  const px=(X,Y)=>{const tx=Math.floor(X/256),ty=Math.floor(Y/256),t=tiles[tx+","+ty];return t?t[(Y-ty*256)*256+(X-tx*256)]:0};
+  const sample=(X,Y)=>{const fx=Math.floor(X),fy=Math.floor(Y),ax=X-fx,ay=Y-fy;return px(fx,fy)*(1-ax)*(1-ay)+px(fx+1,fy)*ax*(1-ay)+px(fx,fy+1)*(1-ax)*ay+px(fx+1,fy+1)*ax*ay};
+  const E=new Float32Array(W*H);for(let y=0;y<H;y++)for(let x=0;x<W;x++)E[y*W+x]=sample(x0+x*scale,y0+y*scale);
+  const g=canvas.getContext("2d"),img=g.createImageData(W,H),o=img.data;
+  const mpp=156543.03*Math.cos(cLat*Math.PI/180)/2**z*scale;
+  const L=[[225,30,.65],[300,45,.35]].map(([a,h,w])=>[a*Math.PI/180,h*Math.PI/180,w]);
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+    const i=y*W+x,e=E[i];
+    const dzdx=(E[y*W+Math.min(W-1,x+1)]-E[y*W+Math.max(0,x-1)])/(2*mpp),dzdy=(E[Math.min(H-1,y+1)*W+x]-E[Math.max(0,y-1)*W+x])/(2*mpp);
+    const slope=Math.atan(Math.hypot(dzdx,dzdy)),asp=Math.atan2(dzdy,-dzdx);
+    let hs=0;for(const [az,alt,w] of L)hs+=w*Math.max(0,Math.cos(alt)*Math.cos(slope)+Math.sin(alt)*Math.sin(slope)*Math.cos(az-Math.PI/2-asp));
+    let t=Math.min(1,Math.max(0,(hs-.18)/.8));t=t*t*(3-2*t);
+    t*=1-Math.min(1,slope/1.1)*.25; // branta partier lite mörkare (klippor)
+    let R,G,B;
+    if(e<=1.5){R=40;G=56;B=82}
+    else{R=46+(247-46)*t;G=62+(250-62)*t;B=94+(254-94)*t;const lo=Math.max(0,1-e/300)*.22;R*=1-lo*.5;G*=1-lo*.4;B*=1-lo*.25}
+    o[i*4]=R;o[i*4+1]=G;o[i*4+2]=B;o[i*4+3]=255;
+  }
+  g.putImageData(img,0,0);
+  const toC=ll=>[(lon2x(ll[1],z)*256-x0)/scale,(lat2y(ll[0],z)*256-y0)/scale];
+  const [ax,ay]=toC(r.t),[bx,by]=toC(d.top);
+  g.lineCap="round";
+  g.lineWidth=5*dpr;g.strokeStyle="rgba(17,22,29,.45)";g.beginPath();g.moveTo(ax,ay);g.lineTo(bx,by);g.stroke();
+  g.setLineDash([5*dpr,6*dpr]);g.lineWidth=2.4*dpr;g.strokeStyle="#fff";g.beginPath();g.moveTo(ax,ay);g.lineTo(bx,by);g.stroke();g.setLineDash([]);
+  const dot=(x,y,c,s)=>{g.beginPath();g.arc(x,y,s*dpr,0,7);g.fillStyle=c;g.fill();g.lineWidth=2.2*dpr;g.strokeStyle="#fff";g.stroke()};
+  dot(ax,ay,"#3b97d6",5);dot(bx,by,"#11161d",6);
+}
+
+/* =========================================================
+   LAVIN (Varsom) + VÄDER (Open-Meteo)
+   ========================================================= */
+const avCache={};
+function fetchAv(regionId,date,detail=true){
+  const k=regionId+date+detail;
+  if(!avCache[k])avCache[k]=fetch(`https://api01.nve.no/hydrology/forecast/avalanche/v6.3.0/api/AvalancheWarningByRegion/${detail?"Detail":"Simple"}/${regionId}/1/${date}/${date}`)
+    .then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(a=>a&&a[0]?a[0]:null)
+    .catch(e=>{delete avCache[k];throw e});
+  return avCache[k];
+}
+function heightMatch(p,lo,hi){
+  const h1=p.ExposedHeight1,h2=p.ExposedHeight2,f=p.ExposedHeightFill;
+  if(!f||h1==null)return {ok:true,txt:"alla höjder"};
+  if(f===1)return {ok:hi>h1,txt:`över ${h1} m`};
+  if(f===2)return {ok:lo<h1,txt:`under ${h1} m`};
+  if(f===3)return {ok:hi>h1||lo<h2,txt:`över ${h1} m och under ${h2} m`};
+  if(f===4)return {ok:hi>h2&&lo<h1,txt:`mellan ${h2} och ${h1} m`};
+  return {ok:true,txt:""};
+}
+function roseSVG(exp,routeIdx){
+  let s='<svg class="rose" viewBox="-30 -30 60 60">';
+  for(let i=0;i<8;i++){
+    const a0=(i*45-22.5-90)*Math.PI/180,a1=(i*45+22.5-90)*Math.PI/180,r=26;
+    const on=exp&&exp[i]==="1";
+    s+=`<path d="M0 0L${(r*Math.cos(a0)).toFixed(1)} ${(r*Math.sin(a0)).toFixed(1)}A${r} ${r} 0 0 1 ${(r*Math.cos(a1)).toFixed(1)} ${(r*Math.sin(a1)).toFixed(1)}Z" fill="${on?"#11161d":"#e3e7ec"}" stroke="#fff" stroke-width="1.5"/>`;
+  }
+  const a=(routeIdx*45-90)*Math.PI/180;
+  s+=`<circle cx="${(18*Math.cos(a)).toFixed(1)}" cy="${(18*Math.sin(a)).toFixed(1)}" r="5" fill="#3b97d6" stroke="#fff" stroke-width="2"/>`;
+  s+='<text x="0" y="-21" text-anchor="middle" font-size="8" font-weight="800" fill="#fff">N</text></svg>';
+  return s;
+}
+function verdict(w,r,d){
+  const lvl=+w.DangerLevel||0;
+  const probs=(w.AvalancheProblems||[]).map(p=>{const hm=heightMatch(p,d.startE,d.topE);const am=p.ValidExpositions?p.ValidExpositions[d.aspIdx]==="1":true;return {p,hm,am,hit:hm.ok&&am}});
+  const hit=probs.some(x=>x.hit);
+  let c="g";
+  if(lvl>=4)c="r";else if(lvl===3)c=hit||r.exp!=="g"?"r":"y";else if(lvl===2)c=hit?(r.exp==="r"?"r":"y"):(r.exp==="r"?"y":"g");else if(lvl===1)c=r.exp==="r"&&hit?"y":"g";
+  const why=lvl===0?"Ingen faregrad.":hit?`Minst ett lavinproblem gäller ruttens huvudsida (${d.asp}) och höjd.`:`Inget av lavinproblemen verkar träffa ruttens huvudsida (${d.asp}) och höjd.`;
+  const head={g:"Grön – ser hanterbart ut",y:"Gul – var noggrann med vägval",r:"Röd – avstå eller välj säkrare tur"}[c];
+  return {c,probs,why,head};
+}
+async function renderAv(r,date){
+  const box=$("#avBox"),reg=REGION[r.region];
+  box.innerHTML=`<div class="status"><div class="lvl"><span class="spin"></span></div><div><h5>Hämtar prognos från Varsom…</h5><div class="meta">Region ${reg.name} · ${date}</div></div></div>`;
+  let d;try{d=await derive(r)}catch(e){d={startE:0,topE:2000,asp:"?",aspIdx:0}}
+  let w=null,err=null;
+  try{w=await fetchAv(reg.id,date)}catch(e){err=e}
+  if(cur!==r.id)return;
+  const dateRow=`<div class="btnrow" style="align-items:center;justify-content:space-between"><span class="small">Datum</span><input type="date" id="avDate" value="${date}"></div>`;
+  if(w&&+w.DangerLevel>0){
+    const v=verdict(w,r,d);
+    box.innerHTML=`
+      <div class="status"><div class="lvl l${w.DangerLevel}">${w.DangerLevel}</div>
+        <div><h5>${esc(w.DangerLevelName||"Faregrad "+w.DangerLevel)}</h5><div class="meta">Varsom · region ${esc(w.RegionName)} · ${new Date(w.ValidFrom).toLocaleDateString("sv-SE",{weekday:"short",day:"numeric",month:"short",year:"numeric"})}</div></div></div>
+      <p class="p" style="margin-top:12px">${esc(w.MainText||"")}</p>
+      <div class="verdict v-${v.c}"><b>${v.head}</b>${v.why} Ruttens sida räknas grovt som riktningen från toppen mot starten (${d.asp}), höjd ${d.startE}–${d.topE} m.</div>
+      <div style="margin-top:8px">${v.probs.map(x=>`<div class="prob">${roseSVG(x.p.ValidExpositions,d.aspIdx)}<div><div class="t">${esc(x.p.AvalancheProblemTypeName||"")}</div><div class="s">${esc(x.hm.txt)}${x.p.DestructiveSizeName?" · "+esc(x.p.DestructiveSizeName):""}</div><div class="m" style="color:${x.hit?"var(--r)":"var(--g)"}">${x.hit?"Träffar rutten":"Träffar inte ruttens huvudsida/höjd"}</div></div></div>`).join("")}</div>
+      ${dateRow}
+      <div class="btnrow"><a class="btn ghost sm" href="https://varsom.no/en/snow/forecast/warning/${encodeURIComponent(reg.varsom)}/${date}" target="_blank" rel="noopener">Hela prognosen på Varsom</a></div>
+      <p class="disc">Beslutsstöd, inte ett beslut. Ersätter aldrig egen bedömning på plats. Den blå pricken i rosen = ruttens ungefärliga sida.</p>`;
+  }else{
+    const reason=err?"Kunde inte nå Varsom just nu.":"Ingen lavinprognos publicerad för den här dagen (säsongen i norr börjar runt 1 december).";
+    box.innerHTML=`
+      <div class="status"><div class="lvl">–</div><div><h5>Ingen live-prognos</h5><div class="meta">${reason}</div></div></div>
+      <p class="p" style="margin-top:12px">Hämta läget på annat sätt:</p>
+      <div class="btnrow"><button class="btn sm" id="askClaude">Be Claude om statuskoll</button></div>
+      <div class="btnrow"><a class="btn ghost sm" href="https://varsom.no/en/snow/forecast/warning/${encodeURIComponent(reg.varsom)}" target="_blank" rel="noopener">Öppna Varsom</a><button class="btn ghost sm" id="demoAv">Visa exempel (12 mars 2026)</button></div>
+      ${dateRow}
+      <p class="disc">"Be Claude" kopierar en färdig fråga – klistra in den i Troemse-projektet så hämtar Claude prognos och väder och skriver in en grön/gul/röd-bedömning med tidsstämpel.</p>`;
+    $("#askClaude").onclick=()=>{
+      const txt=`Check status for route: ${r.name} (${r.area}). Datum: ${date}. Region Varsom: ${reg.name}. Toppen ca ${d.topE} m, start ca ${d.startE} m, huvudsida ${d.asp}. Kör statuskollen enligt CONTEXT.md och skriv in resultatet i appen.`;
+      (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast("Frågan är kopierad – klistra in den hos Claude")).catch(()=>{prompt("Kopiera frågan:",txt)});
+    };
+    $("#demoAv").onclick=()=>renderAv(r,"2026-03-12");
+  }
+  $("#avDate").onchange=e=>e.target.value&&renderAv(r,e.target.value);
+}
+async function renderWx(r){
+  const box=$("#wxBox");box.innerHTML='<span class="spin"></span>';
+  try{
+    const d=await derive(r);
+    const u=`https://api.open-meteo.com/v1/forecast?latitude=${d.top[0]}&longitude=${d.top[1]}&elevation=${d.topE}&daily=temperature_2m_max,temperature_2m_min,wind_speed_10m_max,wind_gusts_10m_max,snowfall_sum,weather_code&past_days=3&forecast_days=3&wind_speed_unit=ms&timezone=Europe%2FOslo`;
+    const w=await fetch(u).then(x=>x.json());if(cur!==r.id)return;
+    const D=w.daily,news=D.snowfall_sum.slice(0,3).reduce((a,b)=>a+(b||0),0);
+    const days=[3,4,5].map(i=>({dn:new Date(D.time[i]).toLocaleDateString("sv-SE",{weekday:"short"}),tmax:Math.round(D.temperature_2m_max[i]),tmin:Math.round(D.temperature_2m_min[i]),wind:Math.round(D.wind_speed_10m_max[i]),gust:Math.round(D.wind_gusts_10m_max[i]),snow:D.snowfall_sum[i]}));
+    box.innerHTML=`<div class="wx">${days.map((x,i)=>`<div class="d"><div class="dn">${i===0?"Idag":x.dn}</div><div class="tt">${x.tmin}° / ${x.tmax}°</div><div class="mi"><span>Vind ${x.wind} (${x.gust}) m/s</span><span>Snö ${x.snow?x.snow.toFixed(1):0} cm</span></div></div>`).join("")}</div>
+      <p class="small" style="margin:10px 0 0">Nysnö senaste 3 dygnen: <b>${news.toFixed(1)} cm</b> · modell för ${d.topE} m ö.h. (Open-Meteo). <a href="https://www.yr.no/nb/s%C3%B8k?q=${encodeURIComponent(r.name)}" target="_blank" rel="noopener">Yr</a></p>`;
+  }catch(e){box.innerHTML='<p class="p small">Kunde inte hämta väder just nu. <a href="https://www.yr.no" target="_blank" rel="noopener">Öppna Yr</a></p>'}
+}
+
+/* =========================================================
+   HOME
+   ========================================================= */
+let filter="all",query="",onlyFav=false;
+const favs=new Set(store.get("favs",[]));
+const saveFavs=()=>store.set("favs",[...favs]);
+const regionAv={};
+function match(r){
+  if(onlyFav&&!favs.has(r.id))return false;
+  if(query&&!(r.name+" "+r.area).toLowerCase().includes(query))return false;
+  if(filter==="all")return true;
+  if(["lyngen","ost","kvaloya"].includes(filter))return r.region===filter;
+  if(filter==="fit")return r.fit===3;
+  if(filter==="lag")return r.exp==="g";
+  if(filter==="board")return r.board==="bra";
+  if(filter==="storm")return r.storm;
+}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){io.unobserve(e.target);const r=ROUTES.find(x=>x.id===e.target.dataset.id);const c=e.target.querySelector("canvas");relief(r,c).then(()=>c.style.opacity=1).catch(()=>{})}}),{rootMargin:"300px"});
+function avPill(r){
+  const a=regionAv[REGION[r.region].id];
+  if(a===undefined)return `<span class="pill"><span class="dot"></span>Lavin …</span>`;
+  if(!a||!+a.DangerLevel)return `<span class="pill"><span class="dot"></span>Lavin – ingen prognos</span>`;
+  return `<span class="pill av${a.DangerLevel}"><span class="dot"></span>Lavinfara ${a.DangerLevel}</span>`;
+}
+function renderList(){
+  const L=$("#list");L.innerHTML="";
+  const list=ROUTES.filter(match).sort((a,b)=>b.fit-a.fit);
+  if(!list.length){L.innerHTML=`<div class="empty">${onlyFav?"Inga favoriter än – tryck på hjärtat på en tur.":"Inga turer matchar."}</div>`;return}
+  list.forEach(r=>{
+    const el=document.createElement("div");el.className="card";el.dataset.id=r.id;
+    el.innerHTML=`<div class="ph"></div><canvas style="opacity:0;transition:opacity .5s"></canvas><div class="shade"></div>
+      <div class="head"><h3>${esc(r.name)}</h3><div class="loc"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>${esc(r.area)}</div></div>
+      <button class="heart ${favs.has(r.id)?"on":""}" aria-label="Favorit"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8 3.3 4.5 7 4.5c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.7 0 6 3.5 4.5 7.2C19.5 16.4 12 21 12 21z"/></svg></button>
+      <div class="foot"><p class="desc">${esc(r.desc)}</p>
+        <div class="pills"><span class="pill">Passar oss <span class="fitbar">${[1,2,3].map(n=>`<i class="${n<=r.fit?"on":""}"></i>`).join("")}</span></span>${avPill(r)}<span class="pill">${BOARD[r.board][0].replace("Board: ","🏂 ")}</span></div></div>`;
+    el.onclick=e=>{if(e.target.closest(".heart")){e.stopPropagation();favs.has(r.id)?favs.delete(r.id):favs.add(r.id);saveFavs();e.target.closest(".heart").classList.toggle("on");return}location.hash=r.id};
+    L.appendChild(el);io.observe(el);
+  });
+}
+$("#filters").onclick=e=>{const b=e.target.closest("button");if(!b)return;filter=b.dataset.f;document.querySelectorAll("#filters button").forEach(x=>x.classList.toggle("on",x===b));renderList()};
+$("#searchBtn").onclick=()=>{$("#searchBox").classList.toggle("on");if($("#searchBox").classList.contains("on"))$("#q").focus()};
+$("#q").oninput=e=>{query=e.target.value.trim().toLowerCase();renderList()};
+$("#favBtn").onclick=()=>{onlyFav=!onlyFav;$("#favBtn").style.background=onlyFav?"var(--accent)":"";renderList()};
+// lavin per region till korten + väderchip
+[...new Set(Object.values(REGION).map(x=>x.id))].forEach(id=>fetchAv(id,todayISO(),false).then(a=>{regionAv[id]=a}).catch(()=>{regionAv[id]=null}).finally(()=>{if(!cur)renderList()}));
+fetch("https://api.open-meteo.com/v1/forecast?latitude=69.576&longitude=20.219&current=temperature_2m,weather_code&timezone=Europe%2FOslo").then(r=>r.json()).then(w=>{$("#wxtxt").textContent=Math.round(w.current.temperature_2m)+"°C · Lyngen"}).catch(()=>{$("#wxtxt").textContent="Lyngen"});
+
+/* =========================================================
+   DETAIL + 3D-KARTA
+   ========================================================= */
+let map=null,cur=null,spinning=false,spinRAF=null;
+const STYLE={version:8,
+  glyphs:"https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+  sources:{
+    sat:{type:"raster",tiles:["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],tileSize:256,maxzoom:18,attribution:"Bild © Esri, Maxar, Earthstar Geographics"},
+    topo:{type:"raster",tiles:["https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png"],tileSize:256,maxzoom:18,attribution:"© Kartverket"},
+    slope:{type:"raster",tiles:["https://gis3.nve.no/arcgis/rest/services/wmts/Bratthet_2024/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=png32&transparent=true&layers=show:0&f=image"],tileSize:256,attribution:"Bratthet © NVE"},
+    dem:{type:"raster-dem",tiles:["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],tileSize:256,maxzoom:14,encoding:"terrarium",attribution:"Höjd: Mapzen/AWS Terrain Tiles"}
+  },
+  layers:[
+    {id:"bg",type:"background",paint:{"background-color":"#cfd7e0"}},
+    {id:"sat",type:"raster",source:"sat",paint:{"raster-saturation":-0.25,"raster-contrast":0.05}},
+    {id:"topo",type:"raster",source:"topo",layout:{visibility:"none"}},
+    {id:"slope",type:"raster",source:"slope",layout:{visibility:"none"},paint:{"raster-opacity":0.62}},
+    {id:"hs",type:"hillshade",source:"dem",paint:{"hillshade-exaggeration":0.25,"hillshade-shadow-color":"#2a3a52"}}
+  ],
+  terrain:{source:"dem",exaggeration:1.25},
+  sky:{}
+};
+function initMap(){
+  map=new maplibregl.Map({container:"map",style:STYLE,center:[20.1,69.6],zoom:11,pitch:62,maxPitch:80,attributionControl:{compact:true}});
+  map.on("load",()=>{
+    map.addSource("route",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
+    map.addSource("gpx",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
+    map.addLayer({id:"route-casing",type:"line",source:"route",paint:{"line-color":"#11161d","line-width":6,"line-opacity":.35}});
+    map.addLayer({id:"route",type:"line",source:"route",paint:{"line-color":"#ffffff","line-width":3.5,"line-dasharray":[1.4,1.4]}});
+    map.addLayer({id:"gpx-casing",type:"line",source:"gpx",paint:{"line-color":"#11161d","line-width":7,"line-opacity":.4}});
+    map.addLayer({id:"gpx",type:"line",source:"gpx",paint:{"line-color":"#41b8ff","line-width":4.5}});
+    if(cur)showOnMap(ROUTES.find(r=>r.id===cur));
+  });
+  ["dragstart","touchstart","wheel"].forEach(ev=>map.on(ev,()=>stopSpin()));
+}
+let markers=[];
+function mk(html){const el=document.createElement("div");el.innerHTML=html;return el.firstChild}
+async function showOnMap(r){
+  if(!map||!map.isStyleLoaded()||!map.getSource("route"))return;
+  let d;try{d=await derive(r)}catch(e){return}if(cur!==r.id)return;
+  markers.forEach(m=>m.remove());markers=[];
+  const top=[d.top[1],d.top[0]],st=[r.t[1],r.t[0]];
+  map.getSource("route").setData({type:"Feature",geometry:{type:"LineString",coordinates:[st,top]}});
+  markers.push(new maplibregl.Marker({element:mk(`<div style="background:#11161d;color:#fff;font:700 12px Montserrat;padding:6px 10px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.3);white-space:nowrap">▲ ${esc(r.name.split(" /")[0])} · ${d.topE} m</div>`),anchor:"bottom",offset:[0,-6]}).setLngLat(top).addTo(map));
+  markers.push(new maplibregl.Marker({element:mk(`<div style="background:#3b97d6;color:#fff;font:700 11px Montserrat;padding:5px 9px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.3)">P Start</div>`),anchor:"bottom",offset:[0,-4]}).setLngLat(st).addTo(map));
+  drawGpx(r);
+  fitRoute(r,d,true);
+}
+function fitRoute(r,d,instant){
+  const g=store.get("gpx-"+r.id,null);
+  const pts=g?g.c:[[r.t[1],r.t[0]],[d.top[1],d.top[0]]];
+  const b=pts.reduce((b,p)=>b.extend(p),new maplibregl.LngLatBounds(pts[0],pts[0]));
+  const brg=(bearing(r.t,d.top)+0)%360; // titta mot toppen från starten
+  const cam=map.cameraForBounds(b,{padding:{top:90,bottom:110,left:50,right:70}});
+  const opt={center:cam.center,zoom:Math.min(cam.zoom+0.35,14),bearing:brg,pitch:map.getPitch()>5?64:0,duration:instant?0:1200};
+  instant?map.jumpTo(opt):map.easeTo(opt);
+}
+function stopSpin(){spinning=false;cancelAnimationFrame(spinRAF);$("#bSpin").classList.remove("on")}
+$("#bSpin").onclick=()=>{if(spinning)return stopSpin();spinning=true;$("#bSpin").classList.add("on");const step=()=>{if(!spinning)return;map.setBearing(map.getBearing()+0.18);spinRAF=requestAnimationFrame(step)};step()};
+$("#b3d").onclick=()=>{const on=map.getPitch()<5;map.easeTo({pitch:on?64:0,duration:700});map.setTerrain(on?{source:"dem",exaggeration:1.25}:null);$("#b3d").textContent=on?"3D":"2D";$("#b3d").classList.toggle("on",on)};
+$("#bFit").onclick=async()=>{const r=ROUTES.find(x=>x.id===cur);fitRoute(r,await derive(r),false)};
+$("#layers").onclick=e=>{const b=e.target.closest("button");if(!b)return;const l=b.dataset.l;
+  if(l==="slope"){const on=!b.classList.contains("on");b.classList.toggle("on",on);map.setLayoutProperty("slope","visibility",on?"visible":"none");$("#legend").classList.toggle("on",on);return}
+  document.querySelectorAll('#layers button[data-l="sat"],#layers button[data-l="topo"]').forEach(x=>x.classList.toggle("on",x===b));
+  map.setLayoutProperty("sat","visibility",l==="sat"?"visible":"none");map.setLayoutProperty("topo","visibility",l==="topo"?"visible":"none")};
+
+/* GPX */
+function parseGpx(txt){
+  const x=new DOMParser().parseFromString(txt,"application/xml");
+  let pts=[...x.getElementsByTagName("trkpt")];if(!pts.length)pts=[...x.getElementsByTagName("rtept")];
+  const c=pts.map(p=>[+(+p.getAttribute("lon")).toFixed(5),+(+p.getAttribute("lat")).toFixed(5)]).filter(p=>!isNaN(p[0]));
+  if(c.length<2)throw new Error("Inga punkter");
+  const step=Math.max(1,Math.floor(c.length/1500));return c.filter((_,i)=>i%step===0||i===c.length-1);
+}
+function drawGpx(r){
+  const g=store.get("gpx-"+r.id,null);
+  if(map&&map.getSource("gpx"))map.getSource("gpx").setData(g?{type:"Feature",geometry:{type:"LineString",coordinates:g.c}}:{type:"FeatureCollection",features:[]});
+  if(map&&map.getLayer("route"))["route","route-casing"].forEach(l=>map.setLayoutProperty(l,"visibility",g?"none":"visible"));
+  $("#mapnote").style.display=g?"none":"";
+  if(g){let len=0;for(let i=1;i<g.c.length;i++)len+=hav([g.c[i-1][1],g.c[i-1][0]],[g.c[i][1],g.c[i][0]]);$("#gpxInfo").innerHTML=`<b>${esc(g.name)}</b> · ${(len/1000).toFixed(1)} km spår (${g.c.length} punkter). Visas som blå linje i kartan.`;$("#gpxClear").style.display=""}
+  else{$("#gpxInfo").textContent="Inget riktigt spår ännu. Ladda upp en GPX från Strava, Garmin eller FATMAP så ritas den i 3D-kartan.";$("#gpxClear").style.display="none"}
+}
+$("#gpxIn").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=ROUTES.find(x=>x.id===cur);f.text().then(t=>{const c=parseGpx(t);store.set("gpx-"+r.id,{name:f.name,c});drawGpx(r);derive(r).then(d=>fitRoute(r,d,false));toast("Spåret är sparat på den här enheten")}).catch(()=>toast("Kunde inte läsa GPX-filen"));e.target.value=""};
+$("#gpxClear").onclick=()=>{const r=ROUTES.find(x=>x.id===cur);try{localStorage.removeItem("ght-gpx-"+r.id)}catch(e){}drawGpx(r)};
+
+/* Betyg */
+let draft={snow:0,up:0};
+document.querySelectorAll(".scale").forEach(s=>{s.innerHTML=[1,2,3,4,5].map(n=>`<button data-n="${n}">${n}</button>`).join("");s.onclick=e=>{const b=e.target.closest("button");if(!b)return;draft[s.dataset.k]=+b.dataset.n;s.querySelectorAll("button").forEach(x=>x.classList.toggle("on",+x.dataset.n<=draft[s.dataset.k]))}});
+function renderRatings(r){
+  const list=store.get("ratings-"+r.id,[]);
+  $("#rList").innerHTML=list.length?list.map(x=>`<div class="rv"><div class="who">${esc(x.who||"Anonym")} <span class="sc">· ${new Date(x.at).toLocaleDateString("sv-SE")}</span></div><div class="sc">Snö &amp; åkning ${x.snow}/5 · Uppstigning &amp; utsikt ${x.up}/5</div>${x.txt?`<div style="margin-top:4px">${esc(x.txt)}</div>`:""}</div>`).join(""):'<p class="small" style="margin:0">Inga betyg än. I det här utkastet sparas betyg bara på den här enheten.</p>';
+}
+$("#rSave").onclick=()=>{const r=ROUTES.find(x=>x.id===cur);if(!draft.snow||!draft.up)return toast("Sätt båda betygen först");
+  const list=store.get("ratings-"+r.id,[]);list.unshift({...draft,txt:$("#rTxt").value.trim(),who:$("#rWho").value.trim(),at:Date.now()});store.set("ratings-"+r.id,list);store.set("who",$("#rWho").value.trim());
+  draft={snow:0,up:0};document.querySelectorAll(".scale button").forEach(b=>b.classList.remove("on"));$("#rTxt").value="";renderRatings(r);toast("Betyget är sparat")};
+
+async function openDetail(r){
+  cur=r.id;stopSpin();
+  $("#home").classList.remove("on");$("#detail").classList.add("on");window.scrollTo(0,0);
+  $("#dName").textContent=r.name;$("#dArea").textContent=r.area+" · "+AREA_NAME[r.region];
+  $("#dFav").classList.toggle("on",favs.has(r.id));
+  $("#dFit").innerHTML=[1,2,3].map(n=>`<i class="${n<=r.fit?"on":""}"></i>`).join("");
+  $("#dFitTxt").textContent=["","Nischad – kräver rätt dag","Bra alternativ","Mycket bra match"][r.fit];
+  const expWhy={g:"Rutten går mest utanför eller vid sidan av lavinterräng.",y:"Delar av rutten går i lavinterräng – vägval och läge avgör.",r:"Mycket av rutten går i eller under brant lavinterräng."}[r.exp];
+  $("#dFitWhy").textContent=`${expWhy} ${r.boardNote}${r.storm?" Funkar som stormdagsalternativ.":""}`;
+  $("#dTags").innerHTML=[EXP[r.exp],BOARD[r.board]].map(x=>`<span class="tag ${x[1]}">${x[0]}</span>`).join("")+(r.storm?'<span class="tag tg">Stormdag</span>':"")+(r.unsure?'<span class="tag tn">Topp-position ej verifierad</span>':"");
+  $("#dDesc").textContent=r.desc;
+  $("#dSrc").innerHTML="Källa: "+r.src.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${esc(s[0])}</a>`).join(" · ");
+  ["#sTop","#sGain","#sLen","#sAsp"].forEach(s=>$(s).textContent="…");$("#sCalc").textContent="";
+  $("#rWho").value=store.get("who","");renderRatings(r);
+  const ss=SAVED_STATUS[r.id];$("#savedStatus").style.display=ss?"":"none";
+  if(ss)$("#savedStatus").innerHTML=`<div class="verdict v-${ss.c}" style="margin:0"><b>Claudes statuskoll · ${esc(ss.at)}</b>${esc(ss.txt)}</div>`;
+  if(window.maplibregl){if(!map)initMap();else{map.resize();showOnMap(r)}}
+  renderAv(r,todayISO());renderWx(r);
+  let d;try{d=await derive(r)}catch(e){delete derived[r.id];["#sTop","#sGain","#sLen","#sAsp"].forEach(s=>$(s).textContent="–");$("#sCalc").textContent="Kunde inte hämta höjddata just nu.";return}
+  if(cur!==r.id)return;
+  $("#sTop").textContent=d.topE+" m";$("#sGain").textContent="≈"+Math.round(d.gain/10)*10;$("#sLen").textContent="≈"+(d.dist*2*1.35/1000).toFixed(0)+" km";$("#sAsp").textContent=d.asp;
+  $("#sCalc").textContent="Beräknat från höjddata och fågelvägen – ungefärligt tills vi har riktiga spår.";
+}
+$("#dFav").onclick=()=>{const id=cur;favs.has(id)?favs.delete(id):favs.add(id);saveFavs();$("#dFav").classList.toggle("on",favs.has(id))};
+$("#backBtn").onclick=()=>{history.length>1?history.back():(location.hash="")};
+function route(){
+  const id=location.hash.slice(1),r=ROUTES.find(x=>x.id===id);
+  if(r)openDetail(r);else{cur=null;stopSpin();$("#detail").classList.remove("on");$("#home").classList.add("on");renderList()}
+}
+window.addEventListener("hashchange",route);
+route();
+/* Upptäck om externa anslutningar blockeras (t.ex. i en förhandsvisning) */
+let netOK=false;
+fetch("https://api.open-meteo.com/v1/forecast?latitude=69.6&longitude=20.2&current=temperature_2m").then(r=>{if(r.ok)netOK=true}).catch(()=>{});
+setTimeout(()=>{if(!netOK||!window.maplibregl){document.querySelectorAll(".netwarn").forEach(e=>e.classList.add("on"))}},6000);
+</script>
+</body>
+</html>
