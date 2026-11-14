@@ -154,6 +154,52 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
 .netwarn{display:none;margin:12px 20px 0;background:#fff3cd;color:#5c4400;border-radius:16px;padding:12px 14px;font-size:13px;font-weight:500}
 .netwarn.on{display:block}
 .netwarn b{display:block;font-size:13.5px;margin-bottom:2px}
+
+/* ---------- KARTA + RITA ---------- */
+.homeact{display:flex;gap:8px;padding:14px 20px 0}
+.homeact button{flex:1;height:46px;border-radius:14px;background:#fff;border:1px solid var(--line);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px}
+.homeact button.dk{background:var(--dark);border-color:var(--dark);color:#fff}
+.homeact svg{width:18px;height:18px}
+#mapview{position:fixed;inset:0;z-index:30;background:#cfd7e0}
+@media(min-width:560px){#mapview{left:calc(50% - 240px);right:auto;width:480px;top:24px;bottom:24px;border-radius:36px;overflow:hidden}}
+#omap{position:absolute;inset:0}
+.ovtop{position:absolute;z-index:3;top:calc(14px + env(safe-area-inset-top));left:14px;right:14px;display:flex;gap:8px;align-items:center;pointer-events:none}
+.ovtop>*{pointer-events:auto}
+.ovtop .mapbtn{position:static}
+.ovtitle{background:rgba(17,22,29,.86);color:#fff;border-radius:14px;height:44px;padding:0 14px;display:flex;align-items:center;font-weight:700;font-size:14px;white-space:nowrap}
+.ovlay{display:flex;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:14px;padding:4px;gap:2px;box-shadow:0 4px 14px rgba(0,0,0,.15);margin-left:auto}
+.ovlay button{padding:8px 7px;border-radius:10px;font-size:11.5px;font-weight:700;color:#3a4350}
+.ovlay button.on{background:var(--dark);color:#fff}
+.ovctl{position:absolute;right:14px;top:calc(66px + env(safe-area-inset-top));z-index:3;display:flex;flex-direction:column;gap:8px}
+.ovctl .mapbtn{position:static;padding:0 10px}
+.ovctl .mapbtn.on{background:var(--dark);color:#fff}
+.ovp{position:absolute;z-index:4;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));background:#fff;border-radius:24px;padding:14px 16px 16px;max-height:52%;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,.25);-webkit-overflow-scrolling:touch}
+.ovh{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.ovh b{font-size:17px;letter-spacing:-.01em}
+.x{width:34px;height:34px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:20px;font-weight:600;flex:none}
+.rs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.rs div{background:var(--surface);border-radius:12px;padding:8px 10px}
+.rs b{display:block;font-size:16px;font-weight:700}
+.rs span{font-size:11.5px;color:var(--muted);font-weight:600}
+.prof{width:100%;height:92px;display:block;margin-top:10px}
+.flatinfo{margin-top:8px}
+.leg{display:flex;flex-wrap:wrap;gap:5px 12px;font-size:11.5px;font-weight:600;color:#3a4350;margin-top:10px}
+.leg i{display:inline-block;width:16px;height:4px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.segs{display:grid;gap:6px;margin-top:10px}
+.seg{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
+.seg .small{font-weight:500}
+.tg2{margin-left:auto;display:flex;background:var(--surface);border-radius:10px;padding:3px}
+.tg2 button{padding:5px 11px;border-radius:8px;font-size:12px;font-weight:700;color:var(--muted)}
+.tg2 button.on.u{background:#2f6fdc;color:#fff}.tg2 button.on.d{background:#e0342a;color:#fff}
+.ovp input[type=text]{width:100%;height:42px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font:inherit;font-size:14px;background:var(--surface);margin-top:12px}
+.ovp .btn[disabled]{opacity:.4}
+.mylist .it{display:flex;width:100%;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px;font-weight:600;text-align:left}
+.ovm{background:#11161d;color:#fff;font:700 11px Montserrat,sans-serif;padding:5px 8px;border-radius:10px;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.3);cursor:pointer}
+.ovm.cu{background:#7a3fb5}.ovm.sel{background:var(--accent)}
+.drawing .ovm{opacity:.45;pointer-events:none}
+.drawing #omap canvas{cursor:crosshair}
+.wp{width:30px;height:30px;border-radius:50%;background:#fff;border:3px solid #11161d;font:800 12px Montserrat,sans-serif;display:grid;place-items:center;box-shadow:0 3px 10px rgba(0,0,0,.35);cursor:grab;color:#11161d}
+.wp.s{background:#2f6fdc;color:#fff;border-color:#fff}.wp.top{background:#11161d;color:#fff;border-color:#fff}
 </style>
 </head>
 <body>
@@ -174,7 +220,11 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
   <div class="brand">
     <div class="wm">GET HIGH TOUR</div>
     <h1>Upptäck</h1>
-    <p>Lyngen &amp; Tromsø · 11–21 mars 2027</p>
+    <p>Lyngen &amp; Tromsø · 15–21 mars 2027</p>
+  </div>
+  <div class="homeact">
+    <button class="dk" onclick="location.hash='karta'"><svg class="i" viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>Alla turer på kartan</button>
+    <button onclick="location.hash='rita'"><svg class="i" viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16l-1 4z"/><path d="M14 7l3 3"/></svg>Rita egen rutt</button>
   </div>
   <div class="search" id="searchBox"><input id="q" type="text" placeholder="Sök topp eller område…" autocomplete="off"></div>
   <div class="filters" id="filters">
@@ -227,6 +277,11 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
     <div class="calc" id="sCalc"></div>
 
     <div class="sec">
+      <h4>Väg upp &amp; ned</h4>
+      <div class="box" id="calcBox"></div>
+    </div>
+
+    <div class="sec">
       <h4>Passar oss</h4>
       <div class="box">
         <div class="fitrow"><div class="fitbig" id="dFit"></div><b id="dFitTxt"></b></div>
@@ -274,6 +329,20 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
       </div>
     </div>
   </div>
+</section>
+<!-- ================= KARTA ================= -->
+<section class="view" id="mapview">
+  <div id="omap"></div>
+  <div class="ovtop">
+    <button class="mapbtn" id="ovBack" aria-label="Tillbaka"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div class="ovtitle" id="ovTitle">Karta</div>
+    <div class="ovlay" id="ovLayers"><button data-l="winter" class="on">Vinter</button><button data-l="topo">Topo</button><button data-l="slope">Bratthet</button></div>
+  </div>
+  <div class="ovctl">
+    <button class="mapbtn" id="ov3d">3D</button>
+    <button class="mapbtn" id="ovFit" aria-label="Visa allt"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
+  </div>
+  <div class="ovp" id="ovPanel"></div>
 </section>
 <div class="toast" id="toast"></div>
 </div>
@@ -628,11 +697,13 @@ function initMap(){
     mapReady=true;
     const at=document.querySelector(".maplibregl-ctrl-attrib");if(at)at.classList.remove("maplibregl-compact-show");
     map.addSource("route",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
+    map.addSource("calc",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
+    addPathLayers(map,"calc");
     map.addSource("gpx",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
     map.addLayer({id:"route-casing",type:"line",source:"route",paint:{"line-color":"#11161d","line-width":6,"line-opacity":.35}});
     map.addLayer({id:"route",type:"line",source:"route",paint:{"line-color":"#ffffff","line-width":3.5,"line-dasharray":[1.4,1.4]}});
     map.addLayer({id:"gpx-casing",type:"line",source:"gpx",paint:{"line-color":"#11161d","line-width":7,"line-opacity":.4}});
-    map.addLayer({id:"gpx",type:"line",source:"gpx",paint:{"line-color":"#41b8ff","line-width":4.5}});
+    map.addLayer({id:"gpx",type:"line",source:"gpx",paint:{"line-color":"#00c2b2","line-width":4.5}});
     if(cur)showOnMap(ROUTES.find(r=>r.id===cur));
   });
   ["dragstart","touchstart","wheel"].forEach(ev=>map.on(ev,()=>stopSpin()));
@@ -647,12 +718,15 @@ async function showOnMap(r){
   map.getSource("route").setData({type:"Feature",geometry:{type:"LineString",coordinates:[st,top]}});
   markers.push(new maplibregl.Marker({element:mk(`<div style="background:#11161d;color:#fff;font:700 12px Montserrat;padding:6px 10px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.3);white-space:nowrap">▲ ${esc(r.name.split(" /")[0])} · ${d.topE} m</div>`),anchor:"bottom",offset:[0,-6]}).setLngLat(top).addTo(map));
   markers.push(new maplibregl.Marker({element:mk(`<div style="background:#3b97d6;color:#fff;font:700 11px Montserrat;padding:5px 9px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.3)">P Start</div>`),anchor:"bottom",offset:[0,-4]}).setLngLat(st).addTo(map));
+  map.getSource("calc").setData(EMPTY);
+  $("#mapnote").textContent="Streckad linje = fågelvägen, inte spåret";
   drawGpx(r);
+  if(memCalc[r.id])drawCalcDetail(r,memCalc[r.id]);
   fitRoute(r,d,true);
 }
 function fitRoute(r,d,instant){
   const g=store.get("gpx-"+r.id,null);
-  const pts=g?g.c:[[r.t[1],r.t[0]],[d.top[1],d.top[0]]];
+  const pts=g?g.c:memCalc[r.id]?memCalc[r.id].legs.flatMap(L=>L.c):[[r.t[1],r.t[0]],[d.top[1],d.top[0]]];
   const b=pts.reduce((b,p)=>b.extend(p),new maplibregl.LngLatBounds(pts[0],pts[0]));
   const brg=(bearing(r.t,d.top)+0)%360; // titta mot toppen från starten
   const cam=map.cameraForBounds(b,{padding:{top:90,bottom:110,left:50,right:70}});
@@ -734,9 +808,9 @@ function parseGpx(txt){
 function drawGpx(r){
   const g=store.get("gpx-"+r.id,null);
   if(map&&map.getSource("gpx"))map.getSource("gpx").setData(g?{type:"Feature",geometry:{type:"LineString",coordinates:g.c}}:{type:"FeatureCollection",features:[]});
-  if(map&&map.getLayer("route"))["route","route-casing"].forEach(l=>map.setLayoutProperty(l,"visibility",g?"none":"visible"));
+  if(map&&map.getLayer("route"))["route","route-casing"].forEach(l=>map.setLayoutProperty(l,"visibility",g||memCalc[r.id]?"none":"visible"));
   $("#mapnote").style.display=g?"none":"";
-  if(g){let len=0;for(let i=1;i<g.c.length;i++)len+=hav([g.c[i-1][1],g.c[i-1][0]],[g.c[i][1],g.c[i][0]]);$("#gpxInfo").innerHTML=`<b>${esc(g.name)}</b> · ${(len/1000).toFixed(1)} km spår (${g.c.length} punkter). Visas som blå linje i kartan.`;$("#gpxClear").style.display=""}
+  if(g){let len=0;for(let i=1;i<g.c.length;i++)len+=hav([g.c[i-1][1],g.c[i-1][0]],[g.c[i][1],g.c[i][0]]);$("#gpxInfo").innerHTML=`<b>${esc(g.name)}</b> · ${(len/1000).toFixed(1)} km spår (${g.c.length} punkter). Visas som turkos linje i kartan.`;$("#gpxClear").style.display=""}
   else{$("#gpxInfo").textContent="Inget riktigt spår ännu. Ladda upp en GPX från Strava, Garmin eller FATMAP så ritas den i 3D-kartan.";$("#gpxClear").style.display="none"}
 }
 $("#gpxIn").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=ROUTES.find(x=>x.id===cur);f.text().then(t=>{const c=parseGpx(t);store.set("gpx-"+r.id,{name:f.name,c});drawGpx(r);derive(r).then(d=>fitRoute(r,d,false));toast("Spåret är sparat på den här enheten")}).catch(()=>toast("Kunde inte läsa GPX-filen"));e.target.value=""};
@@ -771,18 +845,533 @@ async function openDetail(r){
   if(ss)$("#savedStatus").innerHTML=`<div class="verdict v-${ss.c}" style="margin:0"><b>Claudes statuskoll · ${esc(ss.at)}</b>${esc(ss.txt)}</div>`;
   if(window.maplibregl){if(!map)initMap();else{map.resize();showOnMap(r)}}
   renderAv(r,todayISO());renderWx(r);
+  $("#calcBox").innerHTML='<p class="p small"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> Räknar ut enklaste vägen upp och bästa nedfarten…</p>';
+  calcKnown(r).then(res=>{if(cur===r.id)renderCalcDetail(r,res)}).catch(e=>{if(cur===r.id)$("#calcBox").innerHTML=`<p class="p small">Kunde inte beräkna vägen: ${esc(e.message||"okänt fel")}</p>`});
   let d;try{d=await derive(r)}catch(e){delete derived[r.id];["#sTop","#sGain","#sLen","#sAsp"].forEach(s=>$(s).textContent="–");$("#sCalc").textContent="Kunde inte hämta höjddata just nu.";return}
   if(cur!==r.id)return;
-  $("#sTop").textContent=d.topE+" m";$("#sGain").textContent="≈"+Math.round(d.gain/10)*10;$("#sLen").textContent="≈"+(d.dist*2*1.35/1000).toFixed(0)+" km";$("#sAsp").textContent=d.asp;
-  $("#sCalc").textContent="Beräknat från höjddata och fågelvägen – ungefärligt tills vi har riktiga spår.";
+  $("#sTop").textContent=d.topE+" m";$("#sAsp").textContent=d.asp;
+  if(!memCalc[r.id]){$("#sGain").textContent="≈"+Math.round(d.gain/10)*10;$("#sLen").textContent="≈"+(d.dist*2*1.35/1000).toFixed(0)+" km";
+  $("#sCalc").textContent="Beräknat från höjddata och fågelvägen – ungefärligt tills vägen är beräknad.";}
 }
 $("#dFav").onclick=()=>{const id=cur;favs.has(id)?favs.delete(id):favs.add(id);saveFavs();$("#dFav").classList.toggle("on",favs.has(id))};
 $("#backBtn").onclick=()=>{if(fsOn)return setFs(false);history.length>1?history.back():(location.hash="")};
 function route(){
   if(fsOn)setFs(false);
   const id=location.hash.slice(1),r=ROUTES.find(x=>x.id===id);
+  if(id==="karta"||id==="rita"){openOverview(id==="rita");return}
+  closeOverview();
   if(r)openDetail(r);else{cur=null;stopSpin();$("#detail").classList.remove("on");$("#home").classList.add("on");renderList()}
 }
+/* =========================================================
+   VÄGVAL: A* på ett höjdrutnät (Terrain Tiles z13, ca 13 m/cell).
+   Uppför: spåret hålls under ca 16–20° i färdriktningen (sicksack i brant
+   terräng) och terräng över 30° straffas hårt. Nedför: fallinje gillas,
+   flacka partier straffas (snowboard), terräng över 35° undviks.
+   ========================================================= */
+function routerCore(){
+  const NB=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1],[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]];
+  const DEG=57.29578;
+  function slopes(E,w,h,cell){
+    const S=new Float32Array(w*h);
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+      const xl=x>0?x-1:x,xr=x<w-1?x+1:x,yu=y>0?y-1:y,yd=y<h-1?y+1:y;
+      const dx=(E[y*w+xr]-E[y*w+xl])/(((xr-xl)||1)*cell),dy=(E[yd*w+x]-E[yu*w+x])/(((yd-yu)||1)*cell);
+      S[y*w+x]=Math.atan(Math.hypot(dx,dy))*DEG;
+    }
+    return S;
+  }
+  function cost(up,d,dz,sm,eB){
+    let c;
+    if(up){
+      if(dz>=0){
+        const a=Math.atan2(dz,d)*DEG;
+        c=d/1.1+dz/0.13;                               // ca 4 km/h + 470 höjdm/h
+        if(a>26)c*=6+(a-26)/2;                         // för brant att skinna: gå med skidorna på ryggen
+        else if(a>16){const k=(a-16)/5;c*=1+2*k*k}     // brant spår = jobbigt, ger sicksack
+      }else c=d/1.1+(-dz)/0.6;
+      c*=sm<25?1:sm<30?1.25:sm<35?3:sm<40?7:sm<45?12:20;        // undvik lavinterräng
+    }else{
+      if(dz<0){
+        const a=Math.atan2(-dz,d)*DEG;
+        const wgt=a<3?7:a<5?4:a<8?2:a<12?1.3:a<35?0.9:1.1;
+        c=d*wgt/3;
+        c*=sm<35?1:sm<40?3.5:sm<45?10:sm<50?25:60;
+      }else{
+        c=(d/1.1+dz/0.13)*1.4;                         // motlut: gå/skinna
+        c*=sm<35?1:sm<40?2.5:8;
+      }
+    }
+    if(eB<0.5)c*=40;                                   // hav
+    return c;
+  }
+  function run({E,w,h,cell,segs}){
+    const n=w*h,S=slopes(E,w,h,cell);
+    const g=new Float64Array(n),from=new Int32Array(n),closed=new Uint8Array(n);
+    const paths=[];
+    for(const sg of segs){
+      g.fill(Infinity);from.fill(-1);closed.fill(0);
+      const up=sg.mode==="up",s=sg.a,t=sg.b,tx=t%w,ty=(t/w)|0,Et=E[t];
+      const H=i=>{const d=Math.hypot(i%w-tx,((i/w)|0)-ty)*cell;return up?d/1.1+Math.max(0,Et-E[i])/0.13:d*0.28};
+      let hi=[],hf=[];
+      const push=(i,f)=>{hi.push(i);hf.push(f);let k=hi.length-1;while(k>0){const p=(k-1)>>1;if(hf[p]<=hf[k])break;let ti=hi[p];hi[p]=hi[k];hi[k]=ti;let tf=hf[p];hf[p]=hf[k];hf[k]=tf;k=p}};
+      const pop=()=>{const top=hi[0],li=hi.pop(),lf=hf.pop();if(hi.length){hi[0]=li;hf[0]=lf;let k=0;const L=hi.length;for(;;){const l=2*k+1,r=l+1;let m=k;if(l<L&&hf[l]<hf[m])m=l;if(r<L&&hf[r]<hf[m])m=r;if(m===k)break;let ti=hi[m];hi[m]=hi[k];hi[k]=ti;let tf=hf[m];hf[m]=hf[k];hf[k]=tf;k=m}}return top};
+      g[s]=0;push(s,H(s));let found=s===t,it=0;
+      while(hi.length&&!found){
+        const c=pop();if(closed[c])continue;closed[c]=1;if(c===t){found=true;break}
+        if(++it>5e6)break;
+        const cx=c%w,cy=(c/w)|0,ec=E[c],sc=S[c],gc=g[c];
+        for(let q=0;q<16;q++){
+          const dx=NB[q][0],dy=NB[q][1],nx=cx+dx,ny=cy+dy;
+          if(nx<0||ny<0||nx>=w||ny>=h)continue;
+          const nb=ny*w+nx;if(closed[nb])continue;
+          let sm=sc>S[nb]?sc:S[nb];
+          if(q>=8){const m=(cy+Math.trunc(dy/2))*w+cx+Math.trunc(dx/2);if(S[m]>sm)sm=S[m]}
+          const cst=cost(up,Math.hypot(dx,dy)*cell,E[nb]-ec,sm,E[nb]);
+          if(cst===Infinity)continue;
+          const ng=gc+cst;
+          if(ng<g[nb]){g[nb]=ng;from[nb]=c;push(nb,ng+H(nb))}
+        }
+      }
+      if(!found){paths.push(null);continue}
+      const p=[];for(let k=t;k!==-1;k=from[k])p.push(k);p.reverse();
+      paths.push({idx:Int32Array.from(p),s:Float32Array.from(p,k=>S[k])});
+    }
+    return {paths};
+  }
+  return {run};
+}
+let RW=null,rwId=0;const rwP={};
+function runRouter(data){
+  if(RW===null){
+    try{
+      RW=new Worker(URL.createObjectURL(new Blob([`const R=(${routerCore.toString()})();onmessage=e=>{let o;try{o={id:e.data.id,...R.run(e.data)}}catch(err){o={id:e.data.id,error:String(err)}}postMessage(o)}`],{type:"text/javascript"})));
+      RW.onmessage=e=>{const p=rwP[e.data.id];if(!p)return;delete rwP[e.data.id];e.data.error?p.rej(new Error(e.data.error)):p.res(e.data)};
+      RW.onerror=()=>{RW=false;Object.keys(rwP).forEach(id=>{const p=rwP[id];delete rwP[id];try{p.res(routerCore().run(p.data))}catch(err){p.rej(err)}})};
+    }catch(e){RW=false}
+  }
+  if(RW===false)return new Promise((res,rej)=>setTimeout(()=>{try{res(routerCore().run(data))}catch(e){rej(e)}},0));
+  return new Promise((res,rej)=>{const id=++rwId;rwP[id]={res,rej,data};RW.postMessage({...data,id})});
+}
+
+const RZ=13,CALCV=1;
+async function buildGrid(pts){
+  const P=pts.map(([lat,lon])=>[lon2x(lon,RZ)*256,lat2y(lat,RZ)*256]);
+  const latc=pts.reduce((a,p)=>a+p[0],0)/pts.length;
+  const mpp=156543.03*Math.cos(latc*Math.PI/180)/2**RZ;
+  let x0=Math.min(...P.map(p=>p[0])),x1=Math.max(...P.map(p=>p[0])),y0=Math.min(...P.map(p=>p[1])),y1=Math.max(...P.map(p=>p[1]));
+  const ext=Math.max(x1-x0,y1-y0)*mpp;
+  if(ext>30000)throw new Error("Rutten är för stor – håll punkterna inom 30 km.");
+  const m=Math.max(1500,ext*0.3)/mpp;x0-=m;x1+=m;y0-=m;y1+=m;
+  let step=2;while(((x1-x0)/step)*((y1-y0)/step)>450000)step++;
+  const w=Math.ceil((x1-x0)/step),h=Math.ceil((y1-y0)/step);
+  const tx0=Math.floor(x0/256),tx1=Math.floor((x0+w*step)/256),ty0=Math.floor(y0/256),ty1=Math.floor((y0+h*step)/256);
+  const tiles={},jobs=[];
+  for(let x=tx0;x<=tx1;x++)for(let y=ty0;y<=ty1;y++)jobs.push(loadTile(RZ,x,y).then(t=>{tiles[x+","+y]=t}));
+  await Promise.all(jobs);
+  if(Object.values(tiles).some(t=>!t))throw new Error("Kunde inte hämta höjddata just nu.");
+  const E=new Float32Array(w*h);
+  for(let j=0;j<h;j++){const py=Math.floor(y0+j*step+step/2),ty=py>>8,oy=py&255;
+    for(let i=0;i<w;i++){const px=Math.floor(x0+i*step+step/2),t=tiles[(px>>8)+","+ty];E[j*w+i]=t?t[oy*256+(px&255)]:0}}
+  const cellOf=([lat,lon])=>{const i=Math.min(w-1,Math.max(0,Math.floor((lon2x(lon,RZ)*256-x0)/step))),j=Math.min(h-1,Math.max(0,Math.floor((lat2y(lat,RZ)*256-y0)/step)));return j*w+i};
+  const ll=k=>{const i=k%w,j=(k/w)|0;return [+x2lon((x0+i*step+step/2)/256,RZ).toFixed(5),+y2lat((y0+j*step+step/2)/256,RZ).toFixed(5)]};
+  return {E,w,h,cell:mpp*step,cellOf,ll};
+}
+function smoothLine(c){
+  if(c.length<4)return c;
+  let a=c;
+  for(let pass=0;pass<2;pass++){const b=a.map(p=>p.slice());for(let k=1;k<a.length-1;k++){b[k][0]=+((a[k-1][0]+a[k][0]+a[k+1][0])/3).toFixed(5);b[k][1]=+((a[k-1][1]+a[k][1]+a[k+1][1])/3).toFixed(5)}a=b}
+  return a;
+}
+/* pts: [[lat,lon],…], over: {segIndex:"up"|"down"} (null = automatiskt vid högsta punkten) */
+async function computeRoute(pts,over){
+  if(pts.length<2)throw new Error("Minst två punkter behövs.");
+  const G=await buildGrid(pts);
+  const cells=pts.map(G.cellOf),el=cells.map(k=>G.E[k]);
+  let hiI=0;el.forEach((e,i)=>{if(e>el[hiI])hiI=i});
+  const auto=pts.slice(1).map((_,i)=>i<hiI?"up":"down");
+  const modes=auto.map((m,i)=>(over&&over[i])||m);
+  const segs=modes.map((m,i)=>({a:cells[i],b:cells[i+1],mode:m}));
+  const {paths}=await runRouter({E:G.E,w:G.w,h:G.h,cell:G.cell,segs});
+  const legs=paths.map((p,i)=>{
+    if(!p)throw new Error(`Hittade ingen rimlig väg mellan punkt ${i+1} och ${i+2}.`);
+    const ix=[...p.idx];
+    return {mode:modes[i],c:smoothLine(ix.map(G.ll)),e:ix.map(k=>Math.round(G.E[k])),s:[...p.s].map(v=>Math.round(v))};
+  });
+  return hydrate({v:CALCV,modes,auto,hi:hiI,legs});
+}
+const packRes=res=>({v:res.v,modes:res.modes,auto:res.auto,hi:res.hi,legs:res.legs.map(L=>({mode:L.mode,c:L.c,e:L.e,s:L.s}))});
+function hydrate(res){
+  res.legs.forEach(L=>{
+    const n=L.c.length,D=[0];
+    for(let k=1;k<n;k++)D.push(D[k-1]+hav([L.c[k-1][1],L.c[k-1][0]],[L.c[k][1],L.c[k][0]]));
+    L.d=D;
+    if(L.mode!=="down"){L.cls=null;return}
+    const cls=new Array(Math.max(0,n-1));
+    for(let k=0;k<n-1;k++){
+      const mid=(D[k]+D[k+1])/2;let a=k,b=k+1;
+      while(a>0&&mid-D[a]<25)a--;while(b<n-1&&D[b]-mid<25)b++;
+      const ang=Math.atan2(L.e[a]-L.e[b],Math.max(1,D[b]-D[a]))*57.3;
+      cls[k]=ang<-1.5?"mot":ang<5?"flat":"ride";
+    }
+    // slå ihop korta (<25 m) partier med föregående
+    let k=0;while(k<cls.length){let j=k;while(j+1<cls.length&&cls[j+1]===cls[k])j++;
+      const len=D[j+1]-D[k];if(len<25&&k>0){for(let q=k;q<=j;q++)cls[q]=cls[k-1]}k=j+1}
+    L.cls=cls;
+  });
+  return res;
+}
+function calcStats(res){
+  let upLen=0,gain=0,dnLen=0,drop=0,flat=0,maxUp=0,maxDn=0,steep=0;const flats=[];
+  res.legs.forEach(L=>{
+    const len=L.d[L.d.length-1];let pos=0,neg=0;
+    for(let k=1;k<L.e.length;k++){const dz=L.e[k]-L.e[k-1];dz>0?pos+=dz:neg-=dz}
+    const mx=Math.max(0,...L.s);
+    for(let k=1;k<L.s.length;k++)if(L.s[k]>40)steep+=L.d[k]-L.d[k-1];
+    if(L.mode==="up"){upLen+=len;gain+=pos;maxUp=Math.max(maxUp,mx)}
+    else{dnLen+=len;drop+=neg;gain+=pos;maxDn=Math.max(maxDn,mx);
+      let k=0;while(k<L.cls.length){if(L.cls[k]==="ride"){k++;continue}let j=k,mot=0;
+        while(j<L.cls.length&&L.cls[j]!=="ride"){if(L.cls[j]==="mot")mot+=L.d[j+1]-L.d[j];j++}
+        const l=L.d[j]-L.d[k];flat+=l;if(l>=60)flats.push({len:l,e0:L.e[k],e1:L.e[j],k:mot>l/2?"mot":"flat"});k=j}}
+  });
+  const Hh=(upLen)/4000,V=gain/400,tUp=Math.max(Hh,V)+Math.min(Hh,V)/2,tDn=drop/1500+flat/3000;
+  return {steep,upLen,gain,dnLen,drop,flat,flats:flats.sort((a,b)=>b.len-a.len),maxUp,maxDn,time:tUp+tDn,board:!res.legs.some(L=>L.mode==="down")?null:flat<150?"bra":flat<500?"ok":"jobbig"};
+}
+
+/* =========================================================
+   BERÄKNADE VÄGAR – gemensam rendering
+   ========================================================= */
+const EMPTY={type:"FeatureCollection",features:[]};
+const KCOL={up:"#2f6fdc",down:"#e0342a",ride:"#e0342a",flat:"#ffd23f",mot:"#ff8a2b"};
+const PCOL=["match",["get","k"],"up",KCOL.up,"flat",KCOL.flat,"mot",KCOL.mot,KCOL.down];
+const LEGEND=`<div class="leg"><span><i style="background:${KCOL.up}"></i>Upp</span><span><i style="background:${KCOL.down}"></i>Ned</span><span><i style="background:${KCOL.flat}"></i>Flackt – board kan behöva gå</span><span><i style="background:${KCOL.mot}"></i>Motlut</span></div>`;
+const CALC_DISC="Beräknat från höjddata (ca 13 m rutnät). Uppför hålls spåret under ca 16–20° i färdriktningen och terräng över 30° undviks så långt det går. Nedför följer vägen fallinjen, och terräng över 35° undviks. Höjddata vet inget om skavlar, block, skog, glaciärsprickor eller dagens snö. Det här är beslutsstöd, inte beslut.";
+const fmtM=m=>m>=1000?(m/1000).toFixed(1).replace(".",",")+" km":Math.round(m/10)*10+" m";
+const fmtT=h=>{const m=Math.round(h*60/10)*10;return m<60?m+" min":Math.floor(m/60)+" h"+(m%60?" "+m%60+" min":"")};
+function resFeatures(res,rid){
+  const f=[];
+  res.legs.forEach(L=>{
+    if(L.mode==="up"){f.push({type:"Feature",properties:{k:"up",rid},geometry:{type:"LineString",coordinates:L.c}});return}
+    let k=0;while(k<L.cls.length){let j=k;while(j+1<L.cls.length&&L.cls[j+1]===L.cls[k])j++;
+      f.push({type:"Feature",properties:{k:L.cls[k]==="ride"?"down":L.cls[k],rid},geometry:{type:"LineString",coordinates:L.c.slice(k,j+2)}});k=j+1}
+  });
+  // nedfart ritas ovanpå uppstigningen
+  return f.sort((a,b)=>(a.properties.k==="up"?0:1)-(b.properties.k==="up"?0:1));
+}
+function addPathLayers(m,src,before){
+  m.addLayer({id:src+"-cas",type:"line",source:src,layout:{"line-join":"round","line-cap":"round"},paint:{"line-color":"#11161d","line-width":7.5,"line-opacity":.35}},before);
+  m.addLayer({id:src+"-ln",type:"line",source:src,layout:{"line-join":"round","line-cap":"round"},paint:{"line-color":PCOL,"line-width":4.2}},before);
+}
+function resHTML(res,cid){
+  const s=calcStats(res);
+  const hasDown=res.legs.some(L=>L.mode==="down");
+  let flat="";
+  if(hasDown){
+    flat=s.flats.length?`<b>${fmtM(s.flat)} flackt eller motlut</b> på nedfarten. Längst: ${s.flats.slice(0,3).map(f=>`${fmtM(f.len)} ${f.k==="mot"?"motlut":"flackt"} (${f.e0}→${f.e1} m)`).join(" · ")}.`
+      :s.flat>0?`Bara korta flacka partier, ${fmtM(s.flat)} totalt.`:"Inga flacka partier hittades.";
+    flat=`<div class="flatinfo"><span class="tag ${{bra:"tg",ok:"ty",jobbig:"tr"}[s.board]}">🏂 Board: ${s.board} (beräknat)</span><p class="p" style="margin-top:6px;font-size:13.5px">${flat}</p></div>`;
+  }
+  const warn=s.steep>=20?`<div class="flatinfo"><span class="tag tr">⚠ Ca ${fmtM(s.steep)} brantare än 40°</span><p class="p" style="margin-top:6px;font-size:13.5px">Vägen kommer inte runt allt brant här – räkna med att gå eller klättra, och kolla terrängen noga.</p></div>`:"";
+  return `<div class="rs">
+    <div><b>↑ ${Math.round(s.gain/10)*10} m</b><span>Upp · ${fmtM(s.upLen)}</span></div>
+    <div><b>↓ ${Math.round(s.drop/10)*10} m</b><span>Ned · ${hasDown?fmtM(s.dnLen):"–"}</span></div>
+    <div><b>${fmtT(s.time)}</b><span>Ungefärlig tid</span></div>
+    <div><b>${s.maxUp||"–"}° / ${hasDown?s.maxDn+"°":"–"}</b><span>Brantast terräng upp / ned</span></div>
+  </div><canvas class="prof" id="${cid}"></canvas>${warn}${flat}`;
+}
+function drawProfile(cv,res){
+  if(!cv||!cv.clientWidth)return;
+  const dpr=Math.min(2,devicePixelRatio||1),W=cv.width=Math.round(cv.clientWidth*dpr),H=cv.height=Math.round(cv.clientHeight*dpr),g=cv.getContext("2d");
+  const P=[];let off=0;
+  res.legs.forEach(L=>{L.c.forEach((_,k)=>P.push({x:off+L.d[k],e:L.e[k],k:k<L.c.length-1?(L.mode==="up"?"up":L.cls[k]):null}));off+=L.d[L.d.length-1]});
+  const tot=off||1,eMin=Math.min(...P.map(p=>p.e)),eMax=Math.max(...P.map(p=>p.e));
+  const pl=34*dpr,pr=6*dpr,pt=8*dpr,pb=16*dpr;
+  const X=x=>pl+x/tot*(W-pl-pr),Y=e=>H-pb-(e-eMin)/((eMax-eMin)||1)*(H-pt-pb);
+  g.clearRect(0,0,W,H);
+  g.beginPath();g.moveTo(X(0),H-pb);P.forEach(p=>g.lineTo(X(p.x),Y(p.e)));g.lineTo(X(tot),H-pb);g.closePath();g.fillStyle="#eef1f5";g.fill();
+  g.lineWidth=3*dpr;g.lineCap="round";
+  for(let i=0;i<P.length-1;i++){if(!P[i].k)continue;g.strokeStyle=P[i].k==="flat"?"#e8b400":KCOL[P[i].k];g.beginPath();g.moveTo(X(P[i].x),Y(P[i].e));g.lineTo(X(P[i+1].x),Y(P[i+1].e));g.stroke()}
+  g.fillStyle="#6a7380";g.font=`600 ${10*dpr}px Montserrat,sans-serif`;g.textAlign="right";
+  g.fillText(eMax+" m",pl-4*dpr,pt+8*dpr);g.fillText(eMin+" m",pl-4*dpr,H-pb);
+  g.textAlign="left";g.fillText("0",pl,H-3*dpr);g.textAlign="right";g.fillText(fmtM(tot),W-pr,H-3*dpr);
+}
+function toGpx(name,res){
+  const seg=L=>`<trkseg>${L.c.map((p,k)=>`<trkpt lat="${p[1]}" lon="${p[0]}"><ele>${L.e[k]}</ele></trkpt>`).join("")}</trkseg>`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Get High Tour" xmlns="http://www.topografix.com/GPX/1/1">${res.legs.map((L,i)=>`<trk><name>${esc(name)} – ${L.mode==="up"?"upp":"ned"} ${i+1}</name>${seg(L)}</trk>`).join("")}</gpx>`;
+}
+function dlGpx(name,res){
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([toGpx(name,res)],{type:"application/gpx+xml"}));
+  a.download=(name.replace(/[^\wåäöÅÄÖøØæÆ -]/g,"").trim().replace(/\s+/g,"-")||"rutt")+".gpx";
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);
+}
+const memCalc={},calcP={};
+function calcKnown(r){
+  if(memCalc[r.id])return Promise.resolve(memCalc[r.id]);
+  if(calcP[r.id])return calcP[r.id];
+  const c=store.get(`calc${CALCV}-${r.id}`,null);
+  if(c&&c.v===CALCV){memCalc[r.id]=hydrate(c);return Promise.resolve(memCalc[r.id])}
+  return calcP[r.id]=derive(r).then(d=>computeRoute([r.t,d.top,r.t],null)).then(res=>{memCalc[r.id]=res;store.set(`calc${CALCV}-${r.id}`,packRes(res));return res}).finally(()=>{delete calcP[r.id]});
+}
+function resBounds(res){const b=new maplibregl.LngLatBounds();res.legs.forEach(L=>L.c.forEach(p=>b.extend(p)));return b}
+
+/* ---------- detaljvyn ---------- */
+function renderCalcDetail(r,res){
+  const s=calcStats(res);
+  $("#sGain").textContent="≈"+Math.round(s.gain/10)*10;$("#sLen").textContent="≈"+((s.upLen+s.dnLen)/1000).toFixed(1).replace(".",",")+" km";
+  $("#sCalc").textContent="Beräknat längs föreslagen väg upp och ned.";
+  $("#calcBox").innerHTML=resHTML(res,"dprof")+LEGEND+`<div class="btnrow"><button class="btn ghost sm" id="cEdit">Ändra i kartan</button><button class="btn ghost sm" id="cGpx">Ladda ner GPX</button></div><p class="disc">${CALC_DISC}</p>`;
+  drawProfile($("#dprof"),res);
+  $("#cGpx").onclick=()=>dlGpx(r.name,res);
+  $("#cEdit").onclick=()=>derive(r).then(d=>{setDraft({pts:[r.t,d.top,r.t],over:{},name:r.name+" – egen variant"});location.hash="rita"});
+  drawCalcDetail(r,res);
+}
+function drawCalcDetail(r,res){
+  if(!map||!mapReady||!map.getSource("calc")||cur!==r.id)return;
+  map.getSource("calc").setData({type:"FeatureCollection",features:resFeatures(res,r.id)});
+  ["route","route-casing"].forEach(l=>map.setLayoutProperty(l,"visibility","none"));
+  if(!store.get("gpx-"+r.id,null)){$("#mapnote").textContent="Blå = upp · Röd = ned · Gul = flackt";$("#mapnote").style.display=""}
+}
+
+/* =========================================================
+   ÖVERSIKTSKARTA + RITA EGEN RUTT
+   ========================================================= */
+let omap=null,omapReady=false,ovSel=null,drawMode=false,ovQueued=false,ovProg="",ovLayer="winter",ovSlope=false;
+let plan=store.get("plan",{pts:[],over:{},name:""}),draftRes=null,draftErr=null,draftBusy=false,draftTok=0,draftT=null;
+let dMarkers=[],ovMarkers={},osmF=[];
+let custom=store.get("custom",[]);
+custom.forEach(c=>{if(c.res)hydrate(c.res)});
+const saveCustom=()=>store.set("custom",custom.map(c=>({...c,res:c.res?packRes(c.res):null})));
+function setDraft(d){plan=d;draftRes=null;draftErr=null;store.set("plan",plan)}
+
+function openOverview(draw){
+  cur=null;stopSpin();
+  $("#home").classList.remove("on");$("#detail").classList.remove("on");$("#mapview").classList.add("on");
+  document.body.style.overflow="hidden";
+  drawMode=draw;if(draw)ovSel=null;
+  if(!window.maplibregl){$("#ovPanel").innerHTML='<p class="p">Kartan kan inte laddas här. Öppna appen i Chrome eller Safari.</p>';return}
+  if(!omap)initOmap();else{omap.resize();applyMode()}
+}
+function closeOverview(){$("#mapview").classList.remove("on");document.body.style.overflow=""}
+
+function initOmap(){
+  if(!window._winterProto){maplibregl.addProtocol("winter",winterTile);window._winterProto=true}
+  const st=JSON.parse(JSON.stringify(STYLE));
+  st.sources.osm={type:"geojson",data:EMPTY,attribution:"Turspår © OpenStreetMap"};
+  omap=new maplibregl.Map({container:"omap",style:st,center:[19.6,69.65],zoom:8.4,pitch:0,maxPitch:80,attributionControl:{compact:true}});
+  omap.on("load",()=>{
+    omapReady=true;
+    const at=document.querySelector("#mapview .maplibregl-ctrl-attrib");if(at)at.classList.remove("maplibregl-compact-show");
+    omap.setTerrain(null);
+    omap.addLayer({id:"osm",type:"line",source:"osm",layout:{"line-join":"round"},paint:{"line-color":"#8e44d9","line-width":2.6,"line-dasharray":[2,1.4],"line-opacity":.9}});
+    omap.addSource("ov-gpx",{type:"geojson",data:EMPTY});
+    omap.addLayer({id:"ov-gpx",type:"line",source:"ov-gpx",paint:{"line-color":"#00c2b2","line-width":3.5}});
+    omap.addSource("ov-paths",{type:"geojson",data:EMPTY});addPathLayers(omap,"ov-paths");
+    omap.addSource("ov-plan",{type:"geojson",data:EMPTY});
+    omap.addSource("ov-plan-line",{type:"geojson",data:EMPTY});
+    omap.addLayer({id:"ov-plan-line",type:"line",source:"ov-plan-line",paint:{"line-color":"#11161d","line-width":2,"line-dasharray":[1,1.5],"line-opacity":.6}});
+    addPathLayers(omap,"ov-plan");
+    ROUTES.forEach(r=>addOvMarker(r.id,r.s,r.name.split(" /")[0],false));
+    custom.forEach(c=>addOvMarker(c.id,c.pts[c.res?c.res.hi:0]||c.pts[0],c.name,true));
+    fitAll(true);
+    refreshOvPaths();applyMode();
+    loadOsm().then(f=>{osmF=f;omap.getSource("osm").setData({type:"FeatureCollection",features:f});if(!drawMode&&!ovSel)renderPanel()}).catch(()=>{});
+    ovQueueRun();
+  });
+  omap.on("click",e=>{
+    if(!drawMode)return;
+    const t=e.originalEvent&&e.originalEvent.target;if(t&&t.closest&&t.closest(".wp,.ovm"))return;
+    plan.pts.push([+e.lngLat.lat.toFixed(5),+e.lngLat.lng.toFixed(5)]);onDraftChange();
+  });
+}
+function addOvMarker(id,ll,label,isCustom){
+  if(ovMarkers[id])ovMarkers[id].remove();
+  const el=mk(`<div class="ovm${isCustom?" cu":""}">${isCustom?"✏️":"▲"} ${esc(label)}</div>`);
+  el.addEventListener("click",ev=>{ev.stopPropagation();if(!drawMode)selectOv(id)});
+  ovMarkers[id]=new maplibregl.Marker({element:el,anchor:"bottom",offset:[0,-2]}).setLngLat([ll[1],ll[0]]).addTo(omap);
+}
+function fitAll(instant){
+  const b=new maplibregl.LngLatBounds();ROUTES.forEach(r=>b.extend([r.s[1],r.s[0]]));custom.forEach(c=>c.pts.forEach(p=>b.extend([p[1],p[0]])));
+  omap.fitBounds(b,{padding:padFor(),duration:instant?0:900,maxZoom:12});
+}
+function padFor(){const p=$("#ovPanel");return {top:80,left:40,right:40,bottom:Math.min(window.innerHeight*.55,(p?p.offsetHeight:200)+30)}}
+function refreshOvPaths(){
+  if(!omapReady)return;
+  const f=[];
+  ROUTES.forEach(r=>{if(memCalc[r.id])f.push(...resFeatures(memCalc[r.id],r.id))});
+  custom.forEach(c=>{if(c.res&&(ovSel===c.id))f.push(...resFeatures(c.res,c.id))});
+  omap.getSource("ov-paths").setData({type:"FeatureCollection",features:f});
+  const sel=ovSel||"";
+  omap.setPaintProperty("ov-paths-ln","line-width",["case",["==",["get","rid"],sel],5,2.8]);
+  omap.setPaintProperty("ov-paths-cas","line-width",["case",["==",["get","rid"],sel],8.5,5]);
+  omap.setPaintProperty("ov-paths-ln","line-opacity",drawMode?.3:sel?["case",["==",["get","rid"],sel],1,.45]:.95);
+  omap.setPaintProperty("ov-paths-cas","line-opacity",drawMode?.1:sel?["case",["==",["get","rid"],sel],.4,.12]:.3);
+  const g=[];ROUTES.forEach(r=>{const x=store.get("gpx-"+r.id,null);if(x)g.push({type:"Feature",properties:{},geometry:{type:"LineString",coordinates:x.c}})});
+  omap.getSource("ov-gpx").setData({type:"FeatureCollection",features:g});
+  Object.entries(ovMarkers).forEach(([id,m])=>m.getElement().classList.toggle("sel",id===ovSel));
+}
+async function ovQueueRun(){
+  if(ovQueued)return;ovQueued=true;
+  const todo=ROUTES.filter(r=>!memCalc[r.id]&&!store.get(`calc${CALCV}-${r.id}`,null));
+  ROUTES.forEach(r=>{if(!memCalc[r.id]&&store.get(`calc${CALCV}-${r.id}`,null))calcKnown(r)});
+  refreshOvPaths();
+  let done=0;
+  for(const r of todo){
+    ovProg=`Beräknar vägar ${done}/${todo.length}…`;updProg();
+    try{await calcKnown(r)}catch(e){}
+    done++;refreshOvPaths();
+    if(ovSel===r.id)renderPanel();
+  }
+  ovProg="";updProg();
+}
+function updProg(){const e=$("#ovProg");if(e)e.textContent=ovProg}
+async function loadOsm(){
+  const k="osm-skitour-v1",c=store.get(k,null);
+  if(c&&Date.now()-c.at<7*864e5)return c.f;
+  const q='[out:json][timeout:25];way["piste:type"="skitour"](69.2,18.0,70.1,21.0);out geom;';
+  let j=null;
+  for(const u of ["https://overpass-api.de/api/interpreter","https://overpass.private.coffee/api/interpreter"]){
+    const ac=new AbortController(),to=setTimeout(()=>ac.abort(),20000);
+    try{j=await fetch(u,{method:"POST",signal:ac.signal,headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"data="+encodeURIComponent(q)}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()});break}catch(e){}finally{clearTimeout(to)}
+  }
+  if(!j)throw new Error("OSM ej nåbart");
+  const f=(j.elements||[]).filter(e=>e.geometry&&e.geometry.length>1).map(e=>({type:"Feature",properties:{name:(e.tags&&e.tags.name)||""},geometry:{type:"LineString",coordinates:e.geometry.map(p=>[+p.lon.toFixed(5),+p.lat.toFixed(5)])}}));
+  store.set(k,{at:Date.now(),f});return f;
+}
+function osmNear(ll){
+  return osmF.some(x=>x.geometry.coordinates.some(p=>hav([p[1],p[0]],ll)<400));
+}
+function selectOv(id){
+  ovSel=id;refreshOvPaths();renderPanel();
+  const r=ROUTES.find(x=>x.id===id),c=custom.find(x=>x.id===id);
+  const res=r?memCalc[r.id]:c&&c.res;
+  const fly=res=>{if(ovSel!==id)return;const b=res?resBounds(res):new maplibregl.LngLatBounds([r.t[1],r.t[0]],[r.t[1],r.t[0]]).extend([r.s[1],r.s[0]]);omap.fitBounds(b,{padding:padFor(),duration:900,maxZoom:14})};
+  fly(res);
+  if(r&&!res)calcKnown(r).then(x=>{if(ovSel===id){refreshOvPaths();renderPanel();fly(x)}}).catch(e=>{if(ovSel===id)renderPanel(e.message)});
+}
+function applyMode(){
+  $("#mapview").classList.toggle("drawing",drawMode);
+  $("#ovTitle").textContent=drawMode?"Rita egen rutt":"Karta";
+  dMarkers.forEach(m=>m.remove());dMarkers=[];
+  if(drawMode){rebuildDraftMarkers();if(plan.pts.length>=2&&!draftRes&&!draftBusy)scheduleDraft(0);drawDraft();
+    if(plan.pts.length){const b=new maplibregl.LngLatBounds();plan.pts.forEach(p=>b.extend([p[1],p[0]]));setTimeout(()=>omap.fitBounds(b,{padding:padFor(),duration:700,maxZoom:14}),60)}}
+  else if(omapReady){omap.getSource("ov-plan").setData(EMPTY);omap.getSource("ov-plan-line").setData(EMPTY)}
+  refreshOvPaths();renderPanel();
+}
+function rebuildDraftMarkers(){
+  dMarkers.forEach(m=>m.remove());dMarkers=[];
+  const hi=draftRes?draftRes.hi:-1,n=plan.pts.length;
+  plan.pts.forEach((p,i)=>{
+    const same=i===n-1&&n>2&&hav(p,plan.pts[0])<30;
+    const lab=i===0?"S":i===hi?"▲":same?"M":String(i+1);
+    const el=mk(`<div class="wp${i===0?" s":i===hi?" top":""}">${lab}</div>`);
+    const m=new maplibregl.Marker({element:el,draggable:true}).setLngLat([p[1],p[0]]).addTo(omap);
+    m.on("dragend",()=>{const l=m.getLngLat();plan.pts[i]=[+l.lat.toFixed(5),+l.lng.toFixed(5)];onDraftChange()});
+    dMarkers.push(m);
+  });
+}
+function onDraftChange(){
+  // byter antal punkter → manuella upp/ned-val som inte längre stämmer tas bort
+  Object.keys(plan.over).forEach(k=>{if(+k>=plan.pts.length-1)delete plan.over[k]});
+  store.set("plan",plan);draftRes=null;draftErr=null;
+  rebuildDraftMarkers();drawDraft();scheduleDraft(250);renderPanel();
+}
+function scheduleDraft(ms){
+  clearTimeout(draftT);
+  if(plan.pts.length<2){draftBusy=false;return}
+  draftBusy=true;
+  draftT=setTimeout(()=>{
+    const tok=++draftTok;
+    computeRoute(plan.pts,plan.over).then(res=>{if(tok!==draftTok)return;draftRes=res;draftErr=null})
+      .catch(e=>{if(tok!==draftTok)return;draftRes=null;draftErr=e.message||"Något gick fel."})
+      .finally(()=>{if(tok!==draftTok)return;draftBusy=false;if(drawMode){rebuildDraftMarkers();drawDraft();renderPanel()}});
+  },ms);
+}
+function drawDraft(){
+  if(!omapReady)return;
+  omap.getSource("ov-plan").setData(draftRes?{type:"FeatureCollection",features:resFeatures(draftRes,"plan")}:EMPTY);
+  omap.getSource("ov-plan-line").setData(!draftRes&&plan.pts.length>1?{type:"Feature",geometry:{type:"LineString",coordinates:plan.pts.map(p=>[p[1],p[0]])}}:EMPTY);
+}
+function draftModes(){
+  if(draftRes)return draftRes.modes;
+  // innan beräkningen är klar: gissa utifrån ordningen (sista halvan ned)
+  return plan.pts.slice(1).map((_,i)=>plan.over[i]||(i<Math.max(1,Math.ceil((plan.pts.length-1)/2))?"up":"down"));
+}
+function renderPanel(err){
+  const P=$("#ovPanel");if(!P)return;
+  if(drawMode){
+    const n=plan.pts.length,modes=draftModes();
+    const hint=n===0?"Tryck i kartan där turen börjar, till exempel vid parkeringen."
+      :n===1?"Tryck där du vill upp, till exempel toppen. Fler punkter styr vägen."
+      :"Dra i punkterna för att flytta dem. Appen väljer själv var det blir upp och ned, men du kan ändra per sträcka.";
+    const segs=n>1?`<div class="segs">${modes.map((m,i)=>`<div class="seg"><span>${i+1} → ${i+2}</span>${plan.over[i]?'<span class="small">ändrad</span>':'<span class="small">auto</span>'}<div class="tg2"><button data-s="${i}" data-m="up" class="u ${m==="up"?"on":""}">Upp</button><button data-s="${i}" data-m="down" class="d ${m==="down"?"on":""}">Ned</button></div></div>`).join("")}</div>`:"";
+    const body=draftBusy?'<p class="p small" style="margin-top:12px"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> Räknar ut bästa vägen…</p>'
+      :draftErr?`<p class="p" style="margin-top:12px;color:var(--r)">${esc(draftErr)}</p>`
+      :draftRes?resHTML(draftRes,"ovprof")+LEGEND:"";
+    P.innerHTML=`<div class="ovh"><b>Rita egen rutt</b><button class="x" id="dExit" aria-label="Stäng">×</button></div>
+      <p class="p small" style="margin-top:4px">${hint}</p>${segs}${body}
+      <div class="btnrow"><button class="btn ghost sm" id="dUndo" ${n?"":"disabled"}>Ångra</button><button class="btn ghost sm" id="dHome" ${n>1?"":"disabled"}>Tillbaka till start</button><button class="btn ghost sm" id="dClear" ${n?"":"disabled"}>Rensa</button></div>
+      ${draftRes?`<input type="text" id="dNm" placeholder="Namn på rutten" value="${esc(plan.name||"")}"><div class="btnrow"><button class="btn dark sm" id="dSave">Spara rutten</button><button class="btn ghost sm" id="dGpx">GPX</button></div>`:""}
+      ${draftRes?`<p class="disc">${CALC_DISC}</p>`:""}`;
+    drawProfile($("#ovprof"),draftRes||{legs:[]});
+    $("#dExit").onclick=()=>{location.hash="karta"};
+    $("#dUndo").onclick=()=>{plan.pts.pop();onDraftChange()};
+    $("#dHome").onclick=()=>{plan.pts.push(plan.pts[0].slice());onDraftChange()};
+    $("#dClear").onclick=()=>{plan.pts=[];plan.over={};plan.name="";onDraftChange()};
+    P.querySelectorAll(".tg2 button").forEach(b=>b.onclick=()=>{const i=+b.dataset.s,m=b.dataset.m;
+      const auto=draftRes?draftRes.auto[i]:null;if(auto===m)delete plan.over[i];else plan.over[i]=m;onDraftChange()});
+    if(draftRes){
+      $("#dNm").oninput=e=>{plan.name=e.target.value;store.set("plan",plan)};
+      $("#dGpx").onclick=()=>dlGpx(plan.name||"Egen rutt",draftRes);
+      $("#dSave").onclick=()=>{
+        const name=(plan.name||"").trim()||"Egen rutt "+(custom.length+1);
+        let c=plan.editId&&custom.find(x=>x.id===plan.editId);
+        if(c)Object.assign(c,{name,pts:plan.pts,over:plan.over,res:draftRes});
+        else{c={id:"c"+Date.now(),name,pts:plan.pts,over:plan.over,res:draftRes,at:Date.now()};custom.unshift(c)}
+        saveCustom();addOvMarker(c.id,c.pts[c.res.hi],c.name,true);
+        setDraft({pts:[],over:{},name:""});toast("Rutten är sparad på den här enheten");
+        location.hash="karta";setTimeout(()=>selectOv(c.id),80);
+      };
+    }
+    return;
+  }
+  const r=ovSel&&ROUTES.find(x=>x.id===ovSel),c=ovSel&&custom.find(x=>x.id===ovSel);
+  if(r||c){
+    const res=r?memCalc[r.id]:c.res,name=r?r.name:c.name;
+    const near=r&&osmNear(r.s);
+    P.innerHTML=`<div class="ovh"><b>${esc(name)}</b><button class="x" id="ovX" aria-label="Stäng">×</button></div>
+      <div class="small">${r?esc(r.area+" · "+AREA_NAME[r.region]):"Egen rutt"}</div>
+      ${res?resHTML(res,"ovprof")+LEGEND:err?`<p class="p" style="margin-top:10px;color:var(--r)">${esc(err)}</p>`:'<p class="p small" style="margin-top:12px"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> Räknar ut väg upp och bästa nedfart…</p>'}
+      ${near?'<p class="small" style="margin:8px 0 0">Lila streckad linje i närheten = känt turspår i OpenStreetMap.</p>':""}
+      <div class="btnrow">${r?`<button class="btn dark sm" id="ovOpen">Öppna turen</button><button class="btn ghost sm" id="ovEdit">Ändra rutten</button>`
+        :`<button class="btn dark sm" id="ovEdit">Redigera</button><button class="btn ghost sm" id="ovGpx">GPX</button><button class="btn ghost sm" id="ovDel">Ta bort</button>`}</div>`;
+    if(res)drawProfile($("#ovprof"),res);
+    $("#ovX").onclick=()=>{ovSel=null;refreshOvPaths();renderPanel()};
+    if(r){$("#ovOpen").onclick=()=>{location.hash=r.id};
+      $("#ovEdit").onclick=()=>derive(r).then(d=>{setDraft({pts:[r.t,d.top,r.t],over:{},name:r.name+" – egen variant"});location.hash="rita"})}
+    else{
+      $("#ovEdit").onclick=()=>{setDraft({pts:c.pts.map(p=>p.slice()),over:{...c.over},name:c.name,editId:c.id});draftRes=c.res;location.hash="rita"};
+      $("#ovGpx").onclick=()=>dlGpx(c.name,c.res);
+      $("#ovDel").onclick=()=>{if(!confirm(`Ta bort "${c.name}"?`))return;custom=custom.filter(x=>x.id!==c.id);saveCustom();if(ovMarkers[c.id]){ovMarkers[c.id].remove();delete ovMarkers[c.id]}ovSel=null;refreshOvPaths();renderPanel()};
+    }
+    return;
+  }
+  const osmN=osmF.length;
+  P.innerHTML=`<div class="ovh"><b>Alla turer</b><span class="small" id="ovProg">${ovProg}</span></div>
+    <p class="p small" style="margin-top:4px">Tryck på en topp för att se enklaste vägen upp och bästa nedfarten.</p>
+    ${LEGEND.replace('</div>',`${osmN?'<span><i style="background:#8e44d9"></i>Känt spår (OSM)</span>':""}<span><i style="background:#00c2b2"></i>Ert GPX-spår</span></div>`)}
+    <div class="btnrow"><button class="btn sm" id="ovDraw">Rita egen rutt</button></div>
+    ${custom.length?`<div class="mylist" style="margin-top:12px"><div class="small" style="font-weight:700;margin-bottom:4px">MINA RUTTER</div>${custom.map(x=>`<button class="it" data-id="${x.id}"><span>✏️ ${esc(x.name)}</span><span class="small">${x.res?Math.round(calcStats(x.res).gain/10)*10+" hm":""}</span></button>`).join("")}</div>`:""}
+    <p class="disc">Nedfarten är den bästa skidlinjen enligt höjddata. Data om var de flesta faktiskt åker (Strava, FATMAP) är inte öppet tillgänglig. Ladda upp era egna GPX-spår, så syns de här i turkos.</p>`;
+  $("#ovDraw").onclick=()=>{location.hash="rita"};
+  P.querySelectorAll(".mylist .it").forEach(b=>b.onclick=()=>selectOv(b.dataset.id));
+}
+$("#ovBack").onclick=()=>{if(drawMode){location.hash="karta";return}history.length>1?history.back():(location.hash="")};
+$("#ovFit").onclick=()=>{if(!omapReady)return;if(drawMode&&plan.pts.length){const b=new maplibregl.LngLatBounds();plan.pts.forEach(p=>b.extend([p[1],p[0]]));omap.fitBounds(b,{padding:padFor(),maxZoom:14})}else if(ovSel)selectOv(ovSel);else fitAll()};
+$("#ov3d").onclick=()=>{if(!omapReady)return;const on=omap.getPitch()<5;omap.easeTo({pitch:on?60:0,duration:700});omap.setTerrain(on?{source:"dem",exaggeration:1.25}:null);$("#ov3d").classList.toggle("on",on)};
+$("#ovLayers").onclick=e=>{const b=e.target.closest("button");if(!b||!omapReady)return;const l=b.dataset.l;
+  if(l==="slope"){ovSlope=!ovSlope;b.classList.toggle("on",ovSlope);omap.setLayoutProperty("slope","visibility",ovSlope?"visible":"none");return}
+  document.querySelectorAll('#ovLayers button:not([data-l="slope"])').forEach(x=>x.classList.toggle("on",x===b));
+  ["winter","sat","topo"].forEach(id=>omap.setLayoutProperty(id,"visibility",l===id?"visible":"none"))};
+
 window.addEventListener("hashchange",route);
 route();
 /* Upptäck om externa anslutningar blockeras (t.ex. i en förhandsvisning) */
