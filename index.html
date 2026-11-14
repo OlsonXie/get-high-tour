@@ -200,7 +200,7 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
 .drawing #omap canvas{cursor:crosshair}
 .wp{width:30px;height:30px;max-width:30px;overflow:hidden;line-height:1;border-radius:50%;background:#fff;border:3px solid #11161d;font:800 12px Montserrat,sans-serif;display:grid;place-items:center;box-shadow:0 3px 10px rgba(0,0,0,.35);cursor:grab;color:#11161d}
 .wp.wide{width:40px;max-width:40px;border-radius:15px;font-size:11px}
-.wp.s{background:#2f6fdc;color:#fff;border-color:#fff}.wp.top{background:#11161d;color:#fff;border-color:#fff}
+.wp.s{background:#2f6fdc;color:#fff;border-color:#fff}.wp.pk{background:#11161d;color:#fff;border-color:#fff}
 </style>
 </head>
 <body>
@@ -1277,7 +1277,7 @@ function rebuildDraftMarkers(){
     const loop=n>2&&hav(plan.pts[n-1],plan.pts[0])<30;
     if(i===n-1&&loop)return; // mål = start: en gemensam punkt
     const lab=i===0?(loop?"S/M":"S"):i===hi?"▲":String(i+1);
-    const el=mk(`<div class="wp${i===0?" s":i===hi?" top":""}${lab.length>2?" wide":""}">${lab}</div>`);
+    const el=mk(`<div class="wp${i===0?" s":i===hi?" pk":""}${lab.length>2?" wide":""}">${lab}</div>`);
     const m=new maplibregl.Marker({element:el,draggable:true}).setLngLat([p[1],p[0]]).addTo(omap);
     m.on("dragend",()=>{const l=m.getLngLat(),np=[+l.lat.toFixed(5),+l.lng.toFixed(5)];plan.pts[i]=np;if(i===0&&loop)plan.pts[n-1]=np.slice();onDraftChange()});
     dMarkers.push(m);
