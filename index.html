@@ -1071,7 +1071,7 @@ function addPathLayers(m,src,before){
   m.addLayer({id:src+"-ln",type:"line",source:src,layout:{"line-join":"round","line-cap":"round"},paint:{"line-color":PCOL,"line-width":4.2}},before);
   ensureArrow(m);
   // små pilar i färdriktningen på uppstigningen
-  m.addLayer({id:src+"-arr",type:"symbol",source:src,filter:["==",["get","k"],"up"],layout:{"symbol-placement":"line","symbol-spacing":["interpolate",["linear"],["zoom"],10,50,14,80],"icon-image":"up-arrow","icon-size":["interpolate",["linear"],["zoom"],9,.55,13,.85,15,1],"icon-rotation-alignment":"map","icon-pitch-alignment":"map","icon-allow-overlap":true,"icon-ignore-placement":true}},before);
+  m.addLayer({id:src+"-arr",type:"symbol",source:src,filter:["==",["get","k"],"up"],layout:{"symbol-placement":"line","symbol-spacing":["interpolate",["linear"],["zoom"],10,32,14,55],"icon-image":"up-arrow","icon-size":["interpolate",["linear"],["zoom"],9,.8,12,1.15,15,1.45],"icon-rotation-alignment":"map","icon-pitch-alignment":"viewport","icon-allow-overlap":true,"icon-ignore-placement":true}},before);
 }
 function resHTML(res,cid){
   const s=calcStats(res);
