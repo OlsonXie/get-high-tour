@@ -339,7 +339,7 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
     <div class="ovlay" id="ovLayers"><button data-l="winter" class="on">Vinter</button><button data-l="topo">Topo</button><button data-l="slope">Bratthet</button></div>
   </div>
   <div class="ovctl">
-    <button class="mapbtn" id="ov3d">3D</button>
+    <button class="mapbtn on" id="ov3d">3D</button>
     <button class="mapbtn" id="ovFit" aria-label="Visa allt"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
   </div>
   <div class="ovp" id="ovPanel"></div>
@@ -1057,9 +1057,21 @@ function resFeatures(res,rid){
   // nedfart ritas ovanpå uppstigningen
   return f.sort((a,b)=>(a.properties.k==="up"?0:1)-(b.properties.k==="up"?0:1));
 }
+function ensureArrow(m){
+  if(m.hasImage("up-arrow"))return;
+  const S=48,c=document.createElement("canvas");c.width=c.height=S;const g=c.getContext("2d");
+  g.lineCap="round";g.lineJoin="round";
+  const chev=()=>{g.beginPath();g.moveTo(17,13);g.lineTo(30,24);g.lineTo(17,35);g.stroke()};
+  g.strokeStyle="rgba(17,22,29,.75)";g.lineWidth=11;chev();
+  g.strokeStyle="#ffffff";g.lineWidth=6;chev();
+  m.addImage("up-arrow",g.getImageData(0,0,S,S),{pixelRatio:2});
+}
 function addPathLayers(m,src,before){
   m.addLayer({id:src+"-cas",type:"line",source:src,layout:{"line-join":"round","line-cap":"round"},paint:{"line-color":"#11161d","line-width":7.5,"line-opacity":.35}},before);
   m.addLayer({id:src+"-ln",type:"line",source:src,layout:{"line-join":"round","line-cap":"round"},paint:{"line-color":PCOL,"line-width":4.2}},before);
+  ensureArrow(m);
+  // små pilar i färdriktningen på uppstigningen
+  m.addLayer({id:src+"-arr",type:"symbol",source:src,filter:["==",["get","k"],"up"],layout:{"symbol-placement":"line","symbol-spacing":["interpolate",["linear"],["zoom"],10,50,14,80],"icon-image":"up-arrow","icon-size":["interpolate",["linear"],["zoom"],9,.55,13,.85,15,1],"icon-rotation-alignment":"map","icon-pitch-alignment":"map","icon-allow-overlap":true,"icon-ignore-placement":true}},before);
 }
 function resHTML(res,cid){
   const s=calcStats(res);
@@ -1156,11 +1168,10 @@ function initOmap(){
   if(!window._winterProto){maplibregl.addProtocol("winter",winterTile);window._winterProto=true}
   const st=JSON.parse(JSON.stringify(STYLE));
   st.sources.osm={type:"geojson",data:EMPTY,attribution:"Turspår © OpenStreetMap"};
-  omap=new maplibregl.Map({container:"omap",style:st,center:[19.6,69.65],zoom:8.4,pitch:0,maxPitch:80,attributionControl:{compact:true}});
+  omap=new maplibregl.Map({container:"omap",style:st,center:[19.6,69.65],zoom:8.4,pitch:55,maxPitch:80,attributionControl:{compact:true}});
   omap.on("load",()=>{
     omapReady=true;
     const at=document.querySelector("#mapview .maplibregl-ctrl-attrib");if(at)at.classList.remove("maplibregl-compact-show");
-    omap.setTerrain(null);
     omap.addLayer({id:"osm",type:"line",source:"osm",layout:{"line-join":"round"},paint:{"line-color":"#8e44d9","line-width":2.6,"line-dasharray":[2,1.4],"line-opacity":.9}});
     omap.addSource("ov-gpx",{type:"geojson",data:EMPTY});
     omap.addLayer({id:"ov-gpx",type:"line",source:"ov-gpx",paint:{"line-color":"#00c2b2","line-width":3.5}});
@@ -1204,6 +1215,7 @@ function refreshOvPaths(){
   omap.setPaintProperty("ov-paths-cas","line-width",["case",["==",["get","rid"],sel],8.5,5]);
   omap.setPaintProperty("ov-paths-ln","line-opacity",drawMode?.3:sel?["case",["==",["get","rid"],sel],1,.45]:.95);
   omap.setPaintProperty("ov-paths-cas","line-opacity",drawMode?.1:sel?["case",["==",["get","rid"],sel],.4,.12]:.3);
+  omap.setPaintProperty("ov-paths-arr","icon-opacity",drawMode?.25:sel?["case",["==",["get","rid"],sel],1,.35]:.9);
   const g=[];ROUTES.forEach(r=>{const x=store.get("gpx-"+r.id,null);if(x)g.push({type:"Feature",properties:{},geometry:{type:"LineString",coordinates:x.c}})});
   omap.getSource("ov-gpx").setData({type:"FeatureCollection",features:g});
   Object.entries(ovMarkers).forEach(([id,m])=>m.getElement().classList.toggle("sel",id===ovSel));
@@ -1251,6 +1263,7 @@ function applyMode(){
   $("#mapview").classList.toggle("drawing",drawMode);
   $("#ovTitle").textContent=drawMode?"Rita egen rutt":"Karta";
   dMarkers.forEach(m=>m.remove());dMarkers=[];
+  if(drawMode&&omapReady&&omap.getPitch()<5){omap.setTerrain({source:"dem",exaggeration:1.3});omap.easeTo({pitch:55,duration:700});$("#ov3d").classList.add("on")}
   if(drawMode){rebuildDraftMarkers();if(plan.pts.length>=2&&!draftRes&&!draftBusy)scheduleDraft(0);drawDraft();
     if(plan.pts.length){const b=new maplibregl.LngLatBounds();plan.pts.forEach(p=>b.extend([p[1],p[0]]));setTimeout(()=>omap.fitBounds(b,{padding:padFor(),duration:700,maxZoom:14}),60)}}
   else if(omapReady){omap.getSource("ov-plan").setData(EMPTY);omap.getSource("ov-plan-line").setData(EMPTY)}
