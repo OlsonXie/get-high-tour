@@ -81,6 +81,10 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .layers{position:absolute;left:14px;bottom:44px;z-index:3;display:flex;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:14px;padding:4px;gap:2px;box-shadow:0 4px 14px rgba(0,0,0,.15)}
 .layers button{padding:8px 9px;border-radius:10px;font-size:12px;font-weight:700;color:#3a4350}
 .layers button.on{background:var(--dark);color:#fff}
+.s2chip{position:absolute;left:14px;bottom:96px;z-index:3;display:none;align-items:center;gap:8px;flex-wrap:wrap;max-width:calc(100% - 90px);background:rgba(17,22,29,.78);backdrop-filter:blur(8px);color:#fff;font-size:11.5px;font-weight:600;padding:6px 6px 6px 11px;border-radius:12px}
+.s2chip.on{display:flex}
+.s2chip.ov{bottom:auto;left:auto;right:14px;top:calc(70px + env(safe-area-inset-top))}
+.s2chip button{background:rgba(255,255,255,.16);color:#fff;font-size:11px;font-weight:700;padding:5px 9px;border-radius:9px}
 .maplegend{position:absolute;left:14px;bottom:96px;z-index:3;background:rgba(255,255,255,.92);border-radius:10px;padding:6px 9px;font-size:11px;font-weight:600;display:none;gap:8px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
 .maplegend.on{display:flex}
 .maplegend span{display:inline-flex;align-items:center;gap:4px}
@@ -251,9 +255,10 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
     <button class="mapbtn fav" id="dFav" aria-label="Favorit"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8 3.3 4.5 7 4.5c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.7 0 6 3.5 4.5 7.2C19.5 16.4 12 21 12 21z"/></svg></button>
     <div class="mapnote" id="mapnote">Streckad linje = fågelvägen, inte spåret</div>
     <div class="maplegend" id="legend"><span>NVE bratthet:</span><span><b style="background:#f7e04b"></b>27–29°</span><span><b style="background:#f39a25"></b>30–34°</span><span><b style="background:#e3342a"></b>35–39°</span><span><b style="background:#9b3fb5"></b>40°+</span></div>
+    <div class="s2chip" id="s2chip"></div>
     <div class="layers" id="layers">
-      <button data-l="winter" class="on">Vinter</button>
-      <button data-l="sat">Sommar</button>
+      <button data-l="sat" class="on">Satellit</button>
+      <button data-l="s2">Vinter</button>
       <button data-l="topo">Topo</button>
       <button data-l="slope">Bratthet</button>
     </div>
@@ -337,8 +342,9 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
   <div class="ovtop">
     <button class="mapbtn" id="ovBack" aria-label="Tillbaka"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
     <div class="ovtitle" id="ovTitle">Karta</div>
-    <div class="ovlay" id="ovLayers"><button data-l="winter" class="on">Vinter</button><button data-l="topo">Topo</button><button data-l="slope">Bratthet</button></div>
+    <div class="ovlay" id="ovLayers"><button data-l="sat" class="on">Satellit</button><button data-l="s2">Vinter</button><button data-l="topo">Topo</button><button data-l="slope">Bratthet</button></div>
   </div>
+  <div class="s2chip ov" id="ovS2chip"></div>
   <div class="ovctl">
     <button class="mapbtn on" id="ov3d">3D</button>
     <button class="mapbtn" id="ovFit" aria-label="Visa allt"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
@@ -674,7 +680,7 @@ let map=null,cur=null,spinning=false,spinRAF=null,mapReady=false;
 const STYLE={version:8,
   glyphs:"https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
   sources:{
-    winter:{type:"raster",tiles:["winter://{z}/{x}/{y}"],tileSize:256,maxzoom:17,attribution:"Bild © Esri, Maxar, Earthstar Geographics · vinterläge beräknat"},
+    s2:{type:"raster",tiles:["s2://var/{z}/{x}/{y}"],tileSize:256,maxzoom:14,attribution:"Vinterbild: Copernicus Sentinel-2 via Microsoft Planetary Computer"},
     sat:{type:"raster",tiles:["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],tileSize:256,maxzoom:18,attribution:"Bild © Esri, Maxar, Earthstar Geographics"},
     topo:{type:"raster",tiles:["https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png"],tileSize:256,maxzoom:18,attribution:"© Kartverket"},
     slope:{type:"raster",tiles:["https://gis3.nve.no/arcgis/rest/services/wmts/Bratthet_2024/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=png32&transparent=true&layers=show:0&f=image"],tileSize:256,attribution:"Bratthet © NVE"},
@@ -682,11 +688,11 @@ const STYLE={version:8,
   },
   layers:[
     {id:"bg",type:"background",paint:{"background-color":"#cfd7e0"}},
-    {id:"winter",type:"raster",source:"winter"},
-    {id:"sat",type:"raster",source:"sat",layout:{visibility:"none"},paint:{"raster-saturation":-0.25,"raster-contrast":0.05}},
+    {id:"sat",type:"raster",source:"sat",paint:{"raster-saturation":-0.15,"raster-contrast":0.05}},
+    {id:"s2",type:"raster",source:"s2",layout:{visibility:"none"}},
     {id:"topo",type:"raster",source:"topo",layout:{visibility:"none"}},
     {id:"slope",type:"raster",source:"slope",layout:{visibility:"none"},paint:{"raster-opacity":0.62}},
-    {id:"hs",type:"hillshade",source:"dem",paint:{"hillshade-exaggeration":0.35,"hillshade-shadow-color":"#2a3a52","hillshade-highlight-color":"#ffffff"}}
+    {id:"hs",type:"hillshade",source:"dem",paint:{"hillshade-exaggeration":0.2,"hillshade-shadow-color":"#2a3a52","hillshade-highlight-color":"#ffffff"}}
   ],
   terrain:{source:"dem",exaggeration:1.25},
   sky:{}
@@ -741,8 +747,8 @@ $("#bFit").onclick=async()=>{const r=ROUTES.find(x=>x.id===cur);fitRoute(r,await
 $("#layers").onclick=e=>{const b=e.target.closest("button");if(!b)return;const l=b.dataset.l;
   if(l==="slope"){const on=!b.classList.contains("on");b.classList.toggle("on",on);map.setLayoutProperty("slope","visibility",on?"visible":"none");$("#legend").classList.toggle("on",on);return}
   document.querySelectorAll('#layers button:not([data-l="slope"])').forEach(x=>x.classList.toggle("on",x===b));
-  ["winter","sat","topo"].forEach(id=>map.setLayoutProperty(id,"visibility",l===id?"visible":"none"));
-  map.setPaintProperty("hs","hillshade-exaggeration",l==="winter"?0.35:0.2)};
+  ["s2","sat","topo"].forEach(id=>map.setLayoutProperty(id,"visibility",l===id?"visible":"none"));
+  $("#s2chip").classList.toggle("on",l==="s2");if(l==="s2")s2Search(s2Mode).catch(()=>{})};
 
 
 /* =========================================================
@@ -786,45 +792,58 @@ async function kvDemTile(params,ac){
 }
 function regProtocols(){
   if(window._protoOK)return;window._protoOK=true;
-  maplibregl.addProtocol("winter",winterTile);maplibregl.addProtocol("kvdem",kvDemTile);
+  maplibregl.addProtocol("s2",s2Tile);maplibregl.addProtocol("kvdem",kvDemTile);
 }
 
 /* =========================================================
-   VINTERLÄGE: satellitbilden snötäcks utifrån höjd och lutning.
-   Brant klippa (>38°) och skog på låg höjd syns igenom, havet lämnas.
+   VINTERBILD: riktiga Sentinel-2-bilder (10 m) via Microsoft Planetary
+   Computer, utan konto. "var" = klar vårvinterdag, "last" = senaste
+   klara bilden de senaste 60 dagarna (finns inte under mörkertiden).
    ========================================================= */
-async function winterTile(params,ac){
-  const [z,x,y]=params.url.replace("winter://","").split("/").map(Number);
-  const satP=fetch(`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`,{signal:ac&&ac.signal})
-    .then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.blob()}).then(b=>createImageBitmap(b));
-  const zd=Math.min(z,12),k=2**(z-zd),dx=Math.floor(x/k),dy=Math.floor(y/k);
-  const [bmp,dem]=await Promise.all([satP,loadTile(zd,dx,dy).catch(()=>null)]);
-  const c=typeof OffscreenCanvas!=="undefined"?new OffscreenCanvas(256,256):Object.assign(document.createElement("canvas"),{width:256,height:256});
-  const g=c.getContext("2d",{willReadFrequently:true});g.drawImage(bmp,0,0);
-  const im=g.getImageData(0,0,256,256),o=im.data;
-  const ox=(x-dx*k)*256/k,oy=(y-dy*k)*256/k,sc=1/k;
-  const lat=y2lat(y+0.5,z),mpp=156543.03*Math.cos(lat*Math.PI/180)/2**zd;
-  const E=(X,Y)=>dem[Math.max(0,Math.min(255,Y|0))*256+Math.max(0,Math.min(255,X|0))];
-  for(let py=0;py<256;py++)for(let px=0;px<256;px++){
-    const i=(py*256+px)*4,r=o[i],gg=o[i+1],b=o[i+2],lum=(0.299*r+0.587*gg+0.114*b)/255;
-    let e=200,slope=20;
-    if(dem){const fx=ox+(px+.5)*sc,fy=oy+(py+.5)*sc;e=E(fx,fy);
-      const dzx=(E(fx+1,fy)-E(fx-1,fy))/(2*mpp),dzy=(E(fx,fy+1)-E(fx,fy-1))/(2*mpp);slope=Math.atan(Math.hypot(dzx,dzy))*180/Math.PI}
-    if(dem&&e<=0.5){o[i]=r*.78;o[i+1]=gg*.86;o[i+2]=Math.min(255,b*.95+12);continue}
-    let cover=1;
-    if(slope>38)cover-=Math.min(.78,(slope-38)/22*.78);
-    const green=(gg-(r+b)/2)/255;
-    if(e<380&&(green>.025||lum<.28))cover=Math.min(cover,.5+e/380*.3);
-    if(e<60)cover=Math.min(cover,.85);
-    const t=Math.max(205,Math.min(252,236+(lum-.45)*42));
-    const sr=t-7,sg=t-2,sb=Math.min(255,t+7);
-    const ur=r*.62,ug=gg*.66,ub=b*.74;
-    o[i]=ur+(sr-ur)*cover;o[i+1]=ug+(sg-ug)*cover;o[i+2]=ub+(sb-ub)*cover;
-  }
-  g.putImageData(im,0,0);
-  const blob=c.convertToBlob?await c.convertToBlob({type:"image/jpeg",quality:.88}):await new Promise(res=>c.toBlob(res,"image/jpeg",.88));
-  return {data:await blob.arrayBuffer()};
+const S2_API="https://planetarycomputer.microsoft.com/api";
+const S2_PRESET={from:"2026-04-11",to:"2026-04-13",label:"11–13 april 2026"};
+const S2_AREA=[[[17.5,69.0],[21.5,69.0],[21.5,70.3],[17.5,70.3],[17.5,69.0]]];
+let s2Mode="var";const s2Info={},s2P={};
+const s2Date=d=>new Date(d+"T12:00:00Z").toLocaleDateString("sv-SE",{day:"numeric",month:"long",year:"numeric"});
+async function s2Post(path,body){const r=await fetch(S2_API+path,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}
+async function s2Latest(){
+  const j=await s2Post("/stac/v1/search",{collections:["sentinel-2-l2a"],bbox:[18.2,69.3,20.8,70.0],
+    datetime:new Date(Date.now()-60*864e5).toISOString()+"/"+new Date().toISOString(),query:{"eo:cloud_cover":{lt:20}},
+    sortby:[{field:"datetime",direction:"desc"}],limit:1,fields:{include:["properties.datetime"],exclude:["assets","links"]}});
+  const f=j.features&&j.features[0];if(!f)return null;const d=f.properties.datetime.slice(0,10);
+  return {from:d,to:d,label:"senaste klara, "+s2Date(d)};
 }
+function s2Search(mode){
+  if(!s2P[mode]){s2P[mode]=(async()=>{
+    const span=mode==="last"?await s2Latest():S2_PRESET;if(!span)throw new Error("none");
+    const j=await s2Post("/data/v1/mosaic/register",{collections:["sentinel-2-l2a"],"filter-lang":"cql2-json",
+      filter:{op:"and",args:[{op:"anyinteracts",args:[{property:"datetime"},{interval:[span.from+"T00:00:00Z",span.to+"T23:59:59Z"]}]},
+        {op:"s_intersects",args:[{property:"geometry"},{type:"Polygon",coordinates:S2_AREA}]},{op:"<=",args:[{property:"eo:cloud_cover"},40]}]},
+      sortby:[{field:"eo:cloud_cover",direction:"asc"}]});
+    s2Info[mode]={...span,id:j.searchid};updS2Chips();return j.searchid})();
+    s2P[mode].catch(()=>{delete s2P[mode]});}
+  return s2P[mode];
+}
+async function s2Tile(params,ac){
+  const [mode,z,x,y]=params.url.replace("s2://","").split("/");
+  const id=await s2Search(mode);
+  const r=await fetch(`${S2_API}/data/v1/mosaic/${id}/tiles/WebMercatorQuad/${z}/${x}/${y}@1x?collection=sentinel-2-l2a&assets=B04&assets=B03&assets=B02&nodata=0&format=jpg&rescale=0,14000&color_formula=Gamma+RGB+1.7`,{signal:ac&&ac.signal});
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  return {data:await r.arrayBuffer()};
+}
+function updS2Chips(){
+  const i=s2Info[s2Mode],lbl=i?i.label:(s2Mode==="last"?"söker senaste klara bilden…":S2_PRESET.label);
+  const other=s2Mode==="var"?"Senaste klara dagen":"Vårvinter 2026";
+  ["#s2chip","#ovS2chip"].forEach(sel=>{const el=$(sel);if(el)el.innerHTML=`<span>Sentinel-2 · ${esc(lbl)}</span><button data-s2>${other}</button>`});
+}
+async function setS2Mode(m){
+  if(m==="last"){toast("Söker senaste klara Sentinel-2-bilden…");
+    try{await s2Search("last")}catch(e){toast("Ingen klar bild de senaste 60 dagarna. Under mörkertiden (nov–jan) finns inga bilder.");return}}
+  s2Mode=m;updS2Chips();
+  [map,omap].forEach(M=>{if(M&&M.getSource&&M.getSource("s2"))M.getSource("s2").setTiles([`s2://${m}/{z}/{x}/{y}`])});
+}
+document.addEventListener("click",e=>{if(e.target.closest("[data-s2]"))setS2Mode(s2Mode==="var"?"last":"var")});
+updS2Chips();
 
 /* Helskärm för kartan */
 let fsOn=false;
@@ -1217,7 +1236,7 @@ function drawCalcDetail(r,res){
 /* =========================================================
    ÖVERSIKTSKARTA + RITA EGEN RUTT
    ========================================================= */
-let omap=null,omapReady=false,ovSel=null,drawMode=false,ovQueued=false,ovProg="",ovLayer="winter",ovSlope=false;
+let omap=null,omapReady=false,ovSel=null,drawMode=false,ovQueued=false,ovProg="",ovLayer="sat",ovSlope=false;
 let plan=store.get("plan",{pts:[],over:{},name:""}),draftRes=null,draftErr=null,draftBusy=false,draftTok=0,draftT=null;
 let dMarkers=[],ovMarkers={},osmF=[];
 let custom=store.get("custom",[]);
@@ -1455,7 +1474,8 @@ $("#ov3d").onclick=()=>{if(!omapReady)return;const on=omap.getPitch()<5;omap.eas
 $("#ovLayers").onclick=e=>{const b=e.target.closest("button");if(!b||!omapReady)return;const l=b.dataset.l;
   if(l==="slope"){ovSlope=!ovSlope;b.classList.toggle("on",ovSlope);omap.setLayoutProperty("slope","visibility",ovSlope?"visible":"none");return}
   document.querySelectorAll('#ovLayers button:not([data-l="slope"])').forEach(x=>x.classList.toggle("on",x===b));
-  ["winter","sat","topo"].forEach(id=>omap.setLayoutProperty(id,"visibility",l===id?"visible":"none"))};
+  ["s2","sat","topo"].forEach(id=>omap.setLayoutProperty(id,"visibility",l===id?"visible":"none"));
+  $("#ovS2chip").classList.toggle("on",l==="s2");if(l==="s2")s2Search(s2Mode).catch(()=>{})};
 
 window.addEventListener("hashchange",route);
 route();
