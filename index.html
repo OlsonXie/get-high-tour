@@ -73,6 +73,7 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 #map{position:absolute;inset:0}
 .mapbtn{position:absolute;z-index:3;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:14px;height:44px;min-width:44px;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.15);color:var(--dark);font-weight:700;font-size:13px}
 .mapbtn.back{top:calc(14px + env(safe-area-inset-top));left:14px}
+.mapbtn.home{top:calc(14px + env(safe-area-inset-top));left:66px}
 .mapbtn.fav{top:calc(14px + env(safe-area-inset-top));right:14px}
 .mapbtn.fav.on svg{fill:var(--dark)}
 .mapctl{position:absolute;right:14px;bottom:44px;z-index:3;display:flex;flex-direction:column;gap:8px}
@@ -252,6 +253,7 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
   <div class="mapwrap">
     <div id="map"></div>
     <button class="mapbtn back" id="backBtn" aria-label="Tillbaka"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button class="mapbtn home" id="homeBtn" aria-label="Till startsidan"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
     <button class="mapbtn fav" id="dFav" aria-label="Favorit"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8 3.3 4.5 7 4.5c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.7 0 6 3.5 4.5 7.2C19.5 16.4 12 21 12 21z"/></svg></button>
     <div class="mapnote" id="mapnote">Streckad linje = fågelvägen, inte spåret</div>
     <div class="maplegend" id="legend"><span>NVE bratthet:</span><span><b style="background:#f7e04b"></b>27–29°</span><span><b style="background:#f39a25"></b>30–34°</span><span><b style="background:#e3342a"></b>35–39°</span><span><b style="background:#9b3fb5"></b>40°+</span></div>
@@ -341,6 +343,7 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
   <div id="omap"></div>
   <div class="ovtop">
     <button class="mapbtn" id="ovBack" aria-label="Tillbaka"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button class="mapbtn" id="ovHome" aria-label="Till startsidan"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
     <div class="ovtitle" id="ovTitle">Karta</div>
     <div class="ovlay" id="ovLayers"><button data-l="sat" class="on">Satellit</button><button data-l="s2">Vinter</button><button data-l="topo">Topo</button><button data-l="slope">Bratthet</button></div>
   </div>
@@ -918,10 +921,14 @@ async function openDetail(r){
   $("#sCalc").textContent="Beräknat från höjddata och fågelvägen – ungefärligt tills vägen är beräknad.";}
 }
 $("#dFav").onclick=()=>{const id=cur;favs.has(id)?favs.delete(id):favs.add(id);saveFavs();$("#dFav").classList.toggle("on",favs.has(id))};
-$("#backBtn").onclick=()=>{if(fsOn)return setFs(false);history.length>1?history.back():(location.hash="")};
+let prevView="",curView=location.hash.slice(1);
+const goHome=()=>{if(location.hash.slice(1))location.hash="";else route()};
+$("#backBtn").onclick=()=>{location.hash=(prevView==="karta"||prevView==="rita")?"karta":""};
+$("#homeBtn").onclick=goHome;
 function route(){
   if(fsOn)setFs(false);
   const id=location.hash.slice(1),r=ROUTES.find(x=>x.id===id);
+  if(id!==curView){prevView=curView;curView=id}
   if(id==="karta"||id==="rita"){openOverview(id==="rita");return}
   closeOverview();
   if(r)openDetail(r);else{cur=null;stopSpin();$("#detail").classList.remove("on");$("#home").classList.add("on");renderList()}
@@ -1468,7 +1475,8 @@ function renderPanel(err){
   $("#ovDraw").onclick=()=>{location.hash="rita"};
   P.querySelectorAll(".mylist .it").forEach(b=>b.onclick=()=>selectOv(b.dataset.id));
 }
-$("#ovBack").onclick=()=>{if(drawMode){location.hash="karta";return}history.length>1?history.back():(location.hash="")};
+$("#ovBack").onclick=()=>{if(drawMode){location.hash="karta";return}location.hash=ROUTES.some(r=>r.id===prevView)?prevView:""};
+$("#ovHome").onclick=goHome;
 $("#ovFit").onclick=()=>{if(!omapReady)return;if(drawMode&&plan.pts.length){const b=new maplibregl.LngLatBounds();plan.pts.forEach(p=>b.extend([p[1],p[0]]));omap.fitBounds(b,{padding:padFor(),maxZoom:14})}else if(ovSel)selectOv(ovSel);else fitAll()};
 $("#ov3d").onclick=()=>{if(!omapReady)return;const on=omap.getPitch()<5;omap.easeTo({pitch:on?60:0,duration:700});omap.setTerrain(on?{source:"dem",exaggeration:1.25}:null);$("#ov3d").classList.toggle("on",on)};
 $("#ovLayers").onclick=e=>{const b=e.target.closest("button");if(!b||!omapReady)return;const l=b.dataset.l;
