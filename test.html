@@ -677,7 +677,7 @@ let map=null,cur=null,spinning=false,spinRAF=null,mapReady=false;
 const STYLE={version:8,
   glyphs:"https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
   sources:{
-    gps:{type:"raster",tiles:["https://gps-tile.openstreetmap.org/lines/{z}/{x}/{y}.png"],tileSize:256,maxzoom:18,attribution:"GPS-spår © OpenStreetMap-bidragsgivare"},
+    gps:{type:"raster",tiles:["gpsh://{z}/{x}/{y}"],tileSize:256,maxzoom:18,attribution:"GPS-spår © OpenStreetMap-bidragsgivare"},
     s2:{type:"raster",tiles:["s2://var/{z}/{x}/{y}"],tileSize:256,maxzoom:14,attribution:"Vinterbild: Copernicus Sentinel-2 via Microsoft Planetary Computer"},
     sat:{type:"raster",tiles:["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],tileSize:256,maxzoom:18,attribution:"Bild © Esri, Maxar, Earthstar Geographics"},
     topo:{type:"raster",tiles:["https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png"],tileSize:256,maxzoom:18,attribution:"© Kartverket"},
@@ -690,7 +690,7 @@ const STYLE={version:8,
     {id:"s2",type:"raster",source:"s2",layout:{visibility:"none"}},
     {id:"topo",type:"raster",source:"topo",layout:{visibility:"none"}},
     {id:"slope",type:"raster",source:"slope",layout:{visibility:"none"},paint:{"raster-opacity":0.62}},
-    {id:"gps",type:"raster",source:"gps",paint:{"raster-opacity":0.9,"raster-saturation":-1,"raster-brightness-min":0.55}},
+    {id:"gps",type:"raster",source:"gps",paint:{"raster-opacity":0.95}},
     {id:"hs",type:"hillshade",source:"dem",paint:{"hillshade-exaggeration":0.2,"hillshade-shadow-color":"#2a3a52","hillshade-highlight-color":"#ffffff"}}
   ],
   terrain:{source:"dem",exaggeration:1.25},
@@ -795,7 +795,21 @@ async function kvDemTile(params,ac){
 }
 function regProtocols(){
   if(window._protoOK)return;window._protoOK=true;
-  maplibregl.addProtocol("s2",s2Tile);maplibregl.addProtocol("kvdem",kvDemTile);
+  maplibregl.addProtocol("s2",s2Tile);maplibregl.addProtocol("kvdem",kvDemTile);maplibregl.addProtocol("gpsh",gpsHeatTile);
+}
+
+/* Spår-lagret: OSM:s GPS-spår färgade som värmekarta (svaga spår gula, täta röda) */
+async function gpsHeatTile(params,ac){
+  const [z,x,y]=params.url.replace("gpsh://","").split("/");
+  const r=await fetch(`https://gps-tile.openstreetmap.org/lines/${z}/${x}/${y}.png`,{signal:ac&&ac.signal});if(!r.ok)throw new Error("HTTP "+r.status);
+  const bm=await createImageBitmap(await r.blob());
+  const c=typeof OffscreenCanvas!=="undefined"?new OffscreenCanvas(256,256):Object.assign(document.createElement("canvas"),{width:256,height:256});
+  const g=c.getContext("2d",{willReadFrequently:true});g.drawImage(bm,0,0);const im=g.getImageData(0,0,256,256),d=im.data;
+  for(let i=0;i<d.length;i+=4){const a=d[i+3];if(!a)continue;const k=Math.min(1,a/110);
+    d[i]=255;d[i+1]=Math.round(235-185*k);d[i+2]=Math.round(60-50*k);d[i+3]=Math.min(255,Math.round(90+a*2.2))}
+  g.putImageData(im,0,0);
+  const blob=c.convertToBlob?await c.convertToBlob({type:"image/png"}):await new Promise(res=>c.toBlob(res,"image/png"));
+  return {data:await blob.arrayBuffer()};
 }
 
 /* =========================================================
@@ -1095,7 +1109,7 @@ async function traceGrid(G,osmLines){
   const A=(px,py)=>{const t=tiles[(px>>8)+","+(py>>8)];return t?t[(py&255)*256+(px&255)]:0};
   for(let j=0;j<h;j++)for(let i=0;i<w;i++){const cx=Math.floor(x0+(i+.5)*step),cy=Math.floor(y0+(j+.5)*step);let m=0;
     for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const v=A(cx+dx,cy+dy);if(v>m)m=v}
-    if(m>40)T[j*w+i]=1}
+    if(m>20)T[j*w+i]=1}
   for(const L of osmLines)for(let k=1;k<L.length;k++){
     const a=[lon2x(L[k-1][1],RZ)*256,lat2y(L[k-1][0],RZ)*256],b=[lon2x(L[k][1],RZ)*256,lat2y(L[k][0],RZ)*256];
     const n=Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/step*2)+1;
