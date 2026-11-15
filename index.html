@@ -716,6 +716,23 @@ const STYLE={version:8,
   terrain:{source:"dem",exaggeration:1.25},
   sky:{}
 };
+/* Orter och områden på kartan (OpenStreetMap place=city/town/village). r: 1 stad, 2 ort, 3 by, 0 område */
+const PLACES=[["Tromsø",69.6516,18.9559,1],["Finnsnes",69.2296,17.9813,2],["Kvaløysletta",69.6902,18.862,2],["Kaldfjord",69.6852,18.7408,3],["Ersfjordbotn",69.6944,18.6208,3],
+ ["Fagernes",69.5612,19.1823,3],["Lyngseidet",69.5763,20.2191,2],["Olderdalen",69.6031,20.5371,3],["Furuflaten",69.4413,20.154,3],["Skibotn",69.3908,20.2678,3],
+ ["Lakselvbukt",69.4333,19.647,3],["Nordkjosbotn",69.2173,19.5583,3],["Storsteinnes",69.2408,19.2341,3],["Hansnes",69.967,19.6271,3],["Vengsøy",69.8373,18.58,3],
+ ["Sjursnes",69.5331,19.6366,3],["Djupvik",69.7487,20.4902,3],["Rotsund",69.7775,20.5902,3],["Sørbotn",69.5136,19.2474,3],["Laksvatn",69.3762,19.3629,3],
+ ["Mestervik",69.3293,18.9165,3],["Gibostad",69.3538,18.0761,3],["Sand",69.3915,18.6086,3],["Birtavarre",69.495,20.8319,3],["Hatteng",69.2707,19.9599,3],
+ ["Botnhamn",69.5082,17.9028,3],["Dåfjord",69.9925,19.4048,3],["Stakkvik",69.9543,19.6709,3],["Vannvåg",70.0725,19.982,3],["Arnøyhamn",70.0527,20.6317,3],
+ ["Kvaløya",69.715,18.52,0],["Ringvassøya",69.93,19.25,0],["Lyngsalpene",69.72,20.06,0],["Malangen",69.47,18.75,0]];
+function addPlaces(M){
+  if(M.getSource("places"))return;
+  M.addSource("places",{type:"geojson",data:{type:"FeatureCollection",features:PLACES.map(([n,la,lo,r])=>({type:"Feature",properties:{n,r},geometry:{type:"Point",coordinates:[lo,la]}}))}});
+  M.addLayer({id:"places-area",type:"symbol",source:"places",filter:["==",["get","r"],0],layout:{"text-field":["upcase",["get","n"]],"text-font":["Open Sans Semibold"],"text-size":13,"text-letter-spacing":0.25,"text-max-width":20},
+    paint:{"text-color":"#ffffff","text-opacity":0.85,"text-halo-color":"rgba(17,22,29,.55)","text-halo-width":1.4},maxzoom:11.5});
+  M.addLayer({id:"places",type:"symbol",source:"places",filter:[">",["get","r"],0],layout:{"text-field":["get","n"],"text-font":["Open Sans Semibold"],
+    "text-size":["match",["get","r"],1,16,2,13,11.5],"symbol-sort-key":["get","r"],"text-padding":4},
+    paint:{"text-color":"#11161d","text-halo-color":"#ffffff","text-halo-width":1.6},minzoom:7});
+}
 /* Kompass: nålen pekar mot norr när kartan vrids; tryck = norr uppåt */
 function wireCompass(M,sel){const b=$(sel);if(!b)return;const n=b.querySelector(".needle");
   const upd=()=>{n.style.transform=`rotate(${-M.getBearing()}deg)`};M.on("rotate",upd);upd();
@@ -737,6 +754,7 @@ function initMap(){
     map.addLayer({id:"route",type:"line",source:"route",paint:{"line-color":"#ffffff","line-width":3.5,"line-dasharray":[1.4,1.4]}});
     map.addLayer({id:"gpx-casing",type:"line",source:"gpx",paint:{"line-color":"#11161d","line-width":7,"line-opacity":.4}});
     map.addLayer({id:"gpx",type:"line",source:"gpx",paint:{"line-color":"#00c2b2","line-width":4.5}});
+    addPlaces(map);
     if(cur)showOnMap(ROUTES.find(r=>r.id===cur));
   });
   ["dragstart","touchstart","wheel"].forEach(ev=>map.on(ev,()=>stopSpin()));
@@ -1363,6 +1381,7 @@ function initOmap(){
   wireCompass(omap,"#ovNorth");
   omap.on("load",()=>{
     omapReady=true;
+    addPlaces(omap);
     const at=document.querySelector("#mapview .maplibregl-ctrl-attrib");if(at)at.classList.remove("maplibregl-compact-show");
     omap.addLayer({id:"osm",type:"line",source:"osm",layout:{"line-join":"round"},paint:{"line-color":"#8e44d9","line-width":2.6,"line-dasharray":[2,1.4],"line-opacity":.9}});
     omap.addSource("ov-gpx",{type:"geojson",data:EMPTY});
