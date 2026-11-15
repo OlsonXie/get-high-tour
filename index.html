@@ -239,12 +239,12 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
   <div class="search" id="searchBox"><input id="q" type="text" placeholder="Sök topp eller område…" autocomplete="off"></div>
   <div class="filters" id="filters">
     <button data-f="all" class="on">Alla</button>
-    <button data-f="lyngen">Lyngen</button>
-    <button data-f="ost">Kåfjord</button>
     <button data-f="kvaloya">Kvaløya</button>
+    <button data-f="fastland">Fastlandet</button>
+    <button data-f="lyngen">Lyngen</button>
     <button data-f="fit">Passar oss bäst</button>
     <button data-f="lag">Låg exponering</button>
-    <button data-f="board">Board-vänlig</button>
+    <button data-f="board">Brädvänlig</button>
     <button data-f="storm">Stormdag</button>
   </div>
   <div class="list" id="list"></div>
@@ -267,6 +267,7 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
       <button data-l="s2">Vinter</button>
       <button data-l="topo">Topo</button>
       <button data-l="slope">Bratthet</button>
+      <button data-l="gps" class="on">Spår</button>
     </div>
     <div class="mapctl">
       <button class="mapbtn" id="bFs" aria-label="Helskärm"></button>
@@ -349,7 +350,7 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
     <button class="mapbtn" id="ovBack" aria-label="Tillbaka"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
     <button class="mapbtn" id="ovHome" aria-label="Till startsidan"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
     <div class="ovtitle" id="ovTitle">Karta</div>
-    <div class="ovlay" id="ovLayers"><button data-l="sat" class="on">Satellit</button><button data-l="s2">Vinter</button><button data-l="topo">Topo</button><button data-l="slope">Bratthet</button></div>
+    <div class="ovlay" id="ovLayers"><button data-l="sat" class="on">Satellit</button><button data-l="s2">Vinter</button><button data-l="topo">Topo</button><button data-l="slope">Bratthet</button><button data-l="gps" class="on">Spår</button></div>
   </div>
   <div class="s2chip ov" id="ovS2chip"></div>
   <div class="ovctl">
@@ -367,82 +368,71 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
    Höjdmeter, längd och sida räknas fram från höjddata.
    ========================================================= */
 const ROUTES=[
- {id:"tafeltinden",name:"Tafeltinden",area:"Koppangen, norra Lyngen",region:"lyngen",s:[69.6933,20.0896],t:[69.6792,20.2635],fit:3,exp:"y",board:"ok",storm:false,
-  desc:"Den stora klassikern: lång, måttlig glaciärtur från havet med en av Lyngens längsta sammanhängande nedfarter. Mestadels 25–30°, men sista branten mot toppen är lavinterräng.",
-  boardNote:"Kort flackt parti i början vid Koppangen, annars fallinje.",
-  src:[["FATMAP","https://fatmap.com/discover/route/norway/troms/ski-touring/tafeltinden-1395/3079631"]]},
- {id:"fugldalsfjellet",name:"Fugldalsfjellet",area:"Fugldalen, Lyngsalpernas västsida",region:"lyngen",s:[69.5185,19.836],t:[69.5052,19.777],snap:500,unsure:true,fit:3,exp:"y",board:"ok",storm:false,
-  desc:"En lång och stor tur upp till en bred snökupol med utsikt mot Jiehkkevárri och Holmbukttind. Passar en lång, fin dag när det är stabilt.",
-  boardNote:"Lång dalgång in och ut – kolla hur flack den nedre delen är.",
-  src:[["Gulliver","https://www.gulliver.it/?p=331871"]]},
- {id:"daltinden",name:"Daltinden",area:"Furuflaten, södra Lyngen",region:"lyngen",s:[69.4279,20.0513],t:[69.4413,20.154],fit:2,exp:"y",board:"bra",storm:false,
-  desc:"En av de populäraste topparna i södra Lyngen, med en stor nordostvänd nedfart. Bra när de nordliga sidorna har den bästa snön.",
-  boardNote:"Ser ut att gå i fallinje, men behöver verifieras.",
-  src:[["Gulliver","https://www.gulliver.it/?p=522280"]]},
- {id:"rornestinden",name:"Rørnestinden",area:"Lyngseidet",region:"lyngen",s:[69.5733,20.112],t:[69.5763,20.2191],fit:3,exp:"y",board:"bra",storm:false,
-  desc:"Går direkt från Lyngseidet med utsikt över både Lyngenfjorden och Kjosen. Medelsvår med några brantare partier runt 30°. Kan kombineras med Goalsevárri.",
-  boardNote:"Splitboardrutt finns beskriven. Kort skogsväg i början.",
-  src:[["Splitboarding.eu","https://www.splitboarding.eu/en/routes/rornestinden-or-kavringtinden/"]]},
- {id:"goalsevarri",name:"Goalsevárri / Kavringtinden",area:"Lyngseidet",region:"lyngen",s:[69.547,20.1242],t:[69.565,20.205],fit:2,exp:"y",board:"ok",storm:false,
-  desc:"Pålitlig topp nära Lyngseidet längs nordostryggen. Inte störst, men fungerar även när snön är tunn.",
-  boardNote:"Sista delen längs ryggen kan bli gång med brädan på ryggen.",
-  src:[["ut.no","https://ut.no/turforslag/115352"]]},
- {id:"fastdalstinden",name:"Fastdalstinden",area:"Lyngen, norr om Lyngseidet",region:"lyngen",s:[69.6293,20.168],t:[69.628,20.255],fit:2,exp:"y",board:"?",storm:false,
-  desc:"Bland guidebolagens favoriter. Behöver mer research: höjdmeter, aspekter och spår.",
-  boardNote:"Okänt än.",
-  src:[["Explore-Share","https://www.explore-share.com/trip/Guided-ski-touring-tromso-Lyngen/"]]},
- {id:"rundfjellet",name:"Rundfjellet",area:"Sør-Lenangen, norra Lyngen",region:"lyngen",s:[69.8355,20.0978],t:[69.8197,20.0269],fit:2,exp:"g",board:"ok",storm:true,
-  desc:"En bra och säker introduktion till Lyngen. Passar en dag med förhöjd lavinfara eller som uppvärmning dag 1.",
-  boardNote:"Mjuk terräng, så det kan finnas flacka partier.",
-  src:[["Visit Norway","https://www.visitnorway.com/things-to-do/outdoor-activities/skiing/ski-touring/top-6-ski-touring-hot-spots"]]},
- {id:"russelvfjellet",name:"Russelvfjellet",area:"Nordspetsen av Lyngen",region:"lyngen",s:[69.948,20.258],t:[69.9475,20.2221],fit:2,exp:"g",board:"jobbig",storm:true,
-  desc:"Klassisk ryggtraversering längst ut på halvön, med öppna snöfält ner mot fjorden. Tips när lavinläget är dåligt. Enskilda partier upp till ~44°.",
-  boardNote:"Traverstur med många upp- och nedgångar, alltså mycket växling.",
-  src:[["FATMAP","https://fatmap.com/discover/route/ski-touring/russelvfjellet-traverse/2933927"]]},
- {id:"sorbmegaisa",name:"Sorbmegáisá",area:"Kåfjord, östra sidan",region:"ost",s:[69.7286,20.6157],t:[69.733,20.52],fit:3,exp:"y",board:"bra",storm:false,
-  desc:"Kallas den klassiska och bästa toppturen i Kåfjord. Måttlig svårighet och en fin nedfart med utsikt över Lyngsalperna från andra hållet.",
-  boardNote:"Måttlig och rak tur, ser board-vänlig ut.",
-  src:[["FATMAP","https://fatmap.com/discover/route/ski-touring/sorbmegaisa-1288-m/197188"]]},
- {id:"storhaugen",name:"Storhaugen",area:"Kåfjord, östra sidan",region:"ost",s:[69.7419,20.6053],t:[69.745,20.52],fit:2,exp:"g",board:"ok",storm:true,
-  desc:"Lätt att nå med fin utsikt över halvön. Låg lutning och minimal lavinfara – ett känt alternativ på stormdagar.",
-  boardNote:"Låg lutning ger risk för flacka partier.",
-  src:[["FATMAP","https://fatmap.com/discover/route/ski-touring/storhaugen/3268896"]]},
+ {id:"rodtinden",name:"Rødtinden",area:"Storelva, Kvaløysletta",region:"kvaloya",s:[69.7015,18.7526],t:[69.68794,18.79335],osm:1371229727,fit:2,exp:"g",board:"ok",storm:true,
+  desc:"Tromsøs närmaste klassiker, med start ovanför Storelva skistadion på Kvaløysletta. Kort, relativt lavinsäker och bra för en resdag eller när läget är dåligt.",
+  boardNote:"Kort tur, några flackare partier i början.",
+  src:[["Visit Tromsø","https://www.visittromso.no/no/topptur"],["Tromsø Outdoor","https://www.tromsooutdoor.no/articles/where-to-go-ski-touring-in-tromso-area"]]},
+ {id:"finnlandsfjellet",name:"Finnlandsfjellet",area:"Storelva, Kvaløysletta",region:"kvaloya",s:[69.7018,18.7995],t:[69.6876,18.7933],fit:2,exp:"g",board:"ok",storm:true,
+  desc:"Lätt och kort tur från samma start som Rødtinden. En av de populära topparna nära stan, bra som kvällstur eller uppvärmning.",
+  boardNote:"Mjuk terräng, kan ha flacka partier.",
+  src:[["Tromsø Outdoor","https://www.tromsooutdoor.no/articles/where-to-go-ski-touring-in-tromso-area"]]},
+ {id:"kjolen",name:"Kjølen",area:"Finnvikvatnet, norra Kvaløya",region:"kvaloya",s:[69.7337,18.7876],t:[69.7542,18.8677],unsure:true,fit:2,exp:"g",board:"bra",storm:true,
+  desc:"En av Kvaløyas mest besökta toppar. Inga vassa eggar, men fin och jämn skidåkning. Gå mot radarn på toppen och följ snöfälten ner.",
+  boardNote:"Jämn lutning, undvik bäckraviner och terrängfällor på vägen ner.",
+  src:[["ut.no","https://ut.no/turforslag/118113"]]},
+ {id:"buren",name:"Buren",area:"Ersfjordbotn, Kvaløya",region:"kvaloya",s:[69.7142,18.5864],t:[69.6936,18.617],unsure:true,fit:3,exp:"y",board:"ok",storm:false,
+  desc:"Den perfekta toppen efter jobbet, med varierad åkning. Partier på 25–30° högre upp.",
+  boardNote:"Varierad nedfart, ingen lång transport.",
+  src:[["FATMAP (arkiv)","https://fatmap.com/discover/route/norway/troms/ski-touring/buren-802m/448410"]]},
+ {id:"steinskarstinden",name:"Steinskarstinden",area:"Kattfjordeidet, Kvaløya",region:"kvaloya",s:[69.6478,18.5881],t:[69.6517,18.5362],unsure:true,fit:3,exp:"y",board:"bra",storm:false,
+  desc:"Förstahandsvalet på pudderdagar. Ungefär en timme upp och lätt, varierad åkning ner. Mycket besökt hela säsongen.",
+  boardNote:"Kort och jämn, bra för bräda.",
+  src:[["FATMAP (arkiv)","https://fatmap.com/routeid/442380"],["Peakbook","https://peakbook.org/tour/302457/Steinskartinden.html"]]},
  {id:"lille-blamannen",name:"Lille Blåmannen",area:"Håkøybotn, Kvaløya",region:"kvaloya",s:[69.6441,18.5985],t:[69.655,18.705],fit:3,exp:"g",board:"bra",storm:true,
   desc:"Den mest åkta fjällsidan i Tromsø. Normalvägen går via en bred, mjuk östrygg och räknas som säker – brantare varianter finns.",
   boardNote:"Kort flackt parti genom skogen vid starten.",
-  src:[["FATMAP","https://fatmap.com/discover/route/norway/troms/ski-touring/lille-blamannen/31532"]]},
- {id:"skittentinden",name:"Skittentinden",area:"Kattfjordeidet, Kvaløya",region:"kvaloya",s:[69.6757,18.4425],t:[69.655,18.47],fit:3,exp:"y",board:"bra",storm:false,
+  src:[["FATMAP (arkiv)","https://fatmap.com/discover/route/norway/troms/ski-touring/lille-blamannen/31532"]]},
+ {id:"skittentinden",name:"Skittentinden",area:"Kattfjordeidet, Kvaløya",region:"kvaloya",s:[69.6757,18.4425],t:[69.64857,18.48208],osm:1365622091,fit:3,exp:"y",board:"bra",storm:false,
   desc:"Den mest ikoniska toppen på Kvaløya, med en lång nedfart samma väg ner mot Kattfjordvatnet.",
   boardNote:"Upp och ner samma väg i fallinje.",
-  src:[["FATMAP","https://fatmap.com/discover/route/norway/troms/ski-touring/skittentinden-1042m/436511"]]},
- {id:"middagstinden",name:"Middagstinden",area:"Kattfjordeidet, Kvaløya",region:"kvaloya",s:[69.676,18.4066],t:[69.6362,18.4457],fit:2,exp:"y",board:"ok",storm:false,
-  desc:"Klassisk Kvaløya-tur med ett litet alpint parti om man vill hela vägen upp.",
-  boardNote:"Toppartiet kan kräva gång.",
-  src:[["FATMAP","https://fatmap.com/discover/route/norway/troms/ski-touring/tverrfjellet/1211720"]]},
- {id:"rodtinden",name:"Rødtinden",area:"Kaldfjord, närmast Tromsø",region:"kvaloya",s:[69.7015,18.7526],t:[69.6852,18.7408],fit:1,exp:"g",board:"ok",storm:true,
-  desc:"Relativt lavinsäker och nära staden. Passar en resdag eller när allt annat är stängt.",
-  boardNote:"Kort tur.",
-  src:[["Tromsø Outdoor","https://www.tromsooutdoor.no/articles/where-to-go-ski-touring-in-tromso-area"]]},
- {id:"store-lenangstind",name:"Store Lenangstind",area:"Jægervatnet, norra Lyngen",region:"lyngen",s:[69.7101,20.0861],t:[69.716,19.955],fit:1,exp:"r",board:"jobbig",storm:false,
-  desc:"Det högsta berget i norra Lyngen och ett riktigt äventyr – graderad som severe. Mycket lång dag, bara vid riktigt stabilt läge.",
-  boardNote:"Lång inflygning, räkna med transportsträckor.",
-  src:[["FATMAP","https://fatmap.com/discover/norway/troms/lyngen/routes/7"]]},
- {id:"store-jaegervasstind",name:"Store Jægervasstinden",area:"Jægervatnet, norra Lyngen",region:"lyngen",s:[69.7027,20.043],t:[69.716,19.955],fit:1,exp:"r",board:"ok",storm:false,
-  desc:"Lång och vild tur i ett av Lyngens vackraste hörn, med ravin- och skålpartier på 30–38°. De flesta vänder vid västtoppen. Isyxa och stegjärn.",
-  boardNote:"Fin fallinje i skålen, men brant.",
-  src:[["FATMAP","https://fatmap.com/discover/route/norway/troms/ski-touring/store-jaegervasstinden/31515"]]},
- {id:"store-lakselvtinden",name:"Tomas Couloir / Store Lakselvtinden",area:"Lakselvbukt",region:"lyngen",s:[69.4053,19.7336],t:[69.4333,19.647],fit:1,exp:"r",board:"ok",storm:false,
-  desc:"Två fina, ganska branta raviner i en av norra Norges vackraste dalar. Sydvända ravinen upp till toppen går man till fots. Bara vid låg faregrad och stabil snö.",
-  boardNote:"Bra åkning i ravinen, men dalen ut kan vara flack.",
-  src:[["FATMAP","https://fatmap.com/discover/route/norway/troms/ski-touring/tomas-couloir-and-store-lakselvtinden/31511"]]}
+  src:[["FATMAP (arkiv)","https://fatmap.com/discover/route/norway/troms/ski-touring/skittentinden-1042m/436511"]]},
+ {id:"tromsdalstinden",name:"Tromsdalstinden",area:"Ramfjordmoen, Tromsø fastland",region:"fastland",s:[69.6071,19.1458],t:[69.5835,19.2118],unsure:true,fit:2,exp:"y",board:"ok",storm:false,
+  desc:"Tromsøs hemberg (1238 m). Normalvägen på skidor går upp till sadeln och längs sydvästryggen. Nedfarten är en fin sydvästvänd sluttning och sedan skålar och skog. Håll avstånd till skavlarna mot östväggen.",
+  boardNote:"Toppen är nästan platt, och det finns en kort sidledsförflyttning ur sista skålen.",
+  src:[["FATMAP (arkiv)","https://fatmap.com/routeid/31530"],["iso-maps","https://www.iso-maps.com/en/ski-de-randonnee/norway/mainland-tromso-norvege/tromsdalstinden-versant-s-voie-normale-278591"]]},
+ {id:"fagerfjellet",name:"Fagerfjellet",area:"Ramfjorden, Tromsø fastland",region:"fastland",s:[69.5453,19.2781],t:[69.5596,19.2263],fit:3,exp:"g",board:"ok",storm:true,
+  desc:"Lättillgänglig topp som fungerar när lavinfaran är hög. Normalvägen går upp nordvästsidan och sedan längs ryggen mot toppen. Den nedre delen är skog.",
+  boardNote:"Skogen längst ner kan vara jobbig i djup snö.",
+  src:[["Outmap","https://outmap.pro/route/fagerfjellet-e4XHpV6esF49VFHaQzaohi"],["Summitpost","https://summitpost.org/fagerfjell/853530"]]},
+ {id:"stormheimfjellet",name:"Stormheimfjellet",area:"Breivikeidet, Tromsø fastland",region:"fastland",s:[69.5937,19.499],t:[69.62506,19.59539],osm:1371236252,fit:2,exp:"y",board:"?",storm:false,
+  desc:"Längre tur på fastlandet via Breivikeidet. Ett skidspår är inritat i OpenStreetMap hela vägen från vägen till toppen. Lite mindre känd, så kolla guidebok och Varsom extra noga.",
+  boardNote:"Lång anmarsch, kolla flacka partier i profilen.",
+  src:[["OpenStreetMap","https://www.openstreetmap.org/way/1371236252"]]},
+ {id:"rornestinden",name:"Rørnestinden",area:"Lyngseidet",region:"lyngen",s:[69.5733,20.112],t:[69.56717,20.18549],osm:1365622087,fit:3,exp:"y",board:"bra",storm:false,
+  desc:"Går direkt från Lyngseidet med utsikt över både Lyngenfjorden och Kjosen. Medelsvår med några brantare partier runt 30°. Kan kombineras med Goalsevárri.",
+  boardNote:"Splitboardrutt finns beskriven. Kort skogsväg i början.",
+  src:[["Splitboarding.eu","https://www.splitboarding.eu/en/routes/rornestinden-or-kavringtinden/"],["OpenStreetMap","https://www.openstreetmap.org/way/1365622087"]]},
+ {id:"fastdalstinden",name:"Fastdalstinden",area:"Lyngen, norr om Lyngseidet",region:"lyngen",s:[69.6293,20.168],t:[69.60283,20.25505],osm:1365624329,fit:2,exp:"y",board:"?",storm:false,
+  desc:"Bland guidebolagens favoriter i Lyngen. Ett skidspår är inritat i OpenStreetMap från vägen till toppen.",
+  boardNote:"Okänt än, kolla profilen.",
+  src:[["Explore-Share","https://www.explore-share.com/trip/Guided-ski-touring-tromso-Lyngen/"],["OpenStreetMap","https://www.openstreetmap.org/way/1365624329"]]}
 ];
+/* Skidspår inritade i OpenStreetMap (piste:type=skitour), © OpenStreetMap-bidragsgivare, ODbL. [lat,lon] */
+const OSM_TRK={
+ 1371229727:[[69.68794,18.79335],[69.68835,18.79343],[69.68863,18.79383],[69.68902,18.79323],[69.68947,18.79162],[69.68976,18.79117],[69.69004,18.79051],[69.69015,18.79007],[69.69048,18.78788],[69.69088,18.78683],[69.69136,18.78528],[69.69193,18.78432],[69.69255,18.78302],[69.69257,18.78199],[69.69248,18.78105],[69.69272,18.77984],[69.69312,18.77895],[69.69306,18.77802],[69.69336,18.77688],[69.69372,18.77493],[69.69378,18.77418],[69.69425,18.77395],[69.6946,18.77327],[69.69484,18.77219],[69.695,18.77075],[69.69574,18.76954],[69.69604,18.76898],[69.69636,18.76773],[69.69659,18.76672],[69.6971,18.76539],[69.69765,18.76411],[69.69835,18.76174],[69.69879,18.76074],[69.70007,18.7567],[69.70041,18.7548],[69.70063,18.75342],[69.7008,18.75207],[69.70115,18.7519],[69.70146,18.75255]],
+ 1365622091:[[69.64857,18.48208],[69.64948,18.48133],[69.65194,18.4818],[69.65569,18.47998],[69.65852,18.47751],[69.65989,18.47481],[69.66178,18.47474],[69.6626,18.47454],[69.66391,18.47026],[69.66471,18.46707],[69.66638,18.46554],[69.6689,18.46013],[69.67138,18.46037],[69.67355,18.45787],[69.67408,18.45424],[69.67407,18.44762],[69.67497,18.44567]],
+ 1371236252:[[69.62506,19.59539],[69.62547,19.58942],[69.62571,19.58498],[69.62564,19.58263],[69.6254,19.57991],[69.62506,19.57582],[69.62465,19.57293],[69.62428,19.57069],[69.6237,19.56943],[69.62324,19.56872],[69.62293,19.56719],[69.62301,19.56504],[69.62206,19.56292],[69.62142,19.56011],[69.62091,19.5573],[69.62081,19.55484],[69.62065,19.55177],[69.62079,19.54934],[69.62081,19.54853],[69.6196,19.5479],[69.61965,19.54324],[69.61943,19.54177],[69.6188,19.53991],[69.61802,19.53823],[69.61686,19.53448],[69.61518,19.53111],[69.61365,19.52824],[69.61211,19.52393],[69.61169,19.52178],[69.61043,19.52181],[69.60953,19.5217],[69.6088,19.52191],[69.60819,19.52202],[69.60746,19.522],[69.60644,19.52056],[69.60441,19.51846],[69.60349,19.51726],[69.60205,19.51513],[69.60129,19.51302],[69.6001,19.51055],[69.59945,19.50896],[69.59775,19.50692],[69.59702,19.50599],[69.59635,19.5048],[69.5956,19.50363],[69.59437,19.50058],[69.59377,19.49922],[69.59371,19.49904]],
+ 1365622087:[[69.56717,20.18549],[69.56674,20.18203],[69.5652,20.17901],[69.56558,20.1769],[69.56561,20.16822],[69.56603,20.16509],[69.56598,20.16057],[69.56661,20.15877],[69.566,20.15579],[69.56616,20.15128],[69.56646,20.14617],[69.56687,20.13984],[69.56803,20.12846],[69.56801,20.12425],[69.56801,20.12261],[69.5703,20.12296],[69.57235,20.12294],[69.57321,20.12296],[69.57355,20.11888],[69.5733,20.11289]],
+ 1365624329:[[69.62926,20.16806],[69.62743,20.17158],[69.62593,20.17956],[69.62489,20.18766],[69.62406,20.19349],[69.62237,20.19167],[69.62077,20.18974],[69.61912,20.1887],[69.61858,20.19094],[69.61862,20.19452],[69.61855,20.19811],[69.61759,20.20152],[69.61528,20.20836],[69.61401,20.21014],[69.61302,20.21086],[69.61207,20.21096],[69.6108,20.21376],[69.60956,20.21794],[69.60861,20.21935],[69.60802,20.22339],[69.60693,20.23026],[69.60598,20.23374],[69.60534,20.24014],[69.60454,20.24414],[69.60379,20.25035],[69.60283,20.25505]]
+};
+
 /* Statuskollar som Claude skriver in (Check status for route). Tomt tills vi kör en. */
 const SAVED_STATUS={};
 
-const REGION={lyngen:{id:3010,name:"Lyngen",varsom:"Lyngen"},ost:{id:3010,name:"Lyngen",varsom:"Lyngen"},kvaloya:{id:3011,name:"Tromsø",varsom:"Tromsø"}};
-const AREA_NAME={lyngen:"Lyngen",ost:"Kåfjord",kvaloya:"Kvaløya"};
+const REGION={lyngen:{id:3010,name:"Lyngen",varsom:"Lyngen"},ost:{id:3010,name:"Lyngen",varsom:"Lyngen"},kvaloya:{id:3011,name:"Tromsø",varsom:"Tromsø"},fastland:{id:3011,name:"Tromsø",varsom:"Tromsø"}};
+const AREA_NAME={lyngen:"Lyngen",ost:"Kåfjord",kvaloya:"Kvaløya",fastland:"Tromsø fastland"};
 const EXP={g:["Låg exponering","tg"],y:["Medel exponering","ty"],r:["Hög exponering","tr"]};
-const BOARD={bra:["Board: bra","tg"],ok:["Board: ok","ty"],jobbig:["Board: jobbig","tr"],"?":["Board: okänt","tn"]};
+const BOARD={bra:["Bräda: bra","tg"],ok:["Bräda: ok","ty"],jobbig:["Bräda: jobbig","tr"],"?":["Bräda: okänt","tn"]};
 const ASP=["N","NO","O","SO","S","SV","V","NV"];
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -613,7 +603,7 @@ async function renderAv(r,date){
       ${dateRow}
       <p class="disc">"Be Claude" kopierar en färdig fråga – klistra in den i Troemse-projektet så hämtar Claude prognos och väder och skriver in en grön/gul/röd-bedömning med tidsstämpel.</p>`;
     $("#askClaude").onclick=()=>{
-      const txt=`Check status for route: ${r.name} (${r.area}). Datum: ${date}. Region Varsom: ${reg.name}. Toppen ca ${d.topE} m, start ca ${d.startE} m, huvudsida ${d.asp}. Kör statuskollen enligt CONTEXT.md och skriv in resultatet i appen.`;
+      const txt=`Statuskoll för rutt: ${r.name} (${r.area}). Datum: ${date}. Region Varsom: ${reg.name}. Toppen ca ${d.topE} m, start ca ${d.startE} m, huvudsida ${d.asp}. Kör statuskollen enligt CONTEXT.md och skriv in resultatet i appen.`;
       (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast("Frågan är kopierad – klistra in den hos Claude")).catch(()=>{prompt("Kopiera frågan:",txt)});
     };
     $("#demoAv").onclick=()=>renderAv(r,"2026-03-12");
@@ -644,7 +634,7 @@ function match(r){
   if(onlyFav&&!favs.has(r.id))return false;
   if(query&&!(r.name+" "+r.area).toLowerCase().includes(query))return false;
   if(filter==="all")return true;
-  if(["lyngen","ost","kvaloya"].includes(filter))return r.region===filter;
+  if(["lyngen","ost","kvaloya","fastland"].includes(filter))return r.region===filter;
   if(filter==="fit")return r.fit===3;
   if(filter==="lag")return r.exp==="g";
   if(filter==="board")return r.board==="bra";
@@ -667,7 +657,7 @@ function renderList(){
       <div class="head"><h3>${esc(r.name)}</h3><div class="loc"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>${esc(r.area)}</div></div>
       <button class="heart ${favs.has(r.id)?"on":""}" aria-label="Favorit"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8 3.3 4.5 7 4.5c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.7 0 6 3.5 4.5 7.2C19.5 16.4 12 21 12 21z"/></svg></button>
       <div class="foot"><p class="desc">${esc(r.desc)}</p>
-        <div class="pills"><span class="pill">Passar oss <span class="fitbar">${[1,2,3].map(n=>`<i class="${n<=r.fit?"on":""}"></i>`).join("")}</span></span>${avPill(r)}<span class="pill">${BOARD[r.board][0].replace("Board: ","🏂 ")}</span></div></div>`;
+        <div class="pills"><span class="pill">Passar oss <span class="fitbar">${[1,2,3].map(n=>`<i class="${n<=r.fit?"on":""}"></i>`).join("")}</span></span>${avPill(r)}<span class="pill">${BOARD[r.board][0].replace("Bräda: ","🏂 ")}</span></div></div>`;
     el.onclick=e=>{if(e.target.closest(".heart")){e.stopPropagation();favs.has(r.id)?favs.delete(r.id):favs.add(r.id);saveFavs();e.target.closest(".heart").classList.toggle("on");return}location.hash=r.id};
     L.appendChild(el);io.observe(el);
   });
@@ -687,6 +677,7 @@ let map=null,cur=null,spinning=false,spinRAF=null,mapReady=false;
 const STYLE={version:8,
   glyphs:"https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
   sources:{
+    gps:{type:"raster",tiles:["gpsh://{z}/{x}/{y}"],tileSize:256,maxzoom:18,attribution:"GPS-spår © OpenStreetMap-bidragsgivare"},
     s2:{type:"raster",tiles:["s2://var/{z}/{x}/{y}"],tileSize:256,maxzoom:14,attribution:"Vinterbild: Copernicus Sentinel-2 via Microsoft Planetary Computer"},
     sat:{type:"raster",tiles:["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],tileSize:256,maxzoom:18,attribution:"Bild © Esri, Maxar, Earthstar Geographics"},
     topo:{type:"raster",tiles:["https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png"],tileSize:256,maxzoom:18,attribution:"© Kartverket"},
@@ -699,6 +690,7 @@ const STYLE={version:8,
     {id:"s2",type:"raster",source:"s2",layout:{visibility:"none"}},
     {id:"topo",type:"raster",source:"topo",layout:{visibility:"none"}},
     {id:"slope",type:"raster",source:"slope",layout:{visibility:"none"},paint:{"raster-opacity":0.62}},
+    {id:"gps",type:"raster",source:"gps",paint:{"raster-opacity":0.95}},
     {id:"hs",type:"hillshade",source:"dem",paint:{"hillshade-exaggeration":0.2,"hillshade-shadow-color":"#2a3a52","hillshade-highlight-color":"#ffffff"}}
   ],
   terrain:{source:"dem",exaggeration:1.25},
@@ -713,6 +705,8 @@ function initMap(){
     map.addSource("route",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
     map.addSource("calc",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
     addPathLayers(map,"calc");
+    map.addSource("known",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
+    map.addLayer({id:"known",type:"line",source:"known",layout:{"line-join":"round"},paint:{"line-color":"#8e44d9","line-width":3,"line-dasharray":[2,1.4],"line-opacity":.9}});
     map.addSource("gpx",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
     map.addLayer({id:"route-casing",type:"line",source:"route",paint:{"line-color":"#11161d","line-width":6,"line-opacity":.35}});
     map.addLayer({id:"route",type:"line",source:"route",paint:{"line-color":"#ffffff","line-width":3.5,"line-dasharray":[1.4,1.4]}});
@@ -733,6 +727,7 @@ async function showOnMap(r){
   markers.push(new maplibregl.Marker({element:mk(`<div style="background:#11161d;color:#fff;font:700 12px Montserrat;padding:6px 10px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.3);white-space:nowrap">▲ ${esc(r.name.split(" /")[0])} · ${d.topE} m</div>`),anchor:"bottom",offset:[0,-6]}).setLngLat(top).addTo(map));
   markers.push(new maplibregl.Marker({element:mk(`<div style="background:#3b97d6;color:#fff;font:700 11px Montserrat;padding:5px 9px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.3)">P Start</div>`),anchor:"bottom",offset:[0,-4]}).setLngLat(st).addTo(map));
   map.getSource("calc").setData(EMPTY);
+  const kn=r.osm&&OSM_TRK[r.osm];map.getSource("known").setData(kn?{type:"Feature",geometry:{type:"LineString",coordinates:kn.map(p=>[p[1],p[0]])}}:EMPTY);
   $("#mapnote").textContent="Streckad linje = fågelvägen, inte spåret";
   drawGpx(r);
   if(memCalc[r.id])drawCalcDetail(r,memCalc[r.id]);
@@ -752,6 +747,7 @@ $("#bSpin").onclick=()=>{if(spinning)return stopSpin();spinning=true;$("#bSpin")
 $("#b3d").onclick=()=>{const on=map.getPitch()<5;map.easeTo({pitch:on?64:0,duration:700});map.setTerrain(on?{source:"dem",exaggeration:1.25}:null);$("#b3d").textContent=on?"3D":"2D";$("#b3d").classList.toggle("on",on)};
 $("#bFit").onclick=async()=>{const r=ROUTES.find(x=>x.id===cur);fitRoute(r,await derive(r),false)};
 $("#layers").onclick=e=>{const b=e.target.closest("button");if(!b)return;const l=b.dataset.l;
+  if(l==="gps"){const on=!b.classList.contains("on");b.classList.toggle("on",on);map.setLayoutProperty("gps","visibility",on?"visible":"none");return}
   if(l==="slope"){const on=!b.classList.contains("on");b.classList.toggle("on",on);map.setLayoutProperty("slope","visibility",on?"visible":"none");$("#legend").classList.toggle("on",on);return}
   document.querySelectorAll('#layers button:not([data-l="slope"])').forEach(x=>x.classList.toggle("on",x===b));
   ["s2","sat","topo"].forEach(id=>map.setLayoutProperty(id,"visibility",l===id?"visible":"none"));
@@ -799,7 +795,49 @@ async function kvDemTile(params,ac){
 }
 function regProtocols(){
   if(window._protoOK)return;window._protoOK=true;
-  maplibregl.addProtocol("s2",s2Tile);maplibregl.addProtocol("kvdem",kvDemTile);
+  maplibregl.addProtocol("s2",s2Tile);maplibregl.addProtocol("kvdem",kvDemTile);maplibregl.addProtocol("gpsh",gpsHeatTile);
+}
+
+/* Spår-lagret: OSM:s GPS-spår som tjocka magentarosa linjer (täta spår blir mörkare).
+   Spår i dalbottnar/på vägar döljs: en pixel visas bara om marken där ligger minst
+   TRACE_MIN_RISE m över lägsta punkten inom TRACE_RADIUS m (alltså på väg upp mot en topp). */
+const TRACE_MIN_RISE=120,TRACE_RADIUS=1500,reliefCache=new Map();
+function reliefTile(zc,x,y){
+  const key=zc+"/"+x+"/"+y;
+  if(!reliefCache.has(key))reliefCache.set(key,(async()=>{
+    const T={};await Promise.all([-1,0,1].flatMap(dy=>[-1,0,1].map(dx=>loadTile(zc,x+dx,y+dy).then(t=>{T[dx+","+dy]=t}))));
+    const C=T["0,0"];if(!C)return null;
+    const N=192,D=new Float32Array(N*N);                // 3x3 rutor, nedskalat 4x (min per 4x4-block)
+    for(let j=0;j<N;j++)for(let i=0;i<N;i++){const t=T[(Math.floor(i/64)-1)+","+(Math.floor(j/64)-1)]||C;let m=1e9;
+      const bx=(i%64)*4,by=(j%64)*4;for(let v=0;v<4;v++)for(let u=0;u<4;u++){const e=t[(by+v)*256+bx+u];if(e<m)m=e}D[j*N+i]=m}
+    const lat=y2lat(y+.5,zc),mpp=156543.03*Math.cos(lat*Math.PI/180)/2**zc*4,R=Math.max(1,Math.ceil(TRACE_RADIUS/mpp));
+    const H=new Float32Array(N*N),M=new Float32Array(N*N);
+    for(let j=0;j<N;j++)for(let i=0;i<N;i++){let m=1e9;for(let k=Math.max(0,i-R);k<=Math.min(N-1,i+R);k++){const v=D[j*N+k];if(v<m)m=v}H[j*N+i]=m}
+    for(let j=0;j<N;j++)for(let i=0;i<N;i++){let m=1e9;for(let k=Math.max(0,j-R);k<=Math.min(N-1,j+R);k++){const v=H[k*N+i];if(v<m)m=v}M[j*N+i]=m}
+    const Mc=new Float32Array(64*64);for(let j=0;j<64;j++)for(let i=0;i<64;i++)Mc[j*64+i]=M[(j+64)*N+i+64];
+    return {E:C,M:Mc};
+  })());
+  return reliefCache.get(key);
+}
+async function gpsHeatTile(params,ac){
+  const [z,x,y]=params.url.replace("gpsh://","").split("/");
+  const r=await fetch(`https://gps-tile.openstreetmap.org/lines/${z}/${x}/${y}.png`,{signal:ac&&ac.signal});if(!r.ok)throw new Error("HTTP "+r.status);
+  const bm=await createImageBitmap(await r.blob());
+  const c=typeof OffscreenCanvas!=="undefined"?new OffscreenCanvas(256,256):Object.assign(document.createElement("canvas"),{width:256,height:256});
+  const g=c.getContext("2d",{willReadFrequently:true});g.drawImage(bm,0,0);const im=g.getImageData(0,0,256,256),d=im.data;
+  // tjockare linjer: största alfa i 3x3-grannskapet
+  const A=new Uint8Array(65536);for(let i=0;i<65536;i++)A[i]=d[i*4+3];
+  if(+z>=9){const zc=Math.min(+z,12),f=2**(+z-zc),rx=Math.floor(+x/f),ry=Math.floor(+y/f),rel=await reliefTile(zc,rx,ry);
+    if(rel)for(let py=0;py<256;py++)for(let px=0;px<256;px++){const q=py*256+px;if(!A[q])continue;
+      const X=Math.min(255,Math.floor(((+x-rx*f)*256+px+.5)/f)),Y=Math.min(255,Math.floor(((+y-ry*f)*256+py+.5)/f));
+      if(rel.E[Y*256+X]-rel.M[(Y>>2)*64+(X>>2)]<TRACE_MIN_RISE)A[q]=0}}
+  for(let py=0;py<256;py++)for(let px=0;px<256;px++){let a=0;
+    for(let dy=-1;dy<=1;dy++){const yy=py+dy;if(yy<0||yy>255)continue;for(let dx=-1;dx<=1;dx++){const xx=px+dx;if(xx<0||xx>255)continue;const v=A[yy*256+xx];if(v>a)a=v}}
+    const i=(py*256+px)*4;if(!a){d[i+3]=0;continue}const k=Math.min(1,a/110);
+    d[i]=255;d[i+1]=Math.round(60-60*k);d[i+2]=Math.round(220-90*k);d[i+3]=Math.min(255,Math.round(150+a*2))}
+  g.putImageData(im,0,0);
+  const blob=c.convertToBlob?await c.convertToBlob({type:"image/png"}):await new Promise(res=>c.toBlob(res,"image/png"));
+  return {data:await blob.arrayBuffer()};
 }
 
 /* =========================================================
@@ -909,7 +947,9 @@ async function openDetail(r){
   $("#dFitWhy").textContent=`${expWhy} ${r.boardNote}${r.storm?" Funkar som stormdagsalternativ.":""}`;
   $("#dTags").innerHTML=[EXP[r.exp],BOARD[r.board]].map(x=>`<span class="tag ${x[1]}">${x[0]}</span>`).join("")+(r.storm?'<span class="tag tg">Stormdag</span>':"")+(r.unsure?'<span class="tag tn">Topp-position ej verifierad</span>':"");
   $("#dDesc").textContent=r.desc;
-  $("#dSrc").innerHTML="Källa: "+r.src.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${esc(s[0])}</a>`).join(" · ");
+  $("#dSrc").innerHTML="Källa: "+r.src.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${esc(s[0])}</a>`).join(" · ")
+    +`<br>Var folk åker: <a href="https://www.strava.com/maps/global-heatmap?sport=BackcountrySki&style=dark#14/${r.s[0]}/${r.s[1]}" target="_blank" rel="noopener">Stravas värmekarta, topptur</a> (kräver Strava-inloggning)`
+    +(r.osm?" · Vägen följer ett skidspår inritat i OpenStreetMap.":"")+(r.unsure?" · Startpunkten är ungefärlig.":"");
   ["#sTop","#sGain","#sLen","#sAsp"].forEach(s=>$(s).textContent="…");$("#sCalc").textContent="";
   $("#rWho").value=store.get("who","");renderRatings(r);
   const ss=SAVED_STATUS[r.id];$("#savedStatus").style.display=ss?"":"none";
@@ -955,7 +995,7 @@ function routerCore(){
     }
     return S;
   }
-  function cost(up,d,dz,sm,eB){
+  function cost(up,d,dz,sm,eB,tr){
     let c;
     if(up){
       if(dz>=0){
@@ -977,9 +1017,10 @@ function routerCore(){
       }
     }
     if(eB<0.5)c*=40;                                   // hav
+    if(tr)c*=up?(tr>1?0.35:0.6):(tr>1?0.5:0.8);        // följ spår där folk gått/åkt (2 = inritat skidspår)
     return c;
   }
-  function run({E,w,h,cell,segs}){
+  function run({E,w,h,cell,segs,T}){
     const n=w*h,S=slopes(E,w,h,cell);
     const g=new Float64Array(n),from=new Int32Array(n),closed=new Uint8Array(n);
     const paths=[];
@@ -1001,7 +1042,7 @@ function routerCore(){
           const nb=ny*w+nx;if(closed[nb])continue;
           let sm=sc>S[nb]?sc:S[nb];
           if(q>=8){const m=(cy+Math.trunc(dy/2))*w+cx+Math.trunc(dx/2);if(S[m]>sm)sm=S[m]}
-          const cst=cost(up,Math.hypot(dx,dy)*cell,E[nb]-ec,sm,E[nb]);
+          const cst=cost(up,Math.hypot(dx,dy)*cell,E[nb]-ec,sm,E[nb],T?T[nb]:0);
           if(cst===Infinity)continue;
           const ng=gc+cst;
           if(ng<g[nb]){g[nb]=ng;from[nb]=c;push(nb,ng+H(nb))}
@@ -1028,7 +1069,7 @@ function runRouter(data){
   return new Promise((res,rej)=>{const id=++rwId;rwP[id]={res,rej,data};RW.postMessage({...data,id})});
 }
 
-const RZ=13,CALCV=2;
+const RZ=13,CALCV=3;
 async function buildGrid(pts){
   const P=pts.map(([lat,lon])=>[lon2x(lon,RZ)*256,lat2y(lat,RZ)*256]);
   const latc=pts.reduce((a,p)=>a+p[0],0)/pts.length;
@@ -1052,7 +1093,7 @@ async function buildGrid(pts){
     for(let i=0;i<w;i++){const px=Math.floor(x0+i*step+step/2),t=tiles[(px>>8)+","+ty];E[j*w+i]=t?t[oy*256+(px&255)]:0}}
   const cellOf=([lat,lon])=>{const i=Math.min(w-1,Math.max(0,Math.floor((lon2x(lon,RZ)*256-x0)/step))),j=Math.min(h-1,Math.max(0,Math.floor((lat2y(lat,RZ)*256-y0)/step)));return j*w+i};
   const ll=k=>{const i=k%w,j=(k/w)|0;return [+x2lon((x0+i*step+step/2)/256,RZ).toFixed(5),+y2lat((y0+j*step+step/2)/256,RZ).toFixed(5)]};
-  return {E,w,h,cell:mpp*step,cellOf,ll,src:"aws"};
+  return {E,w,h,cell:mpp*step,cellOf,ll,src:"aws",x0,y0,step};
 }
 function gridFns(x0,y0,w,h,step){
   const cellOf=([lat,lon])=>{const i=Math.min(w-1,Math.max(0,Math.floor((lon2x(lon,RZ)*256-x0)/step))),j=Math.min(h-1,Math.max(0,Math.floor((lat2y(lat,RZ)*256-y0)/step)));return j*w+i};
@@ -1075,7 +1116,7 @@ async function kvGrid(x0,y0,x1,y1,mpp){
   for(let j=0;j<h;j++)for(let i=0;i<w;i++){let sum=0,n=0;
     for(let dj=-1;dj<=1;dj++){const jj=j+dj;if(jj<0||jj>=h)continue;for(let di=-1;di<=1;di++){const ii=i+di;if(ii<0||ii>=w)continue;sum+=E[jj*w+ii];n++}}
     F[j*w+i]=E[j*w+i]<0.5?E[j*w+i]:sum/n}
-  return {E:F,w,h,cell:mpp*step,...gridFns(x0,y0,w,h,step),src:"kv"};
+  return {E:F,w,h,cell:mpp*step,...gridFns(x0,y0,w,h,step),src:"kv",x0,y0,step};
 }
 function smoothLine(c){
   if(c.length<4)return c;
@@ -1083,16 +1124,38 @@ function smoothLine(c){
   for(let pass=0;pass<2;pass++){const b=a.map(p=>p.slice());for(let k=1;k<a.length-1;k++){b[k][0]=+((a[k-1][0]+a[k][0]+a[k+1][0])/3).toFixed(5);b[k][1]=+((a[k-1][1]+a[k][1]+a[k+1][1])/3).toFixed(5)}a=b}
   return a;
 }
+/* Spårgrid: 1 = GPS-spår i OpenStreetMap (folk har gått/åkt här, alla årstider), 2 = inritat skidspår */
+const gpsTileCache=new Map();
+function gpsTile(x,y){const k=x+","+y;if(!gpsTileCache.has(k))gpsTileCache.set(k,fetch(`https://gps-tile.openstreetmap.org/lines/${RZ}/${x}/${y}.png`)
+  .then(r=>r.ok?r.blob():null).then(b=>b?createImageBitmap(b):null).then(bm=>{if(!bm)return null;const c=document.createElement("canvas");c.width=c.height=256;const g=c.getContext("2d",{willReadFrequently:true});g.drawImage(bm,0,0);
+    const d=g.getImageData(0,0,256,256).data,a=new Uint8Array(65536);for(let i=0;i<65536;i++)a[i]=d[i*4+3];return a}).catch(()=>null));return gpsTileCache.get(k)}
+async function traceGrid(G,osmLines){
+  const {w,h,x0,y0,step}=G,T=new Uint8Array(w*h);
+  const tx0=Math.floor(x0/256),ty0=Math.floor(y0/256),tx1=Math.floor((x0+w*step)/256),ty1=Math.floor((y0+h*step)/256);
+  const tiles={},jobs=[];for(let x=tx0;x<=tx1;x++)for(let y=ty0;y<=ty1;y++)jobs.push(gpsTile(x,y).then(a=>{tiles[x+","+y]=a}));
+  await Promise.all(jobs);
+  const A=(px,py)=>{const t=tiles[(px>>8)+","+(py>>8)];return t?t[(py&255)*256+(px&255)]:0};
+  for(let j=0;j<h;j++)for(let i=0;i<w;i++){const cx=Math.floor(x0+(i+.5)*step),cy=Math.floor(y0+(j+.5)*step);let m=0;
+    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const v=A(cx+dx,cy+dy);if(v>m)m=v}
+    if(m>20)T[j*w+i]=1}
+  for(const L of osmLines)for(let k=1;k<L.length;k++){
+    const a=[lon2x(L[k-1][1],RZ)*256,lat2y(L[k-1][0],RZ)*256],b=[lon2x(L[k][1],RZ)*256,lat2y(L[k][0],RZ)*256];
+    const n=Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/step*2)+1;
+    for(let q=0;q<=n;q++){const px=a[0]+(b[0]-a[0])*q/n,py=a[1]+(b[1]-a[1])*q/n,ci=Math.floor((px-x0)/step),cj=Math.floor((py-y0)/step);
+      for(let dj=-2;dj<=2;dj++)for(let di=-2;di<=2;di++){const ii=ci+di,jj=cj+dj;if(ii>=0&&jj>=0&&ii<w&&jj<h)T[jj*w+ii]=2}}}
+  return T;
+}
 /* pts: [[lat,lon],…], over: {segIndex:"up"|"down"} (null = automatiskt vid högsta punkten) */
-async function computeRoute(pts,over){
+async function computeRoute(pts,over,osmLines){
   if(pts.length<2)throw new Error("Minst två punkter behövs.");
   const G=await buildGrid(pts);
+  try{G.T=await traceGrid(G,osmLines||[])}catch(e){G.T=null}
   const cells=pts.map(G.cellOf),el=cells.map(k=>G.E[k]);
   let hiI=0;el.forEach((e,i)=>{if(e>el[hiI])hiI=i});
   const auto=pts.slice(1).map((_,i)=>i<hiI?"up":"down");
   const modes=auto.map((m,i)=>(over&&over[i])||m);
   const segs=modes.map((m,i)=>({a:cells[i],b:cells[i+1],mode:m}));
-  const {paths}=await runRouter({E:G.E,w:G.w,h:G.h,cell:G.cell,segs});
+  const {paths}=await runRouter({E:G.E,w:G.w,h:G.h,cell:G.cell,segs,T:G.T});
   const legs=paths.map((p,i)=>{
     if(!p)throw new Error(`Hittade ingen rimlig väg mellan punkt ${i+1} och ${i+2}.`);
     const ix=[...p.idx];
@@ -1144,7 +1207,7 @@ function calcStats(res){
 const EMPTY={type:"FeatureCollection",features:[]};
 const KCOL={up:"#2f6fdc",down:"#e0342a",ride:"#e0342a",flat:"#ffd23f",mot:"#ff8a2b"};
 const PCOL=["match",["get","k"],"up",KCOL.up,"flat",KCOL.flat,"mot",KCOL.mot,KCOL.down];
-const LEGEND=`<div class="leg"><span><i style="background:${KCOL.up}"></i>Upp</span><span><i style="background:${KCOL.down}"></i>Ned</span><span><i style="background:${KCOL.flat}"></i>Flackt – board kan behöva gå</span><span><i style="background:${KCOL.mot}"></i>Motlut</span></div>`;
+const LEGEND=`<div class="leg"><span><i style="background:${KCOL.up}"></i>Upp</span><span><i style="background:${KCOL.down}"></i>Ned</span><span><i style="background:${KCOL.flat}"></i>Flackt – brädan kan behöva gå</span><span><i style="background:${KCOL.mot}"></i>Motlut</span></div>`;
 const CALC_DISC="Beräknat från Kartverkets höjddata (ca 5 m rutnät). Uppför hålls spåret under ca 16–20° i färdriktningen och terräng över 30° undviks så långt det går. Nedför följer vägen fallinjen, och terräng över 35° undviks. Höjddata vet inget om skavlar, block, skog, glaciärsprickor eller dagens snö. Det här är beslutsstöd, inte beslut.";
 const fmtM=m=>m>=1000?(m/1000).toFixed(1).replace(".",",")+" km":Math.round(m/10)*10+" m";
 const fmtT=h=>{const m=Math.round(h*60/10)*10;return m<60?m+" min":Math.floor(m/60)+" h"+(m%60?" "+m%60+" min":"")};
@@ -1181,7 +1244,7 @@ function resHTML(res,cid){
   if(hasDown){
     flat=s.flats.length?`<b>${fmtM(s.flat)} flackt eller motlut</b> på nedfarten. Längst: ${s.flats.slice(0,3).map(f=>`${fmtM(f.len)} ${f.k==="mot"?"motlut":"flackt"} (${f.e0}→${f.e1} m)`).join(" · ")}.`
       :s.flat>0?`Bara korta flacka partier, ${fmtM(s.flat)} totalt.`:"Inga flacka partier hittades.";
-    flat=`<div class="flatinfo"><span class="tag ${{bra:"tg",ok:"ty",jobbig:"tr"}[s.board]}">🏂 Board: ${s.board} (beräknat)</span><p class="p" style="margin-top:6px;font-size:13.5px">${flat}</p></div>`;
+    flat=`<div class="flatinfo"><span class="tag ${{bra:"tg",ok:"ty",jobbig:"tr"}[s.board]}">🏂 Bräda: ${s.board} (beräknat)</span><p class="p" style="margin-top:6px;font-size:13.5px">${flat}</p></div>`;
   }
   const warn=s.steep>=20?`<div class="flatinfo"><span class="tag tr">⚠ Ca ${fmtM(s.steep)} brantare än 40°</span><p class="p" style="margin-top:6px;font-size:13.5px">Vägen kommer inte runt allt brant här – räkna med att gå eller klättra, och kolla terrängen noga.</p></div>`:"";
   return `<div class="rs">
@@ -1222,7 +1285,7 @@ function calcKnown(r){
   if(calcP[r.id])return calcP[r.id];
   const c=store.get(`calc${CALCV}-${r.id}`,null);
   if(c&&c.v===CALCV){memCalc[r.id]=hydrate(c);return Promise.resolve(memCalc[r.id])}
-  return calcP[r.id]=derive(r).then(d=>computeRoute([r.t,d.top,r.t],null)).then(res=>{memCalc[r.id]=res;store.set(`calc${CALCV}-${r.id}`,packRes(res));return res}).finally(()=>{delete calcP[r.id]});
+  return calcP[r.id]=derive(r).then(d=>computeRoute([r.t,d.top,r.t],null,r.osm&&OSM_TRK[r.osm]?[OSM_TRK[r.osm]]:[])).then(res=>{memCalc[r.id]=res;store.set(`calc${CALCV}-${r.id}`,packRes(res));return res}).finally(()=>{delete calcP[r.id]});
 }
 function resBounds(res){const b=new maplibregl.LngLatBounds();res.legs.forEach(L=>L.c.forEach(p=>b.extend(p)));return b}
 
@@ -1484,7 +1547,7 @@ function renderPanel(err){
     ${LEGEND.replace('</div>',`${osmN?'<span><i style="background:#8e44d9"></i>Känt spår (OSM)</span>':""}<span><i style="background:#00c2b2"></i>Ert GPX-spår</span></div>`)}
     <div class="btnrow"><button class="btn sm" id="ovDraw">Rita egen rutt</button></div>
     ${custom.length?`<div class="mylist" style="margin-top:12px"><div class="small" style="font-weight:700;margin-bottom:4px">MINA RUTTER</div>${custom.map(x=>`<button class="it" data-id="${x.id}"><span>✏️ ${esc(x.name)}</span><span class="small">${x.res?Math.round(calcStats(x.res).gain/10)*10+" hm":""}</span></button>`).join("")}</div>`:""}
-    <p class="disc">Nedfarten är den bästa skidlinjen enligt höjddata. Data om var de flesta faktiskt åker (Strava, FATMAP) är inte öppet tillgänglig. Ladda upp era egna GPX-spår, så syns de här i turkos.</p>`;
+    <p class="disc">Rosa linjer ("Spår") är GPS-spår som folk laddat upp till OpenStreetMap, från alla årstider. Spår i dalbottnar och på vägar är bortfiltrerade, så bara spår på väg upp mot topparna visas. Vägvalet styrs mot dem och mot inritade skidspår (lila). Strava har bättre vinterdata, men den kräver inloggning, så varje tur har en länk dit. Ladda upp era egna GPX-spår, så syns de här i turkos.</p>`;
   $("#ovDraw").onclick=()=>{location.hash="rita"};
   $("#ovInfoX").onclick=()=>{ovInfoHidden=true;store.set("ovInfoHidden",true);renderPanel()};
   P.querySelectorAll(".mylist .it").forEach(b=>b.onclick=()=>selectOv(b.dataset.id));
@@ -1494,6 +1557,7 @@ $("#ovHome").onclick=goHome;
 $("#ovFit").onclick=()=>{if(!omapReady)return;if(drawMode&&plan.pts.length){const b=new maplibregl.LngLatBounds();plan.pts.forEach(p=>b.extend([p[1],p[0]]));omap.fitBounds(b,{padding:padFor(),maxZoom:14})}else if(ovSel)selectOv(ovSel);else fitAll()};
 $("#ov3d").onclick=()=>{if(!omapReady)return;const on=omap.getPitch()<5;omap.easeTo({pitch:on?60:0,duration:700});omap.setTerrain(on?{source:"dem",exaggeration:1.25}:null);$("#ov3d").classList.toggle("on",on)};
 $("#ovLayers").onclick=e=>{const b=e.target.closest("button");if(!b||!omapReady)return;const l=b.dataset.l;
+  if(l==="gps"){const on=!b.classList.contains("on");b.classList.toggle("on",on);omap.setLayoutProperty("gps","visibility",on?"visible":"none");return}
   if(l==="slope"){ovSlope=!ovSlope;b.classList.toggle("on",ovSlope);omap.setLayoutProperty("slope","visibility",ovSlope?"visible":"none");return}
   document.querySelectorAll('#ovLayers button:not([data-l="slope"])').forEach(x=>x.classList.toggle("on",x===b));
   ["s2","sat","topo"].forEach(id=>omap.setLayoutProperty(id,"visibility",l===id?"visible":"none"));
