@@ -678,7 +678,7 @@ const STYLE={version:8,
     sat:{type:"raster",tiles:["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],tileSize:256,maxzoom:18,attribution:"Bild © Esri, Maxar, Earthstar Geographics"},
     topo:{type:"raster",tiles:["https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png"],tileSize:256,maxzoom:18,attribution:"© Kartverket"},
     slope:{type:"raster",tiles:["https://gis3.nve.no/arcgis/rest/services/wmts/Bratthet_2024/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=png32&transparent=true&layers=show:0&f=image"],tileSize:256,attribution:"Bratthet © NVE"},
-    dem:{type:"raster-dem",tiles:["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],tileSize:256,maxzoom:14,encoding:"terrarium",attribution:"Höjd: Mapzen/AWS Terrain Tiles"}
+    dem:{type:"raster-dem",tiles:["kvdem://{z}/{x}/{y}"],tileSize:256,maxzoom:15,encoding:"terrarium",attribution:"Höjd © Kartverket (DTM), utanför Norge Mapzen/AWS"}
   },
   layers:[
     {id:"bg",type:"background",paint:{"background-color":"#cfd7e0"}},
@@ -692,7 +692,7 @@ const STYLE={version:8,
   sky:{}
 };
 function initMap(){
-  if(!window._winterProto){maplibregl.addProtocol("winter",winterTile);window._winterProto=true}
+  regProtocols();
   map=new maplibregl.Map({container:"map",style:STYLE,center:[20.1,69.6],zoom:11,pitch:62,maxPitch:80,attributionControl:{compact:true}});
   map.on("load",()=>{
     mapReady=true;
@@ -744,6 +744,50 @@ $("#layers").onclick=e=>{const b=e.target.closest("button");if(!b)return;const l
   ["winter","sat","topo"].forEach(id=>map.setLayoutProperty(id,"visibility",l===id?"visible":"none"));
   map.setPaintProperty("hs","hillshade-exaggeration",l==="winter"?0.35:0.2)};
 
+
+/* =========================================================
+   KARTVERKETS HÖJDMODELL (DTM, källa 0,25–1 m) från hoydedata.no.
+   Används för 3D-ytan, skuggningen och vägvalet. Där Kartverket saknar
+   data (hav, utanför Norge) fylls rutan från AWS Terrain Tiles.
+   ========================================================= */
+const KV_URL="https://hoydedata.no/arcgis/rest/services/DTM/ImageServer/exportImage",MERC=20037508.342789244,KVZ_MIN=10;
+const tileBBox=(z,x,y)=>{const s=2*MERC/2**z;return [-MERC+x*s,MERC-(y+1)*s,-MERC+(x+1)*s,MERC-y*s]};
+const isND=v=>!(v>-500&&v<9000);
+async function kvFetch(bb,w,h,signal){
+  const u=`${KV_URL}?bbox=${bb.map(v=>v.toFixed(2)).join(",")}&bboxSR=3857&imageSR=3857&size=${w},${h}&format=bsq&pixelType=F32&noData=-9999&interpolation=RSP_BilinearInterpolation&f=image`;
+  const r=await fetch(u,{signal});if(!r.ok)throw new Error("HTTP "+r.status);
+  const buf=await r.arrayBuffer();if(buf.byteLength<w*h*4)throw new Error("Ofullständig höjddata");
+  return new Float32Array(buf,0,w*h);
+}
+/* AWS-höjd för en punkt i z-pixelkoordinater (bilinjärt, från närmaste z<=14) */
+async function awsSampler(z,X0,Y0,X1,Y1){
+  const zd=Math.min(z,14),k=2**(z-zd),tiles={},jobs=[];
+  for(let tx=Math.floor(X0/k/256);tx<=Math.floor(X1/k/256);tx++)for(let ty=Math.floor(Y0/k/256);ty<=Math.floor(Y1/k/256);ty++)
+    jobs.push(loadTile(zd,tx,ty).then(t=>{tiles[tx+","+ty]=t}));
+  await Promise.all(jobs);
+  const px=(X,Y)=>{const tx=Math.floor(X/256),ty=Math.floor(Y/256),t=tiles[tx+","+ty];return t?t[Math.min(255,Math.max(0,Y-ty*256))*256+Math.min(255,Math.max(0,X-tx*256))]:0};
+  return (X,Y)=>{X=X/k-.5;Y=Y/k-.5;const fx=Math.floor(X),fy=Math.floor(Y),ax=X-fx,ay=Y-fy;
+    return px(fx,fy)*(1-ax)*(1-ay)+px(fx+1,fy)*ax*(1-ay)+px(fx,fy+1)*(1-ax)*ay+px(fx+1,fy+1)*ax*ay};
+}
+async function kvDemTile(params,ac){
+  const [z,x,y]=params.url.replace("kvdem://","").split("/").map(Number);
+  let E=null;
+  if(z>=KVZ_MIN){try{E=await kvFetch(tileBBox(z,x,y),256,256,ac&&ac.signal)}catch(e){if(ac&&ac.signal&&ac.signal.aborted)throw e;E=null}}
+  const out=new Float32Array(65536);let nd=0;
+  if(E)for(let i=0;i<65536;i++){const v=E[i];if(isND(v)){out[i]=NaN;nd++}else out[i]=v}else nd=65536;
+  if(nd){const S=await awsSampler(z,x*256,y*256,x*256+256,y*256+256);
+    for(let j=0;j<256;j++)for(let i=0;i<256;i++){const q=j*256+i;if(nd===65536||isNaN(out[q]))out[q]=S(x*256+i+.5,y*256+j+.5)}}
+  const c=typeof OffscreenCanvas!=="undefined"?new OffscreenCanvas(256,256):Object.assign(document.createElement("canvas"),{width:256,height:256});
+  const g=c.getContext("2d"),im=g.createImageData(256,256),o=im.data;
+  for(let i=0;i<65536;i++){const v=Math.max(-32768,Math.min(32767,out[i]))+32768,p=i*4;o[p]=v>>8;o[p+1]=Math.floor(v)&255;o[p+2]=Math.floor((v%1)*256);o[p+3]=255}
+  g.putImageData(im,0,0);
+  const blob=c.convertToBlob?await c.convertToBlob({type:"image/png"}):await new Promise(res=>c.toBlob(res,"image/png"));
+  return {data:await blob.arrayBuffer()};
+}
+function regProtocols(){
+  if(window._protoOK)return;window._protoOK=true;
+  maplibregl.addProtocol("winter",winterTile);maplibregl.addProtocol("kvdem",kvDemTile);
+}
 
 /* =========================================================
    VINTERLÄGE: satellitbilden snötäcks utifrån höjd och lutning.
@@ -864,7 +908,7 @@ function route(){
   if(r)openDetail(r);else{cur=null;stopSpin();$("#detail").classList.remove("on");$("#home").classList.add("on");renderList()}
 }
 /* =========================================================
-   VÄGVAL: A* på ett höjdrutnät (Terrain Tiles z13, ca 13 m/cell).
+   VÄGVAL: A* på ett höjdrutnät (Kartverkets DTM, ca 5 m/cell; reserv AWS z13, ca 13 m/cell).
    Uppför: spåret hålls under ca 16–20° i färdriktningen (sicksack i brant
    terräng) och terräng över 30° straffas hårt. Nedför: fallinje gillas,
    flacka partier straffas (snowboard), terräng över 35° undviks.
@@ -954,7 +998,7 @@ function runRouter(data){
   return new Promise((res,rej)=>{const id=++rwId;rwP[id]={res,rej,data};RW.postMessage({...data,id})});
 }
 
-const RZ=13,CALCV=1;
+const RZ=13,CALCV=2;
 async function buildGrid(pts){
   const P=pts.map(([lat,lon])=>[lon2x(lon,RZ)*256,lat2y(lat,RZ)*256]);
   const latc=pts.reduce((a,p)=>a+p[0],0)/pts.length;
@@ -963,6 +1007,9 @@ async function buildGrid(pts){
   const ext=Math.max(x1-x0,y1-y0)*mpp;
   if(ext>30000)throw new Error("Rutten är för stor – håll punkterna inom 30 km.");
   const m=Math.max(1500,ext*0.3)/mpp;x0-=m;x1+=m;y0-=m;y1+=m;
+  // Kartverket: 5–8 m/cell (max 600 000 celler, ca 2,4 MB per tur). Reserv: AWS z13, ca 13 m/cell.
+  let G=null;try{G=await kvGrid(x0,y0,x1,y1,mpp)}catch(e){G=null}
+  if(G)return G;
   let step=2;while(((x1-x0)/step)*((y1-y0)/step)>450000)step++;
   const w=Math.ceil((x1-x0)/step),h=Math.ceil((y1-y0)/step);
   const tx0=Math.floor(x0/256),tx1=Math.floor((x0+w*step)/256),ty0=Math.floor(y0/256),ty1=Math.floor((y0+h*step)/256);
@@ -975,7 +1022,30 @@ async function buildGrid(pts){
     for(let i=0;i<w;i++){const px=Math.floor(x0+i*step+step/2),t=tiles[(px>>8)+","+ty];E[j*w+i]=t?t[oy*256+(px&255)]:0}}
   const cellOf=([lat,lon])=>{const i=Math.min(w-1,Math.max(0,Math.floor((lon2x(lon,RZ)*256-x0)/step))),j=Math.min(h-1,Math.max(0,Math.floor((lat2y(lat,RZ)*256-y0)/step)));return j*w+i};
   const ll=k=>{const i=k%w,j=(k/w)|0;return [+x2lon((x0+i*step+step/2)/256,RZ).toFixed(5),+y2lat((y0+j*step+step/2)/256,RZ).toFixed(5)]};
-  return {E,w,h,cell:mpp*step,cellOf,ll};
+  return {E,w,h,cell:mpp*step,cellOf,ll,src:"aws"};
+}
+function gridFns(x0,y0,w,h,step){
+  const cellOf=([lat,lon])=>{const i=Math.min(w-1,Math.max(0,Math.floor((lon2x(lon,RZ)*256-x0)/step))),j=Math.min(h-1,Math.max(0,Math.floor((lat2y(lat,RZ)*256-y0)/step)));return j*w+i};
+  const ll=k=>{const i=k%w,j=(k/w)|0;return [+x2lon((x0+i*step+step/2)/256,RZ).toFixed(5),+y2lat((y0+j*step+step/2)/256,RZ).toFixed(5)]};
+  return {cellOf,ll};
+}
+async function kvGrid(x0,y0,x1,y1,mpp){
+  let step=5/mpp;const area=(x1-x0)*(y1-y0);if(area/(step*step)>6e5)step=Math.sqrt(area/6e5);
+  const w=Math.ceil((x1-x0)/step),h=Math.ceil((y1-y0)/step);
+  const pm=2*MERC/(256*2**RZ);                      // meter (webbmercator) per z13-pixel
+  const bb=[-MERC+x0*pm,MERC-(y0+h*step)*pm,-MERC+(x0+w*step)*pm,MERC-y0*pm];
+  const raw=await kvFetch(bb,w,h);
+  const E=new Float32Array(w*h);let nd=0;
+  for(let i=0;i<w*h;i++){const v=raw[i];if(isND(v)){E[i]=NaN;nd++}else E[i]=v}
+  if(nd>0.6*w*h)throw new Error("För lite Kartverket-data här");
+  if(nd){const k=2**(14-RZ),S=await awsSampler(14,x0*k,y0*k,(x0+w*step)*k,(y0+h*step)*k);
+    for(let j=0;j<h;j++)for(let i=0;i<w;i++){const q=j*w+i;if(isNaN(E[q])){const v=S((x0+(i+.5)*step)*k,(y0+(j+.5)*step)*k);E[q]=v<0.5?0:v}}}
+  // En lätt 3x3-utjämning (ca 15 m), så att enstaka block inte räknas som brant terräng
+  const F=new Float32Array(w*h);
+  for(let j=0;j<h;j++)for(let i=0;i<w;i++){let sum=0,n=0;
+    for(let dj=-1;dj<=1;dj++){const jj=j+dj;if(jj<0||jj>=h)continue;for(let di=-1;di<=1;di++){const ii=i+di;if(ii<0||ii>=w)continue;sum+=E[jj*w+ii];n++}}
+    F[j*w+i]=E[j*w+i]<0.5?E[j*w+i]:sum/n}
+  return {E:F,w,h,cell:mpp*step,...gridFns(x0,y0,w,h,step),src:"kv"};
 }
 function smoothLine(c){
   if(c.length<4)return c;
@@ -1045,7 +1115,7 @@ const EMPTY={type:"FeatureCollection",features:[]};
 const KCOL={up:"#2f6fdc",down:"#e0342a",ride:"#e0342a",flat:"#ffd23f",mot:"#ff8a2b"};
 const PCOL=["match",["get","k"],"up",KCOL.up,"flat",KCOL.flat,"mot",KCOL.mot,KCOL.down];
 const LEGEND=`<div class="leg"><span><i style="background:${KCOL.up}"></i>Upp</span><span><i style="background:${KCOL.down}"></i>Ned</span><span><i style="background:${KCOL.flat}"></i>Flackt – board kan behöva gå</span><span><i style="background:${KCOL.mot}"></i>Motlut</span></div>`;
-const CALC_DISC="Beräknat från höjddata (ca 13 m rutnät). Uppför hålls spåret under ca 16–20° i färdriktningen och terräng över 30° undviks så långt det går. Nedför följer vägen fallinjen, och terräng över 35° undviks. Höjddata vet inget om skavlar, block, skog, glaciärsprickor eller dagens snö. Det här är beslutsstöd, inte beslut.";
+const CALC_DISC="Beräknat från Kartverkets höjddata (ca 5 m rutnät). Uppför hålls spåret under ca 16–20° i färdriktningen och terräng över 30° undviks så långt det går. Nedför följer vägen fallinjen, och terräng över 35° undviks. Höjddata vet inget om skavlar, block, skog, glaciärsprickor eller dagens snö. Det här är beslutsstöd, inte beslut.";
 const fmtM=m=>m>=1000?(m/1000).toFixed(1).replace(".",",")+" km":Math.round(m/10)*10+" m";
 const fmtT=h=>{const m=Math.round(h*60/10)*10;return m<60?m+" min":Math.floor(m/60)+" h"+(m%60?" "+m%60+" min":"")};
 function resFeatures(res,rid){
@@ -1166,7 +1236,7 @@ function openOverview(draw){
 function closeOverview(){$("#mapview").classList.remove("on");document.body.style.overflow=""}
 
 function initOmap(){
-  if(!window._winterProto){maplibregl.addProtocol("winter",winterTile);window._winterProto=true}
+  regProtocols();
   const st=JSON.parse(JSON.stringify(STYLE));
   st.sources.osm={type:"geojson",data:EMPTY,attribution:"Turspår © OpenStreetMap"};
   omap=new maplibregl.Map({container:"omap",style:st,center:[19.6,69.65],zoom:8.4,pitch:55,maxPitch:80,attributionControl:{compact:true}});
