@@ -618,8 +618,8 @@ async function renderWx(r){
     const w=await fetch(u).then(x=>x.json());if(cur!==r.id)return;
     const D=w.daily,news=D.snowfall_sum.slice(0,3).reduce((a,b)=>a+(b||0),0);
     const days=[3,4,5].map(i=>({dn:new Date(D.time[i]).toLocaleDateString("sv-SE",{weekday:"short"}),tmax:Math.round(D.temperature_2m_max[i]),tmin:Math.round(D.temperature_2m_min[i]),wind:Math.round(D.wind_speed_10m_max[i]),gust:Math.round(D.wind_gusts_10m_max[i]),snow:D.snowfall_sum[i]}));
-    box.innerHTML=`<div class="wx">${days.map((x,i)=>`<div class="d"><div class="dn">${i===0?"Idag":x.dn}</div><div class="tt">${x.tmin}° / ${x.tmax}°</div><div class="mi"><span>Vind ${x.wind} (${x.gust}) m/s</span><span>Snö ${x.snow?x.snow.toFixed(1):0} cm</span></div></div>`).join("")}</div>
-      <p class="small" style="margin:10px 0 0">Nysnö senaste 3 dygnen: <b>${news.toFixed(1)} cm</b> · modell för ${d.topE} m ö.h. (Open-Meteo). <a href="https://www.yr.no/nb/s%C3%B8k?q=${encodeURIComponent(r.name)}" target="_blank" rel="noopener">Yr</a></p>`;
+    box.innerHTML=`<div class="wx">${days.map((x,i)=>`<div class="d"><div class="dn">${i===0?"Idag":x.dn}</div><div class="tt">${x.tmin}° / ${x.tmax}°</div><div class="mi"><span>Vind ${x.wind} (${x.gust}) m/s</span><span>Snö ${x.snow?x.snow.toFixed(1).replace(".",","):0} cm</span></div></div>`).join("")}</div>
+      <p class="small" style="margin:10px 0 0">Nysnö senaste 3 dygnen: <b>${news.toFixed(1).replace(".",",")} cm</b> · modell för ${d.topE} m ö.h. (Open-Meteo). <a href="https://www.yr.no/nb/s%C3%B8k?q=${encodeURIComponent(r.name)}" target="_blank" rel="noopener">Yr</a></p>`;
   }catch(e){box.innerHTML='<p class="p small">Kunde inte hämta väder just nu. <a href="https://www.yr.no" target="_blank" rel="noopener">Öppna Yr</a></p>'}
 }
 
@@ -939,7 +939,7 @@ $("#rSave").onclick=()=>{const r=ROUTES.find(x=>x.id===cur);if(!draft.snow||!dra
 async function openDetail(r){
   cur=r.id;stopSpin();
   $("#home").classList.remove("on");$("#detail").classList.add("on");window.scrollTo(0,0);
-  $("#dName").textContent=r.name;$("#dArea").textContent=r.area+" · "+AREA_NAME[r.region];
+  $("#dName").textContent=r.name;$("#dArea").textContent=r.area.includes(AREA_NAME[r.region])?r.area:r.area+" · "+AREA_NAME[r.region];
   $("#dFav").classList.toggle("on",favs.has(r.id));
   $("#dFit").innerHTML=[1,2,3].map(n=>`<i class="${n<=r.fit?"on":""}"></i>`).join("");
   $("#dFitTxt").textContent=["","Nischad – kräver rätt dag","Bra alternativ","Mycket bra match"][r.fit];
@@ -1518,7 +1518,7 @@ function renderPanel(err){
     const res=r?memCalc[r.id]:c.res,name=r?r.name:c.name;
     const near=r&&osmNear(r.s);
     P.innerHTML=`<div class="ovh"><b>${esc(name)}</b><button class="x" id="ovX" aria-label="Stäng">×</button></div>
-      <div class="small">${r?esc(r.area+" · "+AREA_NAME[r.region]):"Egen rutt"}</div>
+      <div class="small">${r?esc(r.area.includes(AREA_NAME[r.region])?r.area:r.area+" · "+AREA_NAME[r.region]):"Egen rutt"}</div>
       ${res?resHTML(res,"ovprof")+LEGEND:err?`<p class="p" style="margin-top:10px;color:var(--r)">${esc(err)}</p>`:'<p class="p small" style="margin-top:12px"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> Räknar ut väg upp och bästa nedfart…</p>'}
       ${near?'<p class="small" style="margin:8px 0 0">Lila streckad linje i närheten = känt turspår i OpenStreetMap.</p>':""}
       <div class="btnrow">${r?`<button class="btn dark sm" id="ovOpen">Öppna turen</button><button class="btn ghost sm" id="ovEdit">Ändra rutten</button>`
