@@ -798,15 +798,19 @@ function regProtocols(){
   maplibregl.addProtocol("s2",s2Tile);maplibregl.addProtocol("kvdem",kvDemTile);maplibregl.addProtocol("gpsh",gpsHeatTile);
 }
 
-/* Spår-lagret: OSM:s GPS-spår förstärkta till vita linjer (täta spår blir ljust gula) */
+/* Spår-lagret: OSM:s GPS-spår som tjocka magentarosa linjer (täta spår blir mörkare) */
 async function gpsHeatTile(params,ac){
   const [z,x,y]=params.url.replace("gpsh://","").split("/");
   const r=await fetch(`https://gps-tile.openstreetmap.org/lines/${z}/${x}/${y}.png`,{signal:ac&&ac.signal});if(!r.ok)throw new Error("HTTP "+r.status);
   const bm=await createImageBitmap(await r.blob());
   const c=typeof OffscreenCanvas!=="undefined"?new OffscreenCanvas(256,256):Object.assign(document.createElement("canvas"),{width:256,height:256});
   const g=c.getContext("2d",{willReadFrequently:true});g.drawImage(bm,0,0);const im=g.getImageData(0,0,256,256),d=im.data;
-  for(let i=0;i<d.length;i+=4){const a=d[i+3];if(!a)continue;const k=Math.min(1,a/110);
-    d[i]=255;d[i+1]=255;d[i+2]=Math.round(255-80*k);d[i+3]=Math.min(255,Math.round(110+a*2))}
+  // tjockare linjer: största alfa i 3x3-grannskapet
+  const A=new Uint8Array(65536);for(let i=0;i<65536;i++)A[i]=d[i*4+3];
+  for(let py=0;py<256;py++)for(let px=0;px<256;px++){let a=0;
+    for(let dy=-1;dy<=1;dy++){const yy=py+dy;if(yy<0||yy>255)continue;for(let dx=-1;dx<=1;dx++){const xx=px+dx;if(xx<0||xx>255)continue;const v=A[yy*256+xx];if(v>a)a=v}}
+    const i=(py*256+px)*4;if(!a){d[i+3]=0;continue}const k=Math.min(1,a/110);
+    d[i]=255;d[i+1]=Math.round(60-60*k);d[i+2]=Math.round(220-90*k);d[i+3]=Math.min(255,Math.round(150+a*2))}
   g.putImageData(im,0,0);
   const blob=c.convertToBlob?await c.convertToBlob({type:"image/png"}):await new Promise(res=>c.toBlob(res,"image/png"));
   return {data:await blob.arrayBuffer()};
@@ -1519,7 +1523,7 @@ function renderPanel(err){
     ${LEGEND.replace('</div>',`${osmN?'<span><i style="background:#8e44d9"></i>Känt spår (OSM)</span>':""}<span><i style="background:#00c2b2"></i>Ert GPX-spår</span></div>`)}
     <div class="btnrow"><button class="btn sm" id="ovDraw">Rita egen rutt</button></div>
     ${custom.length?`<div class="mylist" style="margin-top:12px"><div class="small" style="font-weight:700;margin-bottom:4px">MINA RUTTER</div>${custom.map(x=>`<button class="it" data-id="${x.id}"><span>✏️ ${esc(x.name)}</span><span class="small">${x.res?Math.round(calcStats(x.res).gain/10)*10+" hm":""}</span></button>`).join("")}</div>`:""}
-    <p class="disc">Ljusa linjer ("Spår") är GPS-spår som folk laddat upp till OpenStreetMap, från alla årstider. Vägvalet styrs mot dem och mot inritade skidspår (lila). Strava har bättre vinterdata, men den kräver inloggning, så varje tur har en länk dit. Ladda upp era egna GPX-spår, så syns de här i turkos.</p>`;
+    <p class="disc">Rosa linjer ("Spår") är GPS-spår som folk laddat upp till OpenStreetMap, från alla årstider. Vägvalet styrs mot dem och mot inritade skidspår (lila). Strava har bättre vinterdata, men den kräver inloggning, så varje tur har en länk dit. Ladda upp era egna GPX-spår, så syns de här i turkos.</p>`;
   $("#ovDraw").onclick=()=>{location.hash="rita"};
   $("#ovInfoX").onclick=()=>{ovInfoHidden=true;store.set("ovInfoHidden",true);renderPanel()};
   P.querySelectorAll(".mylist .it").forEach(b=>b.onclick=()=>selectOv(b.dataset.id));
