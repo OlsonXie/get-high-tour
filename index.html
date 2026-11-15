@@ -82,6 +82,20 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .layers{position:absolute;left:14px;bottom:44px;z-index:3;display:flex;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:14px;padding:4px;gap:2px;box-shadow:0 4px 14px rgba(0,0,0,.15)}
 .layers button{padding:8px 9px;border-radius:10px;font-size:12px;font-weight:700;color:#3a4350}
 .layers button.on{background:var(--dark);color:#fff}
+.layers,.ovlay{position:absolute}
+.ovlay{position:relative}
+.lyrtog{display:flex;align-items:center;gap:6px}
+.lyrtog svg.i{width:17px;height:17px}
+.lyropts{display:none}
+.layers.open .lyropts,.ovlay.open .lyropts{display:flex;flex-direction:column;align-items:stretch;gap:2px;position:absolute;left:0;bottom:calc(100% + 6px);min-width:130px;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-radius:14px;padding:4px;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.ovlay.open .lyropts{bottom:auto;top:calc(100% + 6px);left:auto;right:0}
+.lyropts button{text-align:left}
+.lyropts button[data-l=slope],.lyropts button[data-l=gps]{position:relative;padding-left:26px}
+.lyropts button[data-l=slope]::before,.lyropts button[data-l=gps]::before{content:"";position:absolute;left:9px;top:50%;width:11px;height:11px;margin-top:-6px;border-radius:3px;border:1.6px solid currentColor}
+.lyropts button[data-l=slope].on::before,.lyropts button[data-l=gps].on::before{background:currentColor;box-shadow:inset 0 0 0 2px var(--dark)}
+.mapbtn.compass{position:relative;width:44px;padding:0!important}
+.mapbtn.compass .needle{width:32px;height:32px;transition:transform .15s linear}
+
 .s2chip{position:absolute;left:14px;bottom:96px;z-index:3;display:none;align-items:center;gap:8px;flex-wrap:wrap;max-width:calc(100% - 90px);background:rgba(17,22,29,.78);backdrop-filter:blur(8px);color:#fff;font-size:11.5px;font-weight:600;padding:6px 6px 6px 11px;border-radius:12px}
 .s2chip.on{display:flex}
 .s2chip.ov{bottom:auto;left:auto;right:14px;top:calc(70px + env(safe-area-inset-top))}
@@ -263,13 +277,17 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
     <div class="maplegend" id="legend"><span>NVE bratthet:</span><span><b style="background:#f7e04b"></b>27–29°</span><span><b style="background:#f39a25"></b>30–34°</span><span><b style="background:#e3342a"></b>35–39°</span><span><b style="background:#9b3fb5"></b>40°+</span></div>
     <div class="s2chip" id="s2chip"></div>
     <div class="layers" id="layers">
+      <button class="lyrtog" aria-label="Kartlager"><svg class="i" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg><span>Satellit</span></button>
+      <div class="lyropts">
       <button data-l="sat" class="on">Satellit</button>
       <button data-l="s2">Vinter</button>
       <button data-l="topo">Topo</button>
       <button data-l="slope">Bratthet</button>
       <button data-l="gps" class="on">Spår</button>
+      </div>
     </div>
     <div class="mapctl">
+      <button class="mapbtn compass" id="bNorth" aria-label="Kompass – tryck för norr uppåt"><svg class="needle" viewBox="0 0 24 24"><text x="12" y="5.6" text-anchor="middle" font-size="5.6" font-weight="800" fill="#e3342a" font-family="Montserrat,sans-serif">N</text><path d="M12 6.6l3.3 5.4H8.7z" fill="#e3342a"/><path d="M12 18l-3.3-6h6.6z" fill="#9aa3ad"/><text x="12" y="23" text-anchor="middle" font-size="5" font-weight="700" fill="#6b7480" font-family="Montserrat,sans-serif">S</text></svg></button>
       <button class="mapbtn" id="bFs" aria-label="Helskärm"></button>
       <button class="mapbtn on" id="b3d">3D</button>
       <button class="mapbtn" id="bSpin" aria-label="Flyg runt"><svg class="i" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
@@ -350,10 +368,11 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
     <button class="mapbtn" id="ovBack" aria-label="Tillbaka"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
     <button class="mapbtn" id="ovHome" aria-label="Till startsidan"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
     <div class="ovtitle" id="ovTitle">Karta</div>
-    <div class="ovlay" id="ovLayers"><button data-l="sat" class="on">Satellit</button><button data-l="s2">Vinter</button><button data-l="topo">Topo</button><button data-l="slope">Bratthet</button><button data-l="gps" class="on">Spår</button></div>
+    <div class="ovlay" id="ovLayers"><button class="lyrtog" aria-label="Kartlager"><svg class="i" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg><span>Satellit</span></button><div class="lyropts"><button data-l="sat" class="on">Satellit</button><button data-l="s2">Vinter</button><button data-l="topo">Topo</button><button data-l="slope">Bratthet</button><button data-l="gps" class="on">Spår</button></div></div>
   </div>
   <div class="s2chip ov" id="ovS2chip"></div>
   <div class="ovctl">
+    <button class="mapbtn compass" id="ovNorth" aria-label="Kompass – tryck för norr uppåt"><svg class="needle" viewBox="0 0 24 24"><text x="12" y="5.6" text-anchor="middle" font-size="5.6" font-weight="800" fill="#e3342a" font-family="Montserrat,sans-serif">N</text><path d="M12 6.6l3.3 5.4H8.7z" fill="#e3342a"/><path d="M12 18l-3.3-6h6.6z" fill="#9aa3ad"/><text x="12" y="23" text-anchor="middle" font-size="5" font-weight="700" fill="#6b7480" font-family="Montserrat,sans-serif">S</text></svg></button>
     <button class="mapbtn on" id="ov3d">3D</button>
     <button class="mapbtn" id="ovFit" aria-label="Visa allt"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
   </div>
@@ -697,9 +716,14 @@ const STYLE={version:8,
   terrain:{source:"dem",exaggeration:1.25},
   sky:{}
 };
+/* Kompass: nålen pekar mot norr när kartan vrids; tryck = norr uppåt */
+function wireCompass(M,sel){const b=$(sel);if(!b)return;const n=b.querySelector(".needle");
+  const upd=()=>{n.style.transform=`rotate(${-M.getBearing()}deg)`};M.on("rotate",upd);upd();
+  b.onclick=()=>{if(typeof stopSpin==="function"&&M===map)stopSpin();M.easeTo({bearing:0,duration:600})}}
 function initMap(){
   regProtocols();
   map=new maplibregl.Map({container:"map",style:STYLE,center:[20.1,69.6],zoom:11,pitch:62,maxPitch:80,attributionControl:{compact:true}});
+  wireCompass(map,"#bNorth");
   map.on("load",()=>{
     mapReady=true;
     const at=document.querySelector(".maplibregl-ctrl-attrib");if(at)at.classList.remove("maplibregl-compact-show");
@@ -748,9 +772,11 @@ $("#bSpin").onclick=()=>{if(spinning)return stopSpin();spinning=true;$("#bSpin")
 $("#b3d").onclick=()=>{const on=map.getPitch()<5;map.easeTo({pitch:on?64:0,duration:700});map.setTerrain(on?{source:"dem",exaggeration:1.25}:null);$("#b3d").textContent=on?"3D":"2D";$("#b3d").classList.toggle("on",on)};
 $("#bFit").onclick=async()=>{const r=ROUTES.find(x=>x.id===cur);fitRoute(r,await derive(r),false)};
 $("#layers").onclick=e=>{const b=e.target.closest("button");if(!b)return;const l=b.dataset.l;
+  if(b.classList.contains("lyrtog")){$("#layers").classList.toggle("open");return}
   if(l==="gps"){const on=!b.classList.contains("on");b.classList.toggle("on",on);map.setLayoutProperty("gps","visibility",on?"visible":"none");return}
   if(l==="slope"){const on=!b.classList.contains("on");b.classList.toggle("on",on);map.setLayoutProperty("slope","visibility",on?"visible":"none");$("#legend").classList.toggle("on",on);return}
-  document.querySelectorAll('#layers button:not([data-l="slope"])').forEach(x=>x.classList.toggle("on",x===b));
+  document.querySelectorAll('#layers .lyropts button:not([data-l="slope"]):not([data-l="gps"])').forEach(x=>x.classList.toggle("on",x===b));
+  $("#layers .lyrtog span").textContent=b.textContent;$("#layers").classList.remove("open");
   ["s2","sat","topo"].forEach(id=>map.setLayoutProperty(id,"visibility",l===id?"visible":"none"));
   $("#s2chip").classList.toggle("on",l==="s2");if(l==="s2")s2Search(s2Mode).catch(()=>{})};
 
@@ -1334,6 +1360,7 @@ function initOmap(){
   const st=JSON.parse(JSON.stringify(STYLE));
   st.sources.osm={type:"geojson",data:EMPTY,attribution:"Turspår © OpenStreetMap"};
   omap=new maplibregl.Map({container:"omap",style:st,center:[19.6,69.65],zoom:8.4,pitch:55,maxPitch:80,attributionControl:{compact:true}});
+  wireCompass(omap,"#ovNorth");
   omap.on("load",()=>{
     omapReady=true;
     const at=document.querySelector("#mapview .maplibregl-ctrl-attrib");if(at)at.classList.remove("maplibregl-compact-show");
@@ -1557,10 +1584,13 @@ $("#ovBack").onclick=()=>{if(drawMode){location.hash="karta";return}location.has
 $("#ovHome").onclick=goHome;
 $("#ovFit").onclick=()=>{if(!omapReady)return;if(drawMode&&plan.pts.length){const b=new maplibregl.LngLatBounds();plan.pts.forEach(p=>b.extend([p[1],p[0]]));omap.fitBounds(b,{padding:padFor(),maxZoom:14})}else if(ovSel)selectOv(ovSel);else fitAll()};
 $("#ov3d").onclick=()=>{if(!omapReady)return;const on=omap.getPitch()<5;omap.easeTo({pitch:on?60:0,duration:700});omap.setTerrain(on?{source:"dem",exaggeration:1.25}:null);$("#ov3d").classList.toggle("on",on)};
-$("#ovLayers").onclick=e=>{const b=e.target.closest("button");if(!b||!omapReady)return;const l=b.dataset.l;
+$("#ovLayers").onclick=e=>{const b=e.target.closest("button");if(!b)return;const l=b.dataset.l;
+  if(b.classList.contains("lyrtog")){$("#ovLayers").classList.toggle("open");return}
+  if(!omapReady)return;
   if(l==="gps"){const on=!b.classList.contains("on");b.classList.toggle("on",on);omap.setLayoutProperty("gps","visibility",on?"visible":"none");return}
   if(l==="slope"){ovSlope=!ovSlope;b.classList.toggle("on",ovSlope);omap.setLayoutProperty("slope","visibility",ovSlope?"visible":"none");return}
-  document.querySelectorAll('#ovLayers button:not([data-l="slope"])').forEach(x=>x.classList.toggle("on",x===b));
+  document.querySelectorAll('#ovLayers .lyropts button:not([data-l="slope"]):not([data-l="gps"])').forEach(x=>x.classList.toggle("on",x===b));
+  $("#ovLayers .lyrtog span").textContent=b.textContent;$("#ovLayers").classList.remove("open");
   ["s2","sat","topo"].forEach(id=>omap.setLayoutProperty(id,"visibility",l===id?"visible":"none"));
   $("#ovS2chip").classList.toggle("on",l==="s2");if(l==="s2")s2Search(s2Mode).catch(()=>{})};
 
