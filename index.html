@@ -180,6 +180,10 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
 .ovctl .mapbtn.on{background:var(--dark);color:#fff}
 .ovp{position:absolute;z-index:4;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));background:#fff;border-radius:24px;padding:14px 16px 16px;max-height:52%;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,.25);-webkit-overflow-scrolling:touch}
 .ovh{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.ovh .r{display:flex;align-items:center;gap:8px}
+.ovp.min{left:10px;right:auto;padding:0;background:none;box-shadow:none;overflow:visible;display:flex;gap:8px}
+.ovp.min button{height:44px;padding:0 14px;border-radius:14px;background:rgba(255,255,255,.95);box-shadow:0 4px 14px rgba(0,0,0,.18);font-weight:700;font-size:13px;color:var(--dark)}
+.ovp.min button.dk{background:var(--dark);color:#fff}
 .ovh b{font-size:17px;letter-spacing:-.01em}
 .x{width:34px;height:34px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:20px;font-weight:600;flex:none}
 .rs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
@@ -1406,8 +1410,10 @@ function draftModes(){
   // innan beräkningen är klar: gissa utifrån ordningen (sista halvan ned)
   return plan.pts.slice(1).map((_,i)=>plan.over[i]||(i<Math.max(1,Math.ceil((plan.pts.length-1)/2))?"up":"down"));
 }
+let ovInfoHidden=!!store.get("ovInfoHidden",false);
 function renderPanel(err){
   const P=$("#ovPanel");if(!P)return;
+  P.classList.remove("min");
   if(drawMode){
     const n=plan.pts.length,modes=draftModes();
     const hint=n===0?"Tryck i kartan där turen börjar, till exempel vid parkeringen."
@@ -1466,13 +1472,21 @@ function renderPanel(err){
     return;
   }
   const osmN=osmF.length;
-  P.innerHTML=`<div class="ovh"><b>Alla turer</b><span class="small" id="ovProg">${ovProg}</span></div>
+  P.classList.toggle("min",ovInfoHidden);
+  if(ovInfoHidden){
+    P.innerHTML=`<button id="ovShow">ⓘ Alla turer <span class="small" id="ovProg">${ovProg}</span></button><button class="dk" id="ovDraw">Rita egen rutt</button>`;
+    $("#ovShow").onclick=()=>{ovInfoHidden=false;store.set("ovInfoHidden",false);renderPanel()};
+    $("#ovDraw").onclick=()=>{location.hash="rita"};
+    return;
+  }
+  P.innerHTML=`<div class="ovh"><b>Alla turer</b><span class="r"><span class="small" id="ovProg">${ovProg}</span><button class="x" id="ovInfoX" aria-label="Stäng">×</button></span></div>
     <p class="p small" style="margin-top:4px">Tryck på en topp för att se enklaste vägen upp och bästa nedfarten.</p>
     ${LEGEND.replace('</div>',`${osmN?'<span><i style="background:#8e44d9"></i>Känt spår (OSM)</span>':""}<span><i style="background:#00c2b2"></i>Ert GPX-spår</span></div>`)}
     <div class="btnrow"><button class="btn sm" id="ovDraw">Rita egen rutt</button></div>
     ${custom.length?`<div class="mylist" style="margin-top:12px"><div class="small" style="font-weight:700;margin-bottom:4px">MINA RUTTER</div>${custom.map(x=>`<button class="it" data-id="${x.id}"><span>✏️ ${esc(x.name)}</span><span class="small">${x.res?Math.round(calcStats(x.res).gain/10)*10+" hm":""}</span></button>`).join("")}</div>`:""}
     <p class="disc">Nedfarten är den bästa skidlinjen enligt höjddata. Data om var de flesta faktiskt åker (Strava, FATMAP) är inte öppet tillgänglig. Ladda upp era egna GPX-spår, så syns de här i turkos.</p>`;
   $("#ovDraw").onclick=()=>{location.hash="rita"};
+  $("#ovInfoX").onclick=()=>{ovInfoHidden=true;store.set("ovInfoHidden",true);renderPanel()};
   P.querySelectorAll(".mylist .it").forEach(b=>b.onclick=()=>selectOv(b.dataset.id));
 }
 $("#ovBack").onclick=()=>{if(drawMode){location.hash="karta";return}location.hash=ROUTES.some(r=>r.id===prevView)?prevView:""};
