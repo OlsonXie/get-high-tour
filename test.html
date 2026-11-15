@@ -798,7 +798,27 @@ function regProtocols(){
   maplibregl.addProtocol("s2",s2Tile);maplibregl.addProtocol("kvdem",kvDemTile);maplibregl.addProtocol("gpsh",gpsHeatTile);
 }
 
-/* Spår-lagret: OSM:s GPS-spår som tjocka magentarosa linjer (täta spår blir mörkare) */
+/* Spår-lagret: OSM:s GPS-spår som tjocka magentarosa linjer (täta spår blir mörkare).
+   Spår i dalbottnar/på vägar döljs: en pixel visas bara om marken där ligger minst
+   TRACE_MIN_RISE m över lägsta punkten inom ca 750 m (alltså på väg upp mot en topp). */
+const TRACE_MIN_RISE=50,reliefCache=new Map();
+function reliefTile(zc,x,y){
+  const key=zc+"/"+x+"/"+y;
+  if(!reliefCache.has(key))reliefCache.set(key,(async()=>{
+    const T={};await Promise.all([-1,0,1].flatMap(dy=>[-1,0,1].map(dx=>loadTile(zc,x+dx,y+dy).then(t=>{T[dx+","+dy]=t}))));
+    const C=T["0,0"];if(!C)return null;
+    const N=192,D=new Float32Array(N*N);                // 3x3 rutor, nedskalat 4x (min per 4x4-block)
+    for(let j=0;j<N;j++)for(let i=0;i<N;i++){const t=T[(Math.floor(i/64)-1)+","+(Math.floor(j/64)-1)]||C;let m=1e9;
+      const bx=(i%64)*4,by=(j%64)*4;for(let v=0;v<4;v++)for(let u=0;u<4;u++){const e=t[(by+v)*256+bx+u];if(e<m)m=e}D[j*N+i]=m}
+    const lat=y2lat(y+.5,zc),mpp=156543.03*Math.cos(lat*Math.PI/180)/2**zc*4,R=Math.max(1,Math.ceil(750/mpp));
+    const H=new Float32Array(N*N),M=new Float32Array(N*N);
+    for(let j=0;j<N;j++)for(let i=0;i<N;i++){let m=1e9;for(let k=Math.max(0,i-R);k<=Math.min(N-1,i+R);k++){const v=D[j*N+k];if(v<m)m=v}H[j*N+i]=m}
+    for(let j=0;j<N;j++)for(let i=0;i<N;i++){let m=1e9;for(let k=Math.max(0,j-R);k<=Math.min(N-1,j+R);k++){const v=H[k*N+i];if(v<m)m=v}M[j*N+i]=m}
+    const Mc=new Float32Array(64*64);for(let j=0;j<64;j++)for(let i=0;i<64;i++)Mc[j*64+i]=M[(j+64)*N+i+64];
+    return {E:C,M:Mc};
+  })());
+  return reliefCache.get(key);
+}
 async function gpsHeatTile(params,ac){
   const [z,x,y]=params.url.replace("gpsh://","").split("/");
   const r=await fetch(`https://gps-tile.openstreetmap.org/lines/${z}/${x}/${y}.png`,{signal:ac&&ac.signal});if(!r.ok)throw new Error("HTTP "+r.status);
@@ -807,6 +827,10 @@ async function gpsHeatTile(params,ac){
   const g=c.getContext("2d",{willReadFrequently:true});g.drawImage(bm,0,0);const im=g.getImageData(0,0,256,256),d=im.data;
   // tjockare linjer: största alfa i 3x3-grannskapet
   const A=new Uint8Array(65536);for(let i=0;i<65536;i++)A[i]=d[i*4+3];
+  if(+z>=9){const zc=Math.min(+z,12),f=2**(+z-zc),rx=Math.floor(+x/f),ry=Math.floor(+y/f),rel=await reliefTile(zc,rx,ry);
+    if(rel)for(let py=0;py<256;py++)for(let px=0;px<256;px++){const q=py*256+px;if(!A[q])continue;
+      const X=Math.min(255,Math.floor(((+x-rx*f)*256+px+.5)/f)),Y=Math.min(255,Math.floor(((+y-ry*f)*256+py+.5)/f));
+      if(rel.E[Y*256+X]-rel.M[(Y>>2)*64+(X>>2)]<TRACE_MIN_RISE)A[q]=0}}
   for(let py=0;py<256;py++)for(let px=0;px<256;px++){let a=0;
     for(let dy=-1;dy<=1;dy++){const yy=py+dy;if(yy<0||yy>255)continue;for(let dx=-1;dx<=1;dx++){const xx=px+dx;if(xx<0||xx>255)continue;const v=A[yy*256+xx];if(v>a)a=v}}
     const i=(py*256+px)*4;if(!a){d[i+3]=0;continue}const k=Math.min(1,a/110);
@@ -1523,7 +1547,7 @@ function renderPanel(err){
     ${LEGEND.replace('</div>',`${osmN?'<span><i style="background:#8e44d9"></i>Känt spår (OSM)</span>':""}<span><i style="background:#00c2b2"></i>Ert GPX-spår</span></div>`)}
     <div class="btnrow"><button class="btn sm" id="ovDraw">Rita egen rutt</button></div>
     ${custom.length?`<div class="mylist" style="margin-top:12px"><div class="small" style="font-weight:700;margin-bottom:4px">MINA RUTTER</div>${custom.map(x=>`<button class="it" data-id="${x.id}"><span>✏️ ${esc(x.name)}</span><span class="small">${x.res?Math.round(calcStats(x.res).gain/10)*10+" hm":""}</span></button>`).join("")}</div>`:""}
-    <p class="disc">Rosa linjer ("Spår") är GPS-spår som folk laddat upp till OpenStreetMap, från alla årstider. Vägvalet styrs mot dem och mot inritade skidspår (lila). Strava har bättre vinterdata, men den kräver inloggning, så varje tur har en länk dit. Ladda upp era egna GPX-spår, så syns de här i turkos.</p>`;
+    <p class="disc">Rosa linjer ("Spår") är GPS-spår som folk laddat upp till OpenStreetMap, från alla årstider. Spår i dalbottnar och på vägar är bortfiltrerade, så bara spår på väg upp mot topparna visas. Vägvalet styrs mot dem och mot inritade skidspår (lila). Strava har bättre vinterdata, men den kräver inloggning, så varje tur har en länk dit. Ladda upp era egna GPX-spår, så syns de här i turkos.</p>`;
   $("#ovDraw").onclick=()=>{location.hash="rita"};
   $("#ovInfoX").onclick=()=>{ovInfoHidden=true;store.set("ovInfoHidden",true);renderPanel()};
   P.querySelectorAll(".mylist .it").forEach(b=>b.onclick=()=>selectOv(b.dataset.id));
