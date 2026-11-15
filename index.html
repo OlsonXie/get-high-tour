@@ -657,7 +657,8 @@ function renderList(){
       <div class="head"><h3>${esc(r.name)}</h3><div class="loc"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>${esc(r.area)}</div></div>
       <button class="heart ${favs.has(r.id)?"on":""}" aria-label="Favorit"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8 3.3 4.5 7 4.5c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.7 0 6 3.5 4.5 7.2C19.5 16.4 12 21 12 21z"/></svg></button>
       <div class="foot"><p class="desc">${esc(r.desc)}</p>
-        <div class="pills"><span class="pill">Passar oss <span class="fitbar">${[1,2,3].map(n=>`<i class="${n<=r.fit?"on":""}"></i>`).join("")}</span></span>${avPill(r)}<span class="pill">${BOARD[r.board][0].replace("Bräda: ","🏂 ")}</span></div></div>`;
+        <div class="pills"><span class="pill hgt">▲ … m</span><span class="pill">Passar oss <span class="fitbar">${[1,2,3].map(n=>`<i class="${n<=r.fit?"on":""}"></i>`).join("")}</span></span>${avPill(r)}</div></div>`;
+    derive(r).then(d=>{const h=el.querySelector(".hgt");if(h)h.textContent="▲ "+d.topE+" m"}).catch(()=>{const h=el.querySelector(".hgt");if(h)h.remove()});
     el.onclick=e=>{if(e.target.closest(".heart")){e.stopPropagation();favs.has(r.id)?favs.delete(r.id):favs.add(r.id);saveFavs();e.target.closest(".heart").classList.toggle("on");return}location.hash=r.id};
     L.appendChild(el);io.observe(el);
   });
@@ -667,7 +668,7 @@ $("#searchBtn").onclick=()=>{$("#searchBox").classList.toggle("on");if($("#searc
 $("#q").oninput=e=>{query=e.target.value.trim().toLowerCase();renderList()};
 $("#favBtn").onclick=()=>{onlyFav=!onlyFav;$("#favBtn").style.background=onlyFav?"var(--accent)":"";renderList()};
 // lavin per region till korten + väderchip
-[...new Set(Object.values(REGION).map(x=>x.id))].forEach(id=>fetchAv(id,todayISO(),false).then(a=>{regionAv[id]=a}).catch(()=>{regionAv[id]=null}).finally(()=>{document.querySelectorAll(".card").forEach(el=>{const r=ROUTES.find(x=>x.id===el.dataset.id);if(REGION[r.region].id!==id)return;const pills=el.querySelectorAll(".pill");if(pills[1])pills[1].outerHTML=avPill(r)})}));
+[...new Set(Object.values(REGION).map(x=>x.id))].forEach(id=>fetchAv(id,todayISO(),false).then(a=>{regionAv[id]=a}).catch(()=>{regionAv[id]=null}).finally(()=>{document.querySelectorAll(".card").forEach(el=>{const r=ROUTES.find(x=>x.id===el.dataset.id);if(REGION[r.region].id!==id)return;const pills=el.querySelectorAll(".pill");if(pills[2])pills[2].outerHTML=avPill(r)})}));
 fetch("https://api.open-meteo.com/v1/forecast?latitude=69.576&longitude=20.219&current=temperature_2m,weather_code&timezone=Europe%2FOslo").then(r=>r.json()).then(w=>{$("#wxtxt").textContent=Math.round(w.current.temperature_2m)+"°C · Lyngen"}).catch(()=>{$("#wxtxt").textContent="Lyngen"});
 
 /* =========================================================
