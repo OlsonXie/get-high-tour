@@ -800,8 +800,8 @@ function regProtocols(){
 
 /* Spår-lagret: OSM:s GPS-spår som tjocka magentarosa linjer (täta spår blir mörkare).
    Spår i dalbottnar/på vägar döljs: en pixel visas bara om marken där ligger minst
-   TRACE_MIN_RISE m över lägsta punkten inom ca 750 m (alltså på väg upp mot en topp). */
-const TRACE_MIN_RISE=50,reliefCache=new Map();
+   TRACE_MIN_RISE m över lägsta punkten inom TRACE_RADIUS m (alltså på väg upp mot en topp). */
+const TRACE_MIN_RISE=120,TRACE_RADIUS=1500,reliefCache=new Map();
 function reliefTile(zc,x,y){
   const key=zc+"/"+x+"/"+y;
   if(!reliefCache.has(key))reliefCache.set(key,(async()=>{
@@ -810,7 +810,7 @@ function reliefTile(zc,x,y){
     const N=192,D=new Float32Array(N*N);                // 3x3 rutor, nedskalat 4x (min per 4x4-block)
     for(let j=0;j<N;j++)for(let i=0;i<N;i++){const t=T[(Math.floor(i/64)-1)+","+(Math.floor(j/64)-1)]||C;let m=1e9;
       const bx=(i%64)*4,by=(j%64)*4;for(let v=0;v<4;v++)for(let u=0;u<4;u++){const e=t[(by+v)*256+bx+u];if(e<m)m=e}D[j*N+i]=m}
-    const lat=y2lat(y+.5,zc),mpp=156543.03*Math.cos(lat*Math.PI/180)/2**zc*4,R=Math.max(1,Math.ceil(750/mpp));
+    const lat=y2lat(y+.5,zc),mpp=156543.03*Math.cos(lat*Math.PI/180)/2**zc*4,R=Math.max(1,Math.ceil(TRACE_RADIUS/mpp));
     const H=new Float32Array(N*N),M=new Float32Array(N*N);
     for(let j=0;j<N;j++)for(let i=0;i<N;i++){let m=1e9;for(let k=Math.max(0,i-R);k<=Math.min(N-1,i+R);k++){const v=D[j*N+k];if(v<m)m=v}H[j*N+i]=m}
     for(let j=0;j<N;j++)for(let i=0;i<N;i++){let m=1e9;for(let k=Math.max(0,j-R);k<=Math.min(N-1,j+R);k++){const v=H[k*N+i];if(v<m)m=v}M[j*N+i]=m}
