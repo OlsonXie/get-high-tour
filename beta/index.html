@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Get High Tour – beta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <style>
 :root{
   --bg:#eef0f3;--surface:#f7f8fa;--card:#fff;--ink:#11161d;--muted:#6a7380;--line:#e2e5ea;
-  --dark:#14181d;--accent:#3b97d6;--accent-ink:#1f5f8b;
+  --dark:#14181d;--accent:#D60000;--accent-ink:#D60000;--serif:'Instrument Serif',Georgia,serif;--sans:Montserrat,system-ui,sans-serif;--outline:#c9ced6;
   --g:#2f8a57;--gbg:#e3f3ea;--y:#a07400;--ybg:#fbf0d2;--o:#c4561c;--obg:#fbe4d6;--r:#b3261e;--rbg:#f9dedb;--n:#6a7380;--nbg:#e8ebef;
   --radius:26px;
 }
@@ -31,14 +31,14 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .spacer{flex:1}
 .brand{padding:18px 20px 2px}
 .brand .wm{font-weight:800;letter-spacing:.32em;font-size:12px;color:var(--muted)}
-.brand h1{margin:6px 0 0;font-size:30px;line-height:1.08;letter-spacing:-.02em;font-weight:700;color:#1d4f78}
+.brand h1{margin:6px 0 0;font-size:30px;line-height:1.08;letter-spacing:-.02em;font-weight:700;color:var(--ink)}
 .brand p{margin:6px 0 0;color:var(--muted);font-size:13.5px}
 .search{margin:12px 20px 0;display:none}
 .search.on{display:block}
 .search input{width:100%;height:46px;border-radius:14px;border:1px solid var(--line);background:#fff;padding:0 16px;font:inherit}
 .filters{display:flex;gap:8px;overflow-x:auto;padding:14px 20px 4px;scrollbar-width:none}
 .filters::-webkit-scrollbar{display:none}
-.filters button{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600}
+.filters button{white-space:nowrap;border:1px solid var(--outline);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600}
 .filters button.on{background:var(--dark);border-color:var(--dark);color:#fff}
 .list{padding:10px 20px 40px;display:grid;gap:18px}
 .card{position:relative;border-radius:var(--radius);overflow:hidden;background:#cfd6df;height:360px;cursor:pointer;box-shadow:0 10px 30px rgba(20,30,45,.12);transition:transform .15s}
@@ -96,11 +96,11 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .mapbtn.compass{position:relative;width:44px;padding:0!important}
 .mapbtn.compass .needle{width:32px;height:32px;transition:transform .15s linear}
 
-.s2chip{position:absolute;left:14px;bottom:96px;z-index:3;display:none;align-items:center;gap:8px;flex-wrap:wrap;max-width:calc(100% - 90px);background:rgba(17,22,29,.78);backdrop-filter:blur(8px);color:#fff;font-size:11.5px;font-weight:600;padding:6px 6px 6px 11px;border-radius:12px}
+.s2chip{position:absolute;left:14px;bottom:116px;z-index:3;display:none;align-items:center;gap:8px;flex-wrap:wrap;max-width:calc(100% - 90px);background:rgba(17,22,29,.78);backdrop-filter:blur(8px);color:#fff;font-size:11.5px;font-weight:600;padding:6px 6px 6px 11px;border-radius:12px}
 .s2chip.on{display:flex}
 .s2chip.ov{bottom:auto;left:auto;right:14px;top:calc(70px + env(safe-area-inset-top))}
 .s2chip button{background:rgba(255,255,255,.16);color:#fff;font-size:11px;font-weight:700;padding:5px 9px;border-radius:9px}
-.maplegend{position:absolute;left:14px;bottom:96px;z-index:3;background:rgba(255,255,255,.92);border-radius:10px;padding:6px 9px;font-size:11px;font-weight:600;display:none;gap:8px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.maplegend{position:absolute;left:14px;bottom:116px;z-index:3;background:rgba(255,255,255,.92);border-radius:10px;padding:6px 9px;font-size:11px;font-weight:600;display:none;gap:8px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
 .maplegend.on{display:flex}
 .maplegend span{display:inline-flex;align-items:center;gap:4px}
 .maplegend b{width:12px;height:8px;border-radius:2px;display:inline-block}
@@ -128,9 +128,9 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .tag{font-size:12px;font-weight:700;border-radius:8px;padding:4px 9px}
 .tg{background:var(--gbg);color:var(--g)}.ty{background:var(--ybg);color:var(--y)}.tr{background:var(--rbg);color:var(--r)}.tn{background:var(--nbg);color:var(--n)}
-.btn{text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:52px;border-radius:16px;background:var(--accent);color:#fff;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13.5px}
+.btn{text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:52px;padding:0 12px;white-space:nowrap;border-radius:16px;background:var(--dark);color:#fff;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13.5px}
 .btn.dark{background:var(--dark)}
-.btn.ghost{background:#fff;color:var(--dark);border:1px solid var(--line)}
+.btn.ghost{background:#fff;color:var(--dark);border:1px solid var(--outline)}
 .btn.sm{height:42px;font-size:12px;border-radius:13px}
 .btnrow{display:flex;gap:8px;margin-top:10px}
 .status{display:flex;gap:14px;align-items:flex-start}
@@ -176,7 +176,7 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
 
 /* ---------- KARTA + RITA ---------- */
 .homeact{display:flex;gap:8px;padding:14px 20px 0}
-.homeact button{flex:1;height:46px;border-radius:14px;background:#fff;border:1px solid var(--line);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px}
+.homeact button{flex:1;height:46px;border-radius:14px;background:#fff;border:1px solid var(--outline);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px}
 .homeact button.dk{background:var(--dark);border-color:var(--dark);color:#fff}
 .homeact svg{width:18px;height:18px}
 #mapview{position:fixed;inset:0;z-index:30;background:#cfd7e0}
@@ -261,11 +261,11 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
 .bmrow .bmmain b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bmrow .bmmain small{display:block;font-size:12px;color:var(--muted);font-weight:500}
 .bmtog{flex:none;height:34px;padding:0 11px;border-radius:11px;font-size:12px;font-weight:700;background:var(--dark);color:#fff;display:flex;align-items:center;gap:5px}
-.bmtog.on{background:var(--surface);color:var(--dark);border:1px solid var(--line)}
+.bmtog.on{background:#fff;color:var(--dark);border:1px solid var(--outline)}
 .bmtog svg{width:15px;height:15px}
 .bmtog.on svg{fill:currentColor}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 6px}
-.chips button{border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12px;font-weight:700;background:#fff}
+.chips button{border:1px solid var(--outline);border-radius:999px;padding:5px 11px;font-size:12px;font-weight:700;background:#fff}
 .chips button.on{background:var(--dark);color:#fff;border-color:var(--dark)}
 .ovm.sug{background:rgba(255,255,255,.94);color:#11161d;font-weight:600;box-shadow:0 3px 10px rgba(0,0,0,.18)}
 .ovm.sug.sel{background:var(--accent);color:#fff}
@@ -286,6 +286,71 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
   #detail .netwarn{display:none!important}
   #detail .mapwrap{flex:1;height:auto;min-height:0;border-radius:0}
   #detail .sheet{width:460px;flex:none;overflow-y:auto;padding:28px 28px 60px;background:var(--surface);box-shadow:-10px 0 30px rgba(0,0,0,.08)}
+}
+
+/* ---------- v0.7: accent #D60000, Instrument Serif-rubriker, kartlager-modul ---------- */
+.brand h1,.card .head h3,.sheet h2,.ovh>b,.ovp .brandw,.sec h4,.ovp h6,.status h5,.lsh h3,.lbody h4{font-family:var(--serif);font-weight:400;letter-spacing:0}
+.brand h1{font-size:40px;line-height:1}
+.card .head h3{font-size:28px;line-height:1.05}
+.sheet h2{font-size:38px;line-height:1.02}
+.ovh>b{font-size:28px;line-height:1.05}
+.ovp .brandw{font-size:34px;line-height:1;color:var(--ink)}
+.ovp .brandw span{font-family:var(--sans);font-size:12px;margin-top:6px}
+.sec h4,.ovp h6,.lbody h4{font-size:22px;text-transform:none;color:var(--ink);line-height:1.1}
+.ovp h6{margin:18px 0 6px}
+.status h5{font-size:20px;line-height:1.1}
+button,.btn,input,textarea,select{font-family:var(--sans)}
+.ovp h6 button{color:var(--accent);font-family:var(--sans)}
+.menu .mi{background:var(--accent)}
+.lyropts{display:none}
+/* kartminiatyr som öppnar lagermodulen */
+.lyrthumb{position:absolute;z-index:3;left:14px;bottom:44px;width:60px;height:60px;border-radius:16px;overflow:hidden;background:#d6dbe1;border:3px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.25);padding:0}
+.lyrthumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.lyrthumb img:not([src]){visibility:hidden}
+.lyrthumb span{position:absolute;left:0;right:0;bottom:0;padding:10px 0 3px;font-size:10.5px;font-weight:700;color:#fff;text-align:center;background:linear-gradient(transparent,rgba(0,0,0,.65))}
+.lyrthumb:hover{transform:scale(1.04)}
+.ovtop .lyrthumb{position:relative;left:auto;bottom:auto;margin-left:auto;width:52px;height:52px;border-radius:14px}
+.ovctl{top:calc(76px + env(safe-area-inset-top))}
+.s2chip.ov{top:calc(78px + env(safe-area-inset-top));right:72px}
+.lscrim{position:fixed;inset:0;z-index:58;background:rgba(17,22,29,.28);opacity:0;pointer-events:none;transition:opacity .25s}
+.lscrim.on{opacity:1;pointer-events:auto}
+.lyrsheet{position:fixed;z-index:59;left:0;right:0;bottom:0;max-height:78vh;display:flex;flex-direction:column;background:var(--surface);border-radius:26px 26px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.25);transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.lyrsheet.on{transform:none}
+.lsh{display:flex;align-items:center;justify-content:space-between;padding:18px 18px 10px 22px;border-bottom:1px solid var(--line)}
+.lsh h3{margin:0;font-size:30px;line-height:1}
+.lsh .x{background:#fff;border:1px solid var(--outline)}
+.lbody{overflow:auto;padding:4px 18px calc(22px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+.lbody h4{margin:18px 4px 10px}
+.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lcard{display:block;text-align:left;background:#fff;border:1px solid var(--line);border-radius:18px;padding:6px 6px 9px;transition:border-color .15s}
+.lcard .im{position:relative;display:block;aspect-ratio:16/10;border-radius:13px;overflow:hidden;background:#d6dbe1}
+.lcard .im img{width:100%;height:100%;object-fit:cover;display:block}
+.lcard .im img:not([src]){visibility:hidden}
+.lcard b{display:block;font-size:13.5px;margin:8px 6px 0}
+.lcard small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin:1px 6px 0;line-height:1.3}
+.lcard.on{border:2px solid var(--accent);padding:5px 5px 8px}
+.lcard.on b{color:var(--accent)}
+.lcard .ck{position:absolute;top:7px;right:7px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:none;place-items:center;font-size:13px;font-weight:800}
+.lcard.on .ck{display:grid}
+.lseg{display:none;margin-top:10px;background:#fff;border:1px solid var(--outline);border-radius:12px;padding:3px}
+.lseg.on{display:flex}
+.lseg button{flex:1;height:34px;border-radius:9px;font-size:12px;font-weight:700;color:var(--muted)}
+.lseg button.on{background:var(--dark);color:#fff}
+.lrows{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.lrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px}
+.lrow+.lrow{border-top:1px solid var(--line)}
+.lrow .sw{width:34px;height:34px;border-radius:10px;flex:none;display:grid;place-items:center}
+.lrow .tx{flex:1;min-width:0}
+.lrow b{display:block;font-size:14px}
+.lrow small{display:block;font-size:12px;color:var(--muted);font-weight:500;line-height:1.3}
+.tgl{flex:none;width:44px;height:26px;border-radius:13px;background:#d3d8df;position:relative;transition:background .2s}
+.tgl::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+.lrow.on .tgl{background:var(--accent)}
+.lrow.on .tgl::after{transform:translateX(18px)}
+@media(min-width:768px){
+  .lyrsheet{left:auto;top:16px;right:16px;bottom:16px;width:360px;max-height:none;border-radius:26px;transform:translateX(calc(100% + 30px))}
+  .lyrsheet.on{transform:none}
+  .lscrim{background:transparent}
 }
 </style>
 </head>
@@ -339,17 +404,7 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
     <div class="mapnote" id="mapnote">Streckad linje = fågelvägen, inte spåret</div>
     <div class="maplegend" id="legend"><span>NVE bratthet:</span><span><b style="background:#f7e04b"></b>27–29°</span><span><b style="background:#f39a25"></b>30–34°</span><span><b style="background:#e3342a"></b>35–39°</span><span><b style="background:#9b3fb5"></b>40°+</span></div>
     <div class="s2chip" id="s2chip"></div>
-    <div class="layers" id="layers">
-      <button class="lyrtog" aria-label="Kartlager"><svg class="i" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg><span>Vinterkarta</span></button>
-      <div class="lyropts">
-      <button data-l="paint" class="on">Vinterkarta</button>
-      <button data-l="sat">Satellit</button>
-      <button data-l="s2">Satellit vinter</button>
-      <button data-l="topo">Topo</button>
-      <button data-l="slope">Bratthet</button>
-      <button data-l="gps" class="on">Spår</button>
-      </div>
-    </div>
+    <button class="lyrthumb" id="lyrD" aria-label="Kartlager"><img alt=""><span>Karta</span></button>
     <div class="mapctl">
       <button class="mapbtn compass" id="bNorth" aria-label="Kompass – tryck för norr uppåt"><svg class="needle" viewBox="0 0 24 24"><text x="12" y="5.6" text-anchor="middle" font-size="5.6" font-weight="800" fill="#e3342a" font-family="Montserrat,sans-serif">N</text><path d="M12 6.6l3.3 5.4H8.7z" fill="#e3342a"/><path d="M12 18l-3.3-6h6.6z" fill="#9aa3ad"/><text x="12" y="23" text-anchor="middle" font-size="5" font-weight="700" fill="#6b7480" font-family="Montserrat,sans-serif">S</text></svg></button>
       <button class="mapbtn" id="bFs" aria-label="Helskärm"></button>
@@ -407,7 +462,7 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
       <div class="box">
         <p class="p small" id="gpxInfo">Inget riktigt spår ännu. Ladda upp en GPX från Strava, Garmin eller FATMAP så ritas den i 3D-kartan.</p>
         <div class="btnrow">
-          <label class="btn ghost sm" style="cursor:pointer"><input type="file" accept=".gpx,application/gpx+xml" id="gpxIn" hidden>Ladda upp GPX</label>
+          <label class="btn ghost sm" style="cursor:pointer"><input type="file" accept=".gpx,application/gpx+xml" id="gpxIn" hidden>Ladda upp</label>
           <button class="btn ghost sm" id="gpxClear" style="display:none">Ta bort</button>
         </div>
       </div>
@@ -433,7 +488,7 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
     <button class="mapbtn" id="ovBack" aria-label="Tillbaka"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
     <button class="mapbtn" id="ovHome" aria-label="Till startsidan"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
     <div class="ovtitle" id="ovTitle">Karta</div>
-    <div class="ovlay" id="ovLayers"><button class="lyrtog" aria-label="Kartlager"><svg class="i" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg><span>Vinterkarta</span></button><div class="lyropts"><button data-l="paint" class="on">Vinterkarta</button><button data-l="sat">Satellit</button><button data-l="s2">Satellit vinter</button><button data-l="topo">Topo</button><button data-l="slope">Bratthet</button><button data-l="gps" class="on">Spår</button></div></div>
+    <button class="lyrthumb" id="lyrO" aria-label="Kartlager"><img alt=""><span>Karta</span></button>
   </div>
   <div class="s2chip ov" id="ovS2chip"></div>
   <div class="ovctl">
@@ -444,6 +499,18 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
   <div class="ovp" id="ovPanel"></div>
 </section>
 <div class="toast" id="toast"></div>
+<div class="lscrim" id="lyrScrim"></div>
+<aside class="lyrsheet" id="lyrSheet" aria-label="Kartlager" aria-hidden="true">
+  <div class="lsh"><h3>Kartlager</h3><button class="x" id="lyrX" aria-label="Stäng">×</button></div>
+  <div class="lbody">
+    <h4>Baskarta</h4>
+    <div class="lgrid" id="lyrGrid"></div>
+    <div class="lseg" id="lyrS2"><button data-s2m="var">Vårvinter 2026</button><button data-s2m="last">Senaste klara</button></div>
+    <h4>Lager</h4>
+    <div class="lrows" id="lyrRows"></div>
+    <p class="disc">Svartvit är för känslan. Välj Vinterkarta eller Topo när ni planerar på riktigt.</p>
+  </div>
+</aside>
 </div>
 
 <script>
@@ -613,7 +680,7 @@ async function relief(r,canvas){
   g.lineWidth=5*dpr;g.strokeStyle="rgba(17,22,29,.45)";g.beginPath();g.moveTo(ax,ay);g.lineTo(bx,by);g.stroke();
   g.setLineDash([5*dpr,6*dpr]);g.lineWidth=2.4*dpr;g.strokeStyle="#fff";g.beginPath();g.moveTo(ax,ay);g.lineTo(bx,by);g.stroke();g.setLineDash([]);
   const dot=(x,y,c,s)=>{g.beginPath();g.arc(x,y,s*dpr,0,7);g.fillStyle=c;g.fill();g.lineWidth=2.2*dpr;g.strokeStyle="#fff";g.stroke()};
-  dot(ax,ay,"#3b97d6",5);dot(bx,by,"#11161d",6);
+  dot(ax,ay,"#D60000",5);dot(bx,by,"#11161d",6);
 }
 
 /* =========================================================
@@ -644,7 +711,7 @@ function roseSVG(exp,routeIdx){
     s+=`<path d="M0 0L${(r*Math.cos(a0)).toFixed(1)} ${(r*Math.sin(a0)).toFixed(1)}A${r} ${r} 0 0 1 ${(r*Math.cos(a1)).toFixed(1)} ${(r*Math.sin(a1)).toFixed(1)}Z" fill="${on?"#11161d":"#e3e7ec"}" stroke="#fff" stroke-width="1.5"/>`;
   }
   const a=(routeIdx*45-90)*Math.PI/180;
-  s+=`<circle cx="${(18*Math.cos(a)).toFixed(1)}" cy="${(18*Math.sin(a)).toFixed(1)}" r="5" fill="#3b97d6" stroke="#fff" stroke-width="2"/>`;
+  s+=`<circle cx="${(18*Math.cos(a)).toFixed(1)}" cy="${(18*Math.sin(a)).toFixed(1)}" r="5" fill="#D60000" stroke="#fff" stroke-width="2"/>`;
   s+='<text x="0" y="-21" text-anchor="middle" font-size="8" font-weight="800" fill="#fff">N</text></svg>';
   return s;
 }
@@ -676,15 +743,15 @@ async function renderAv(r,date){
       <div class="verdict v-${v.c}"><b>${v.head}</b>${v.why} Ruttens sida räknas grovt som riktningen från toppen mot starten (${d.asp}), höjd ${d.startE}–${d.topE} m.</div>
       <div style="margin-top:8px">${v.probs.map(x=>`<div class="prob">${roseSVG(x.p.ValidExpositions,d.aspIdx)}<div><div class="t">${esc(x.p.AvalancheProblemTypeName||"")}</div><div class="s">${esc(x.hm.txt)}${x.p.DestructiveSizeName?" · "+esc(x.p.DestructiveSizeName):""}</div><div class="m" style="color:${x.hit?"var(--r)":"var(--g)"}">${x.hit?"Träffar rutten":"Träffar inte ruttens huvudsida/höjd"}</div></div></div>`).join("")}</div>
       ${dateRow}
-      <div class="btnrow"><a class="btn ghost sm" href="https://varsom.no/en/snow/forecast/warning/${encodeURIComponent(reg.varsom)}/${date}" target="_blank" rel="noopener">Hela prognosen på Varsom</a></div>
+      <div class="btnrow"><a class="btn ghost sm" href="https://varsom.no/en/snow/forecast/warning/${encodeURIComponent(reg.varsom)}/${date}" target="_blank" rel="noopener">Varsom</a></div>
       <p class="disc">Beslutsstöd, inte ett beslut. Ersätter aldrig egen bedömning på plats. Den blå pricken i rosen = ruttens ungefärliga sida.</p>`;
   }else{
     const reason=err?"Kunde inte nå Varsom just nu.":"Ingen lavinprognos publicerad för den här dagen (säsongen i norr börjar runt 1 december).";
     box.innerHTML=`
       <div class="status"><div class="lvl">–</div><div><h5>Ingen live-prognos</h5><div class="meta">${reason}</div></div></div>
       <p class="p" style="margin-top:12px">Hämta läget på annat sätt:</p>
-      <div class="btnrow"><button class="btn sm" id="askClaude">Be Claude om statuskoll</button></div>
-      <div class="btnrow"><a class="btn ghost sm" href="https://varsom.no/en/snow/forecast/warning/${encodeURIComponent(reg.varsom)}" target="_blank" rel="noopener">Öppna Varsom</a><button class="btn ghost sm" id="demoAv">Visa exempel (12 mars 2026)</button></div>
+      <div class="btnrow"><button class="btn sm" id="askClaude">Fråga Claude</button></div>
+      <div class="btnrow"><a class="btn ghost sm" href="https://varsom.no/en/snow/forecast/warning/${encodeURIComponent(reg.varsom)}" target="_blank" rel="noopener">Öppna Varsom</a><button class="btn ghost sm" id="demoAv">Exempel</button></div>
       ${dateRow}
       <p class="disc">"Be Claude" kopierar en färdig fråga – klistra in den i Troemse-projektet så hämtar Claude prognos och väder och skriver in en grön/gul/röd-bedömning med tidsstämpel.</p>`;
     $("#askClaude").onclick=()=>{
@@ -768,18 +835,20 @@ const STYLE={version:8,
     paint:{type:"raster",tiles:["vmal://{z}/{x}/{y}"],tileSize:256,minzoom:8,maxzoom:16,attribution:"Vinterkarta målad av Get High Tour från Kartverkets höjd- och topodata"},
     sat:{type:"raster",tiles:["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],tileSize:256,maxzoom:18,attribution:"Bild © Esri, Maxar, Earthstar Geographics"},
     topo:{type:"raster",tiles:["https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png"],tileSize:256,maxzoom:18,attribution:"© Kartverket"},
+    bw:{type:"raster",tiles:["https://cache.kartverket.no/v1/wmts/1.0.0/topograatone/default/webmercator/{z}/{y}/{x}.png"],tileSize:256,maxzoom:18,attribution:"© Kartverket (gråtone)"},
     slope:{type:"raster",tiles:["https://gis3.nve.no/arcgis/rest/services/wmts/Bratthet_2024/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=png32&transparent=true&layers=show:0&f=image"],tileSize:256,attribution:"Bratthet © NVE"},
     dem:{type:"raster-dem",tiles:["kvdem://{z}/{x}/{y}"],tileSize:256,maxzoom:15,encoding:"terrarium",attribution:"Höjd © Kartverket (DTM), utanför Norge Mapzen/AWS"}
   },
   layers:[
     {id:"bg",type:"background",paint:{"background-color":"#cfd7e0"}},
-    {id:"paint",type:"raster",source:"paint",paint:{"raster-fade-duration":200}},
+    {id:"bw",type:"raster",source:"bw",paint:{"raster-saturation":-1,"raster-contrast":0.25,"raster-brightness-min":0.04}},
+    {id:"paint",type:"raster",source:"paint",layout:{visibility:"none"},paint:{"raster-fade-duration":200}},
     {id:"sat",type:"raster",source:"sat",layout:{visibility:"none"},paint:{"raster-saturation":-0.15,"raster-contrast":0.05}},
     {id:"s2",type:"raster",source:"s2",layout:{visibility:"none"}},
     {id:"topo",type:"raster",source:"topo",layout:{visibility:"none"}},
     {id:"slope",type:"raster",source:"slope",layout:{visibility:"none"},paint:{"raster-opacity":0.62}},
     {id:"gps",type:"raster",source:"gps",minzoom:9.5,paint:{"raster-opacity":0.95}},
-    {id:"hs",type:"hillshade",source:"dem",layout:{visibility:"none"},paint:{"hillshade-exaggeration":0.2,"hillshade-shadow-color":"#2a3a52","hillshade-highlight-color":"#ffffff"}}
+    {id:"hs",type:"hillshade",source:"dem",paint:{"hillshade-exaggeration":0.2,"hillshade-shadow-color":"#2a3a52","hillshade-highlight-color":"#ffffff"}}
   ],
   terrain:{source:"dem",exaggeration:1.25},
   sky:{"sky-color":"#8fb3dc","horizon-color":"#e6eef7","fog-color":"#eef3f9","sky-horizon-blend":0.6,"horizon-fog-blend":0.6,"fog-ground-blend":0.55,"atmosphere-blend":0.6}
@@ -822,7 +891,7 @@ function initMap(){
     map.addLayer({id:"route",type:"line",source:"route",paint:{"line-color":"#ffffff","line-width":3.5,"line-dasharray":[1.4,1.4]}});
     map.addLayer({id:"gpx-casing",type:"line",source:"gpx",paint:{"line-color":"#11161d","line-width":7,"line-opacity":.4}});
     map.addLayer({id:"gpx",type:"line",source:"gpx",paint:{"line-color":"#00c2b2","line-width":4.5}});
-    addPlaces(map);
+    addPlaces(map);applyLyr(map);
     if(cur)showOnMap(ROUTES.find(r=>r.id===cur));
   });
   ["dragstart","touchstart","wheel"].forEach(ev=>map.on(ev,()=>stopSpin()));
@@ -836,7 +905,7 @@ async function showOnMap(r){
   const top=[d.top[1],d.top[0]],st=[r.t[1],r.t[0]];
   map.getSource("route").setData({type:"Feature",geometry:{type:"LineString",coordinates:[st,top]}});
   markers.push(new maplibregl.Marker({element:mk(`<div style="background:#11161d;color:#fff;font:700 12px Montserrat;padding:6px 10px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.3);white-space:nowrap">▲ ${esc(r.name.split(" /")[0])} · ${d.topE} m</div>`),anchor:"bottom",offset:[0,-6]}).setLngLat(top).addTo(map));
-  markers.push(new maplibregl.Marker({element:mk(`<div style="background:#3b97d6;color:#fff;font:700 11px Montserrat;padding:5px 9px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.3)">P Start</div>`),anchor:"bottom",offset:[0,-4]}).setLngLat(st).addTo(map));
+  markers.push(new maplibregl.Marker({element:mk(`<div style="background:#D60000;color:#fff;font:700 11px Montserrat;padding:5px 9px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.3)">P Start</div>`),anchor:"bottom",offset:[0,-4]}).setLngLat(st).addTo(map));
   map.getSource("calc").setData(EMPTY);
   const kn=r.osm&&OSM_TRK[r.osm];map.getSource("known").setData(kn?{type:"Feature",geometry:{type:"LineString",coordinates:kn.map(p=>[p[1],p[0]])}}:EMPTY);
   $("#mapnote").textContent="Streckad linje = fågelvägen, inte spåret";
@@ -857,14 +926,6 @@ function stopSpin(){spinning=false;cancelAnimationFrame(spinRAF);$("#bSpin").cla
 $("#bSpin").onclick=()=>{if(spinning)return stopSpin();spinning=true;$("#bSpin").classList.add("on");const step=()=>{if(!spinning)return;map.setBearing(map.getBearing()+0.18);spinRAF=requestAnimationFrame(step)};step()};
 $("#b3d").onclick=()=>{const on=map.getPitch()<5;map.easeTo({pitch:on?64:0,duration:700});map.setTerrain(on?{source:"dem",exaggeration:1.25}:null);$("#b3d").textContent=on?"3D":"2D";$("#b3d").classList.toggle("on",on)};
 $("#bFit").onclick=async()=>{const r=ROUTES.find(x=>x.id===cur);fitRoute(r,await derive(r),false)};
-$("#layers").onclick=e=>{const b=e.target.closest("button");if(!b)return;const l=b.dataset.l;
-  if(b.classList.contains("lyrtog")){$("#layers").classList.toggle("open");return}
-  if(l==="gps"){const on=!b.classList.contains("on");b.classList.toggle("on",on);map.setLayoutProperty("gps","visibility",on?"visible":"none");return}
-  if(l==="slope"){const on=!b.classList.contains("on");b.classList.toggle("on",on);map.setLayoutProperty("slope","visibility",on?"visible":"none");$("#legend").classList.toggle("on",on);return}
-  document.querySelectorAll('#layers .lyropts button:not([data-l="slope"]):not([data-l="gps"])').forEach(x=>x.classList.toggle("on",x===b));
-  $("#layers .lyrtog span").textContent=b.textContent;$("#layers").classList.remove("open");
-  ["paint","s2","sat","topo"].forEach(id=>map.setLayoutProperty(id,"visibility",l===id?"visible":"none"));map.setLayoutProperty("hs","visibility",l==="paint"?"none":"visible");
-  $("#s2chip").classList.toggle("on",l==="s2");if(l==="s2")s2Search(s2Mode).catch(()=>{})};
 
 
 /* =========================================================
@@ -1118,8 +1179,9 @@ async function s2Tile(params,ac){
 }
 function updS2Chips(){
   const i=s2Info[s2Mode],lbl=i?i.label:(s2Mode==="last"?"söker senaste klara bilden…":S2_PRESET.label);
-  const other=s2Mode==="var"?"Senaste klara dagen":"Vårvinter 2026";
+  const other=s2Mode==="var"?"Senaste klara":"Vårvinter 2026";
   ["#s2chip","#ovS2chip"].forEach(sel=>{const el=$(sel);if(el)el.innerHTML=`<span>Sentinel-2 · ${esc(lbl)}</span><button data-s2>${other}</button>`});
+  if(typeof renderLyr==="function"&&document.querySelector("#lyrSheet.on"))renderLyr();
 }
 async function setS2Mode(m){
   if(m==="last"){toast("Söker senaste klara Sentinel-2-bilden…");
@@ -1672,7 +1734,7 @@ function renderCalcDetail(r,res){
   const s=calcStats(res);
   $("#sGain").textContent="≈"+Math.round(s.gain/10)*10;$("#sLen").textContent="≈"+((s.upLen+s.dnLen)/1000).toFixed(1).replace(".",",")+" km";
   $("#sCalc").textContent="Beräknat längs föreslagen väg upp och ned.";
-  $("#calcBox").innerHTML=resHTML(res,"dprof")+LEGEND+`<div class="btnrow"><button class="btn ghost sm" id="cEdit">Ändra i kartan</button><button class="btn ghost sm" id="cGpx">Ladda ner GPX</button></div><p class="disc">${CALC_DISC}</p>`;
+  $("#calcBox").innerHTML=resHTML(res,"dprof")+LEGEND+`<div class="btnrow"><button class="btn ghost sm" id="cEdit">Ändra</button><button class="btn ghost sm" id="cGpx">GPX</button></div><p class="disc">${CALC_DISC}</p>`;
   drawProfile($("#dprof"),res);
   $("#cGpx").onclick=()=>dlGpx(r.name,res);
   $("#cEdit").onclick=()=>derive(r).then(d=>{setDraft({pts:[r.t,d.top,r.t],over:{},name:r.name+" – egen variant"});location.hash="rita"});
@@ -1701,11 +1763,11 @@ function openOverview(draw){
   cur=null;stopSpin();
   $("#home").classList.remove("on");$("#detail").classList.remove("on");$("#mapview").classList.add("on");document.title="Get High Tour – beta";
   document.body.style.overflow="hidden";
-  drawMode=draw;if(draw)ovSel=null;
+  drawMode=draw;if(draw){ovSel=null;stopAuto()}
   if(!window.maplibregl){$("#ovPanel").innerHTML='<p class="p">Kartan kan inte laddas här. Öppna appen i Chrome eller Safari.</p>';return}
   if(!omap)initOmap();else{omap.resize();applyMode()}
 }
-function closeOverview(){$("#mapview").classList.remove("on");document.body.style.overflow=""}
+function closeOverview(){stopAuto();$("#mapview").classList.remove("on");document.body.style.overflow=""}
 
 function initOmap(){
   regProtocols();
@@ -1715,7 +1777,7 @@ function initOmap(){
   wireCompass(omap,"#ovNorth");
   omap.on("load",()=>{
     omapReady=true;
-    addPlaces(omap);
+    addPlaces(omap);applyLyr(omap);
     const at=document.querySelector("#mapview .maplibregl-ctrl-attrib");if(at)at.classList.remove("maplibregl-compact-show");
     omap.addLayer({id:"osm",type:"line",source:"osm",layout:{"line-join":"round"},paint:{"line-color":"#8e44d9","line-width":2.6,"line-dasharray":[2,1.4],"line-opacity":.9}});
     omap.addSource("ov-gpx",{type:"geojson",data:EMPTY});
@@ -1728,6 +1790,7 @@ function initOmap(){
     ROUTES.forEach(r=>addOvMarker(r.id,r.s,r.name.split(" /")[0],false));
     custom.forEach(c=>addOvMarker(c.id,c.pts[c.res?c.res.hi:0]||c.pts[0],c.name,true));
     fitAll(true);
+    if(!drawMode&&!ovSel&&!ovView)startAuto();
     refreshOvPaths();applyMode();
     loadOsm().then(f=>{osmF=f;omap.getSource("osm").setData({type:"FeatureCollection",features:f});if(!drawMode&&!ovSel)renderPanel()}).catch(()=>{});
     ovQueueRun();
@@ -1883,8 +1946,8 @@ function renderPanel(err){
       :draftRes?resHTML(draftRes,"ovprof")+LEGEND:"";
     P.innerHTML=`<div class="ovh"><b>Rita egen rutt</b><button class="x" id="dExit" aria-label="Stäng">×</button></div>
       <p class="p small" style="margin-top:4px">${hint}</p>${segs}${body}
-      <div class="btnrow"><button class="btn ghost sm" id="dUndo" ${n?"":"disabled"}>Ångra</button><button class="btn ghost sm" id="dHome" ${n>1?"":"disabled"}>Tillbaka till start</button><button class="btn ghost sm" id="dClear" ${n?"":"disabled"}>Rensa</button></div>
-      ${draftRes?`<input type="text" id="dNm" placeholder="Namn på rutten" value="${esc(plan.name||"")}"><div class="btnrow"><button class="btn dark sm" id="dSave">Spara rutten</button><button class="btn ghost sm" id="dGpx">GPX</button></div>`:""}
+      <div class="btnrow"><button class="btn ghost sm" id="dUndo" ${n?"":"disabled"}>Ångra</button><button class="btn ghost sm" id="dHome" ${n>1?"":"disabled"}>Till start</button><button class="btn ghost sm" id="dClear" ${n?"":"disabled"}>Rensa</button></div>
+      ${draftRes?`<input type="text" id="dNm" placeholder="Namn på rutten" value="${esc(plan.name||"")}"><div class="btnrow"><button class="btn dark sm" id="dSave">Spara</button><button class="btn ghost sm" id="dGpx">GPX</button></div>`:""}
       ${draftRes?`<p class="disc">${CALC_DISC}</p>`:""}`;
     drawProfile($("#ovprof"),draftRes||{legs:[]});
     $("#dExit").onclick=()=>{location.hash="karta"};
@@ -1931,7 +1994,7 @@ function renderPanel(err){
   }
   if(ovView==="bm"){renderBm(P);return}
   const nBm=ROUTES.filter(r=>favs.has(r.id)).length;
-  P.innerHTML=`<div class="ovh"><div class="brandw">GET HIGH TOUR<span>Tromsø &amp; Lyngen · 15–21 mars 2027</span></div><span class="small" id="ovProg">${ovProg}</span></div>
+  P.innerHTML=`<div class="ovh"><div class="brandw">Get High Tour<span>Tromsø &amp; Lyngen · 15–21 mars 2027</span></div><span class="small" id="ovProg">${ovProg}</span></div>
     <label class="srch"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="ovQ" type="search" placeholder="Sök topp eller område" autocomplete="off" value="${esc(ovQ)}"></label>
     <div id="ovRes"></div>
     <div class="menu">
@@ -1970,15 +2033,90 @@ $("#ovBack").onclick=()=>{if(drawMode){location.hash="karta";return}location.has
 $("#ovHome").onclick=goHome;
 $("#ovFit").onclick=()=>{if(!omapReady)return;if(drawMode&&plan.pts.length){const b=new maplibregl.LngLatBounds();plan.pts.forEach(p=>b.extend([p[1],p[0]]));omap.fitBounds(b,{padding:padFor(),maxZoom:14})}else if(ovSel)selectOv(ovSel);else fitAll()};
 $("#ov3d").onclick=()=>{if(!omapReady)return;const on=omap.getPitch()<5;omap.easeTo({pitch:on?60:0,duration:700});omap.setTerrain(on?{source:"dem",exaggeration:1.25}:null);$("#ov3d").classList.toggle("on",on)};
-$("#ovLayers").onclick=e=>{const b=e.target.closest("button");if(!b)return;const l=b.dataset.l;
-  if(b.classList.contains("lyrtog")){$("#ovLayers").classList.toggle("open");return}
-  if(!omapReady)return;
-  if(l==="gps"){const on=!b.classList.contains("on");b.classList.toggle("on",on);omap.setLayoutProperty("gps","visibility",on?"visible":"none");return}
-  if(l==="slope"){ovSlope=!ovSlope;b.classList.toggle("on",ovSlope);omap.setLayoutProperty("slope","visibility",ovSlope?"visible":"none");return}
-  document.querySelectorAll('#ovLayers .lyropts button:not([data-l="slope"]):not([data-l="gps"])').forEach(x=>x.classList.toggle("on",x===b));
-  $("#ovLayers .lyrtog span").textContent=b.textContent;$("#ovLayers").classList.remove("open");
-  ["paint","s2","sat","topo"].forEach(id=>omap.setLayoutProperty(id,"visibility",l===id?"visible":"none"));omap.setLayoutProperty("hs","visibility",l==="paint"?"none":"visible");
-  $("#ovS2chip").classList.toggle("on",l==="s2");if(l==="s2")s2Search(s2Mode).catch(()=>{})};
+
+/* =========================================================
+   v0.7 KARTLAGER: miniatyr på kartan öppnar en sidomodul.
+   Gemensamt läge för båda kartorna. Start = svartvit topo.
+   ========================================================= */
+const BASES=[
+  {id:"bw",n:"Svartvit",d:"Gråtonad topo med relief"},
+  {id:"paint",n:"Vinterkarta",d:"Målad från Kartverkets data"},
+  {id:"topo",n:"Topo",d:"Kartverkets topokarta"},
+  {id:"sat",n:"Satellit",d:"Esri, sommarbild"},
+  {id:"s2",n:"Satellit vinter",d:"Sentinel-2, 10 m"}];
+const LYR={base:"bw",slope:false,gps:true};
+const THUMB={},TZ=12,TX=2276,TY=929;
+const SKY_STD={"sky-color":"#8fb3dc","horizon-color":"#e6eef7","fog-color":"#eef3f9","sky-horizon-blend":0.6,"horizon-fog-blend":0.6,"fog-ground-blend":0.55,"atmosphere-blend":0.6};
+const SKY_BW={"sky-color":"#bfc3c8","horizon-color":"#f2f2f2","fog-color":"#f4f4f4","sky-horizon-blend":0.6,"horizon-fog-blend":0.6,"fog-ground-blend":0.5,"atmosphere-blend":0.5};
+function applyLyr(M){
+  if(!M||!M.getLayer||!M.getLayer("bw"))return;
+  const b=LYR.base;
+  ["bw","paint","s2","sat","topo"].forEach(id=>M.setLayoutProperty(id,"visibility",b===id?"visible":"none"));
+  M.setLayoutProperty("hs","visibility",b==="paint"?"none":"visible");
+  M.setPaintProperty("hs","hillshade-shadow-color",b==="bw"?"#000000":"#2a3a52");
+  M.setPaintProperty("hs","hillshade-exaggeration",b==="bw"?0.45:0.2);
+  M.setLayoutProperty("slope","visibility",LYR.slope?"visible":"none");
+  M.setLayoutProperty("gps","visibility",LYR.gps?"visible":"none");
+  try{M.setSky(b==="bw"?SKY_BW:SKY_STD)}catch(e){}
+}
+function applyLyrAll(){
+  [map,omap].forEach(applyLyr);
+  $("#legend").classList.toggle("on",LYR.slope);
+  ["#s2chip","#ovS2chip"].forEach(s=>$(s).classList.toggle("on",LYR.base==="s2"));
+  if(LYR.base==="s2")s2Search(s2Mode).catch(()=>{});
+  updThumbs();renderLyr();
+}
+function updThumbs(){
+  const t=THUMB[LYR.base],nm=BASES.find(x=>x.id===LYR.base).n;
+  document.querySelectorAll(".lyrthumb").forEach(el=>{const im=el.querySelector("img");if(t)im.src=t;im.style.filter=LYR.base==="bw"?"grayscale(1) contrast(1.2)":"";el.querySelector("span").textContent=nm.split(" ")[0]});
+}
+async function blobOf(p){const r=await p;return URL.createObjectURL(new Blob([r.data]))}
+let thumbsP=null;
+function genThumbs(){
+  if(thumbsP)return thumbsP;
+  const set=(id,u)=>{THUMB[id]=u;updThumbs();renderLyr()};
+  set("bw",`https://cache.kartverket.no/v1/wmts/1.0.0/topograatone/default/webmercator/${TZ}/${TY}/${TX}.png`);
+  set("topo",`https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/${TZ}/${TY}/${TX}.png`);
+  set("sat",`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${TZ}/${TY}/${TX}`);
+  regProtocols();
+  thumbsP=Promise.allSettled([
+    blobOf(paintTile({url:`vmal://${TZ}/${TX}/${TY}`},new AbortController())).then(u=>set("paint",u)),
+    blobOf(s2Tile({url:`s2://var/${TZ}/${TX}/${TY}`},new AbortController())).then(u=>set("s2",u))]);
+  return thumbsP;
+}
+function renderLyr(){
+  const G=$("#lyrGrid");if(!G)return;
+  G.innerHTML=BASES.map(b=>`<button class="lcard${LYR.base===b.id?" on":""}" data-base="${b.id}"><span class="im">${THUMB[b.id]?`<img src="${THUMB[b.id]}" alt=""${b.id==="bw"?' style="filter:grayscale(1) contrast(1.2)"':""}>`:""}<span class="ck">✓</span></span><b>${b.n}</b><small>${b.d}</small></button>`).join("");
+  $("#lyrS2").classList.toggle("on",LYR.base==="s2");
+  $("#lyrS2").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x.dataset.s2m===s2Mode));
+  const row=(k,sw,t,d)=>`<button class="lrow${LYR[k]?" on":""}" data-tg="${k}"><span class="sw">${sw}</span><span class="tx"><b>${t}</b><small>${d}</small></span><span class="tgl"></span></button>`;
+  $("#lyrRows").innerHTML=
+    row("slope",'<svg viewBox="0 0 34 34" width="34" height="34"><rect width="34" height="34" rx="10" fill="#f4f5f7"/><path d="M4 28 L14 12 L19 19 L24 9 L30 28Z" fill="#f7e04b"/><path d="M14 12 L19 19 L16.5 22Z" fill="#f39a25"/><path d="M24 9 L27 19 L21.5 15Z" fill="#e3342a"/></svg>',"Bratthet","NVE: gult 27–29°, orange 30–34°, rött 35–39°, lila 40°+")+
+    row("gps",'<svg viewBox="0 0 34 34" width="34" height="34"><rect width="34" height="34" rx="10" fill="#f4f5f7"/><path d="M6 27c5-3 6-9 11-10s8-6 11-11" fill="none" stroke="#e0218a" stroke-width="2.6" stroke-linecap="round"/></svg>',"Spår","Publika GPS-spår från OpenStreetMap");
+}
+function openLyr(){genThumbs();renderLyr();$("#lyrSheet").classList.add("on");$("#lyrSheet").setAttribute("aria-hidden","false");$("#lyrScrim").classList.add("on")}
+function closeLyr(){$("#lyrSheet").classList.remove("on");$("#lyrSheet").setAttribute("aria-hidden","true");$("#lyrScrim").classList.remove("on")}
+document.querySelectorAll(".lyrthumb").forEach(b=>b.onclick=openLyr);
+$("#lyrX").onclick=closeLyr;$("#lyrScrim").onclick=closeLyr;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeLyr()});
+$("#lyrSheet").addEventListener("click",e=>{
+  const c=e.target.closest("[data-base]"),t=e.target.closest("[data-tg]"),m=e.target.closest("[data-s2m]");
+  if(c){LYR.base=c.dataset.base;applyLyrAll()}
+  else if(t){LYR[t.dataset.tg]=!LYR[t.dataset.tg];applyLyrAll()}
+  else if(m){setS2Mode(m.dataset.s2m).then(renderLyr)}
+});
+window.addEventListener("hashchange",closeLyr);
+setTimeout(genThumbs,1500);
+
+/* Startvyn roterar långsamt i 3D tills man rör kartan */
+let autoRot=false,autoRAF=0,autoT=0;
+function startAuto(){
+  if(autoRot||!omap)return;autoRot=true;autoT=performance.now();
+  const step=t=>{if(!autoRot)return;const dt=Math.min(64,t-autoT);autoT=t;omap.setBearing(omap.getBearing()+dt*0.004);autoRAF=requestAnimationFrame(step)};
+  autoRAF=requestAnimationFrame(step);
+}
+function stopAuto(){autoRot=false;cancelAnimationFrame(autoRAF)}
+["pointerdown","wheel","touchstart","keydown"].forEach(ev=>$("#mapview").addEventListener(ev,stopAuto,{capture:true,passive:true}));
 
 window.addEventListener("hashchange",route);
 route();
