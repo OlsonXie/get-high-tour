@@ -14,6 +14,11 @@
   --dark:#14181d;--accent:#D60000;--accent-ink:#D60000;--serif:'Instrument Serif',Georgia,serif;--sans:Montserrat,system-ui,sans-serif;--outline:#c9ced6;
   --g:#2f8a57;--gbg:#e3f3ea;--y:#a07400;--ybg:#fbf0d2;--o:#c4561c;--obg:#fbe4d6;--r:#b3261e;--rbg:#f9dedb;--n:#6a7380;--nbg:#e8ebef;
   --radius:26px;
+  /* spår-tokens (tokens/tokens.json): primitiver */
+  --color-green-track:#6DAE8A;--color-red-track:#E0504A;--color-yellow-track:#E8B24E;--color-blue-flat:#3B7DD8;--color-neutral-known:#8A8F97;
+  /* spår-tokens: semantiska, pekar på primitiverna ovan (eller på --ink för casing) */
+  --track-skin:var(--color-green-track);--track-descent:var(--color-red-track);--track-flat:var(--color-blue-flat);
+  --track-bootpack:var(--color-yellow-track);--track-known:var(--color-neutral-known);--track-casing:var(--ink);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Montserrat,system-ui,sans-serif;font-size:15px;line-height:1.45}
@@ -104,6 +109,18 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .maplegend.on{display:flex}
 .maplegend span{display:inline-flex;align-items:center;gap:4px}
 .maplegend b{width:12px;height:8px;border-radius:2px;display:inline-block}
+.tracklegend{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;z-index:4;display:flex;align-items:center;gap:8px;background:var(--surface);border-radius:999px;padding:5px 12px 5px 5px;box-shadow:0 4px 14px rgba(0,0,0,.15);max-width:calc(100% - 28px)}
+.tracklegend .ti-wrap{display:flex;align-items:center;gap:10px;overflow-x:auto;scrollbar-width:none;min-width:0}
+.tracklegend .ti-wrap::-webkit-scrollbar{display:none}
+.tracklegend .ti{display:flex;align-items:center;gap:4px;flex:none;font-size:10.5px;font-weight:700;color:#3a4350;white-space:nowrap}
+.tracklegend .ti svg{width:24px;height:9px;flex:none}
+.tracklegend .ti.kn{color:var(--muted);opacity:.75}
+.tracklegend .ti.kn.off{display:none}
+.tracklegend .lgtog{width:26px;height:26px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--muted);background:var(--bg)}
+.tracklegend.collapsed{padding:5px}
+.tracklegend.collapsed .ti-wrap{display:none}
+#mapview .tracklegend{bottom:calc(58% + 14px)}
+@media(min-width:768px){#mapview .tracklegend{bottom:14px}}
 .mapnote{position:absolute;top:calc(68px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:3;background:rgba(17,22,29,.72);color:#fff;font-size:11px;font-weight:600;padding:5px 10px;border-radius:999px;white-space:nowrap}
 .maplibregl-ctrl-attrib{font-size:10px}
 .sheet{padding:22px 22px 60px}
@@ -206,8 +223,6 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
 .rs span{font-size:11.5px;color:var(--muted);font-weight:600}
 .prof{width:100%;height:92px;display:block;margin-top:10px}
 .flatinfo{margin-top:8px}
-.leg{display:flex;flex-wrap:wrap;gap:5px 12px;font-size:11.5px;font-weight:600;color:#3a4350;margin-top:10px}
-.leg i{display:inline-block;width:16px;height:4px;border-radius:2px;vertical-align:middle;margin-right:5px}
 .segs{display:grid;gap:6px;margin-top:10px}
 .seg{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
 .seg .small{font-weight:500}
@@ -403,6 +418,7 @@ button,.btn,input,textarea,select{font-family:var(--sans)}
     <button class="mapbtn fav" id="dFav" aria-label="Favorit"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8 3.3 4.5 7 4.5c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.7 0 6 3.5 4.5 7.2C19.5 16.4 12 21 12 21z"/></svg></button>
     <div class="mapnote" id="mapnote">Streckad linje = fågelvägen, inte spåret</div>
     <div class="maplegend" id="legend"><span>NVE bratthet:</span><span><b style="background:#f7e04b"></b>27–29°</span><span><b style="background:#f39a25"></b>30–34°</span><span><b style="background:#e3342a"></b>35–39°</span><span><b style="background:#9b3fb5"></b>40°+</span></div>
+    <div class="tracklegend" id="trackLegendD"></div>
     <div class="s2chip" id="s2chip"></div>
     <button class="lyrthumb" id="lyrD" aria-label="Kartlager"><img alt=""><span>Karta</span></button>
     <div class="mapctl">
@@ -496,6 +512,7 @@ button,.btn,input,textarea,select{font-family:var(--sans)}
     <button class="mapbtn on" id="ov3d">3D</button>
     <button class="mapbtn" id="ovFit" aria-label="Visa allt"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
   </div>
+  <div class="tracklegend" id="trackLegendO"></div>
   <div class="ovp" id="ovPanel"></div>
 </section>
 <div class="toast" id="toast"></div>
@@ -588,6 +605,10 @@ const ASP=["N","NO","O","SO","S","SV","V","NV"];
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const store={get(k,d){try{return JSON.parse(localStorage.getItem("ght-"+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem("ght-"+k,JSON.stringify(v))}catch(e){}}};
+/* MapLibre och canvas kan inte läsa CSS-variabler – läs spår-tokens en gång till ett JS-objekt */
+const T=(()=>{const s=getComputedStyle(document.documentElement),g=n=>s.getPropertyValue(n).trim();
+  return {trackSkin:g("--track-skin"),trackDescent:g("--track-descent"),trackFlat:g("--track-flat"),trackBootpack:g("--track-bootpack"),trackKnown:g("--track-known"),trackCasing:g("--track-casing")}})();
+const hexToRgb=h=>{const m=h.replace("#","").match(/.{2}/g);return m?m.slice(0,3).map(x=>parseInt(x,16)):[138,143,151]};
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("on"),2600)}
 const todayISO=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 
@@ -847,7 +868,7 @@ const STYLE={version:8,
     {id:"s2",type:"raster",source:"s2",layout:{visibility:"none"}},
     {id:"topo",type:"raster",source:"topo",layout:{visibility:"none"}},
     {id:"slope",type:"raster",source:"slope",layout:{visibility:"none"},paint:{"raster-opacity":0.62}},
-    {id:"gps",type:"raster",source:"gps",minzoom:9.5,paint:{"raster-opacity":0.95}},
+    {id:"gps",type:"raster",source:"gps",minzoom:9.5,paint:{"raster-opacity":0.42}},
     {id:"hs",type:"hillshade",source:"dem",paint:{"hillshade-exaggeration":0.2,"hillshade-shadow-color":"#2a3a52","hillshade-highlight-color":"#ffffff"}}
   ],
   terrain:{source:"dem",exaggeration:1.25},
@@ -885,7 +906,7 @@ function initMap(){
     map.addSource("calc",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
     addPathLayers(map,"calc");addAvalLayer(map,"calc-cas");
     map.addSource("known",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
-    map.addLayer({id:"known",type:"line",source:"known",layout:{"line-join":"round"},paint:{"line-color":"#8e44d9","line-width":3,"line-dasharray":[2,1.4],"line-opacity":.9}});
+    map.addLayer({id:"known",type:"line",source:"known",layout:{"line-join":"round"},paint:{"line-color":T.trackKnown,"line-width":1.6,"line-opacity":.45}});
     map.addSource("gpx",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
     map.addLayer({id:"route-casing",type:"line",source:"route",paint:{"line-color":"#11161d","line-width":6,"line-opacity":.35}});
     map.addLayer({id:"route",type:"line",source:"route",paint:{"line-color":"#ffffff","line-width":3.5,"line-dasharray":[1.4,1.4]}});
@@ -1099,9 +1120,10 @@ function regProtocols(){
   maplibregl.addProtocol("s2",s2Tile);maplibregl.addProtocol("kvdem",kvDemTile);maplibregl.addProtocol("gpsh",gpsHeatTile);maplibregl.addProtocol("vmal",paintTile);
 }
 
-/* Spår-lagret: OSM:s GPS-spår som tjocka magentarosa linjer (täta spår blir mörkare).
-   Spår i dalbottnar/på vägar döljs: en pixel visas bara om marken där ligger minst
-   TRACE_MIN_RISE m över lägsta punkten inom TRACE_RADIUS m (alltså på väg upp mot en topp). */
+/* Spår-lagret: OSM:s GPS-spår som tona ned, neutrala linjer (track.known – täta spår blir
+   bara lite tätare, ingen färgskiftning). Spår i dalbottnar/på vägar döljs: en pixel visas
+   bara om marken där ligger minst TRACE_MIN_RISE m över lägsta punkten inom TRACE_RADIUS m
+   (alltså på väg upp mot en topp). */
 const TRACE_MIN_RISE=120,TRACE_RADIUS=1500,reliefCache=new Map();
 function reliefTile(zc,x,y){
   const key=zc+"/"+x+"/"+y;
@@ -1132,10 +1154,11 @@ async function gpsHeatTile(params,ac){
     if(rel)for(let py=0;py<256;py++)for(let px=0;px<256;px++){const q=py*256+px;if(!A[q])continue;
       const X=Math.min(255,Math.floor(((+x-rx*f)*256+px+.5)/f)),Y=Math.min(255,Math.floor(((+y-ry*f)*256+py+.5)/f));
       if(rel.E[Y*256+X]-rel.M[(Y>>2)*64+(X>>2)]<TRACE_MIN_RISE)A[q]=0}}
+  const [kr,kg,kb]=hexToRgb(T.trackKnown);
   for(let py=0;py<256;py++)for(let px=0;px<256;px++){let a=0;
     for(let dy=-1;dy<=1;dy++){const yy=py+dy;if(yy<0||yy>255)continue;for(let dx=-1;dx<=1;dx++){const xx=px+dx;if(xx<0||xx>255)continue;const v=A[yy*256+xx];if(v>a)a=v}}
-    const i=(py*256+px)*4;if(!a){d[i+3]=0;continue}const k=Math.min(1,a/110);
-    d[i]=255;d[i+1]=Math.round(60-60*k);d[i+2]=Math.round(220-90*k);d[i+3]=Math.min(255,Math.round(150+a*2))}
+    const i=(py*256+px)*4;if(!a){d[i+3]=0;continue}
+    d[i]=kr;d[i+1]=kg;d[i+2]=kb;d[i+3]=Math.min(255,Math.round(150+a*2))}
   g.putImageData(im,0,0);
   const blob=c.convertToBlob?await c.convertToBlob({type:"image/png"}):await new Promise(res=>c.toBlob(res,"image/png"));
   return {data:await blob.arrayBuffer()};
@@ -1506,26 +1529,38 @@ async function computeRoute(pts,over,osmLines){
   return hydrate({v:CALCV,modes,auto,hi:hiI,legs});
 }
 const packRes=res=>({v:res.v,modes:res.modes,auto:res.auto,hi:res.hi,legs:res.legs.map(L=>({mode:L.mode,c:L.c,e:L.e,s:L.s,av:L.av||null}))});
+/* Boot pack: terrängens lutning >= BOOTPACK_DEG, eller lutningen i färdriktningen över
+   vägvalets gräns för "skidor på ryggen" (BOOTPACK_DIR_DEG, se cost()-funktionens 26°).
+   Utjämning: korta sträckor (<BOOTPACK_SMOOTH_M) slås ihop med föregående klass. */
+const BOOTPACK_DEG=35,BOOTPACK_DIR_DEG=26,BOOTPACK_SMOOTH_M=30;
 function hydrate(res){
   res.legs.forEach(L=>{
     const n=L.c.length,D=[0];
     for(let k=1;k<n;k++)D.push(D[k-1]+hav([L.c[k-1][1],L.c[k-1][0]],[L.c[k][1],L.c[k][0]]));
     L.d=D;
-    if(L.mode!=="down"){L.cls=null;return}
+    const up=L.mode==="up",sm=up?BOOTPACK_SMOOTH_M:25;
     const cls=new Array(Math.max(0,n-1));
     for(let k=0;k<n-1;k++){
       const mid=(D[k]+D[k+1])/2;let a=k,b=k+1;
-      while(a>0&&mid-D[a]<25)a--;while(b<n-1&&D[b]-mid<25)b++;
-      const ang=Math.atan2(L.e[a]-L.e[b],Math.max(1,D[b]-D[a]))*57.3;
-      cls[k]=ang<-1.5?"mot":ang<5?"flat":"ride";
+      while(a>0&&mid-D[a]<sm)a--;while(b<n-1&&D[b]-mid<sm)b++;
+      if(up){
+        const ang=Math.atan2(L.e[b]-L.e[a],Math.max(1,D[b]-D[a]))*57.3,terrain=Math.max(L.s[k],L.s[k+1]);
+        cls[k]=(terrain>=BOOTPACK_DEG||ang>BOOTPACK_DIR_DEG)?"boot":"skin";
+      }else{
+        const ang=Math.atan2(L.e[a]-L.e[b],Math.max(1,D[b]-D[a]))*57.3;
+        cls[k]=ang<-1.5?"mot":ang<5?"flat":"ride";
+      }
     }
-    // slå ihop korta (<25 m) partier med föregående
+    // slå ihop korta partier med föregående klass, så det inte fladdrar
     let k=0;while(k<cls.length){let j=k;while(j+1<cls.length&&cls[j+1]===cls[k])j++;
-      const len=D[j+1]-D[k];if(len<25&&k>0){for(let q=k;q<=j;q++)cls[q]=cls[k-1]}k=j+1}
+      const len=D[j+1]-D[k];if(len<sm&&k>0){for(let q=k;q<=j;q++)cls[q]=cls[k-1]}k=j+1}
     L.cls=cls;
   });
   return res;
 }
+/* Renderklass per segment: skin/boot (upp) oförändrat, ride→down och mot→flat (ned,
+   motlut ritas som flat tills vidare – se CLAUDE.md) */
+function rkey(L,k){const c=L.cls[k];if(L.mode==="up")return c;return c==="ride"?"down":"flat"}
 function calcStats(res){
   let upLen=0,gain=0,dnLen=0,drop=0,flat=0,maxUp=0,maxDn=0,steep=0;const flats=[];
   res.legs.forEach(L=>{
@@ -1547,37 +1582,42 @@ function calcStats(res){
    BERÄKNADE VÄGAR – gemensam rendering
    ========================================================= */
 const EMPTY={type:"FeatureCollection",features:[]};
-const KCOL={up:"#2f6fdc",down:"#e0342a",ride:"#e0342a",flat:"#ffd23f",mot:"#ff8a2b"};
-const PCOL=["match",["get","k"],"up",KCOL.up,"flat",KCOL.flat,"mot",KCOL.mot,KCOL.down];
-const LEGEND=`<div class="leg"><span><i style="background:${KCOL.up}"></i>Upp</span><span><i style="background:${KCOL.down}"></i>Ned</span><span><i style="background:${KCOL.flat}"></i>Flackt – brädan kan behöva gå</span><span><i style="background:${KCOL.mot}"></i>Motlut</span></div>`;
+const KCOL={skin:T.trackSkin,boot:T.trackBootpack,down:T.trackDescent,flat:T.trackFlat};
+/* Legend centrerad längst ned på kartan (startkarta, ritläge, detaljvy): swatcharna
+   återger de riktiga linjestilarna med CSS-variabler (inline-SVG läser dem direkt). */
+const LEGEND_ITEMS=[["skin","Skins up",3,"4.5,3.2"],["boot","Boot pack",3,"0,5.6"],["down","Descent",3,null],["flat","Flat",4.8,null]];
+const LEGEND_VAR={skin:"--track-skin",boot:"--track-bootpack",down:"--track-descent",flat:"--track-flat",known:"--track-known"};
+const trackSwatch=(v,w,dash)=>`<svg viewBox="0 0 28 10"><line x1="2" y1="5" x2="26" y2="5" stroke="var(${v})" stroke-width="${w}" stroke-linecap="round"${dash?` stroke-dasharray="${dash}"`:""}/></svg>`;
+function trackLegendHTML(){
+  const items=LEGEND_ITEMS.map(([k,label,w,dash])=>`<span class="ti">${trackSwatch(LEGEND_VAR[k],w,dash)}<b>${label}</b></span>`).join("");
+  const kn=`<span class="ti kn${LYR.gps?"":" off"}">${trackSwatch(LEGEND_VAR.known,2,null)}<b>Known tracks</b></span>`;
+  return `<button class="lgtog" aria-label="Toggle legend" aria-expanded="true">i</button><span class="ti-wrap">${items}${kn}</span>`;
+}
+function renderTrackLegend(){document.querySelectorAll(".tracklegend").forEach(el=>el.innerHTML=trackLegendHTML())}
+document.addEventListener("click",e=>{const b=e.target.closest(".lgtog");if(!b)return;const box=b.closest(".tracklegend"),collapsed=box.classList.toggle("collapsed");b.setAttribute("aria-expanded",collapsed?"false":"true")});
 const CALC_DISC="Beräknat från Kartverkets höjddata (ca 5 m rutnät). Uppför hålls spåret under ca 16–20° i färdriktningen och terräng över 30° undviks så långt det går. Nedför följer vägen fallinjen, och terräng över 35° undviks. Höjddata vet inget om skavlar, block, skog, glaciärsprickor eller dagens snö. Det här är beslutsstöd, inte beslut.";
 const fmtM=m=>m>=1000?(m/1000).toFixed(1).replace(".",",")+" km":Math.round(m/10)*10+" m";
 const fmtT=h=>{const m=Math.round(h*60/10)*10;return m<60?m+" min":Math.floor(m/60)+" h"+(m%60?" "+m%60+" min":"")};
 function resFeatures(res,rid){
   const f=[];
   res.legs.forEach(L=>{
-    if(L.mode==="up"){f.push({type:"Feature",properties:{k:"up",rid},geometry:{type:"LineString",coordinates:L.c}});return}
-    let k=0;while(k<L.cls.length){let j=k;while(j+1<L.cls.length&&L.cls[j+1]===L.cls[k])j++;
-      f.push({type:"Feature",properties:{k:L.cls[k]==="ride"?"down":L.cls[k],rid},geometry:{type:"LineString",coordinates:L.c.slice(k,j+2)}});k=j+1}
+    let k=0;while(k<L.cls.length){let j=k;while(j+1<L.cls.length&&rkey(L,j+1)===rkey(L,k))j++;
+      f.push({type:"Feature",properties:{k:rkey(L,k),rid},geometry:{type:"LineString",coordinates:L.c.slice(k,j+2)}});k=j+1}
   });
-  // nedfart ritas ovanpå uppstigningen
-  return f.sort((a,b)=>(a.properties.k==="up"?0:1)-(b.properties.k==="up"?0:1));
+  return f;
 }
-function ensureArrow(m){
-  if(m.hasImage("up-arrow"))return;
-  const S=48,c=document.createElement("canvas");c.width=c.height=S;const g=c.getContext("2d");
-  g.lineCap="round";g.lineJoin="round";
-  const chev=()=>{g.beginPath();g.moveTo(17,13);g.lineTo(30,24);g.lineTo(17,35);g.stroke()};
-  g.strokeStyle="rgba(17,22,29,.75)";g.lineWidth=11;chev();
-  g.strokeStyle="#ffffff";g.lineWidth=6;chev();
-  m.addImage("up-arrow",g.getImageData(0,0,S,S),{pixelRatio:2});
-}
+/* Fyra klasser, var sin lager (MapLibre kan inte göra line-dasharray data-driven per feature).
+   Uppstigningen (skin/boot) läggs först, nedfarten (flat/down) ovanpå – den streckade stilen
+   på uppstigningen räcker för att visa riktning, så pilarna (tidigare up-arrow) är borttagna. */
 function addPathLayers(m,src,before){
-  m.addLayer({id:src+"-cas",type:"line",source:src,layout:{"line-join":"round","line-cap":"round"},paint:{"line-color":"#11161d","line-width":7.5,"line-opacity":.35}},before);
-  m.addLayer({id:src+"-ln",type:"line",source:src,layout:{"line-join":"round","line-cap":"round"},paint:{"line-color":PCOL,"line-width":4.2}},before);
-  ensureArrow(m);
-  // små pilar i färdriktningen på uppstigningen
-  m.addLayer({id:src+"-arr",type:"symbol",source:src,filter:["==",["get","k"],"up"],layout:{"symbol-placement":"line","symbol-spacing":["interpolate",["linear"],["zoom"],10,32,14,55],"icon-image":"up-arrow","icon-size":["interpolate",["linear"],["zoom"],9,.8,12,1.15,15,1.45],"icon-rotation-alignment":"map","icon-pitch-alignment":"viewport","icon-allow-overlap":true,"icon-ignore-placement":true}},before);
+  m.addLayer({id:src+"-cas",type:"line",source:src,layout:{"line-join":"round","line-cap":"round"},
+    paint:{"line-color":T.trackCasing,"line-width":["match",["get","k"],"flat",12,7.5],"line-opacity":.35}},before);
+  const cls=(id,color,width,dash)=>m.addLayer({id:src+"-"+id,type:"line",source:src,filter:["==",["get","k"],id],
+    layout:{"line-join":"round","line-cap":"round"},paint:Object.assign({"line-color":color,"line-width":width},dash?{"line-dasharray":dash}:{})},before);
+  cls("skin",T.trackSkin,4.2,[2.2,1.6]);
+  cls("boot",T.trackBootpack,4.6,[0,2]);
+  cls("flat",T.trackFlat,6.7);
+  cls("down",T.trackDescent,4.2);
 }
 function resHTML(res,cid){
   const s=calcStats(res);
@@ -1600,21 +1640,27 @@ function drawProfile(cv,res){
   if(!cv||!cv.clientWidth)return;
   const dpr=Math.min(2,devicePixelRatio||1),W=cv.width=Math.round(cv.clientWidth*dpr),H=cv.height=Math.round(cv.clientHeight*dpr),g=cv.getContext("2d");
   const P=[];let off=0;
-  res.legs.forEach(L=>{L.c.forEach((_,k)=>P.push({x:off+L.d[k],e:L.e[k],k:k<L.c.length-1?(L.mode==="up"?"up":L.cls[k]):null}));off+=L.d[L.d.length-1]});
+  res.legs.forEach(L=>{L.c.forEach((_,k)=>P.push({x:off+L.d[k],e:L.e[k],k:k<L.c.length-1?rkey(L,k):null}));off+=L.d[L.d.length-1]});
   const tot=off||1,eMin=Math.min(...P.map(p=>p.e)),eMax=Math.max(...P.map(p=>p.e));
   const pl=44*dpr,pr=6*dpr,pt=8*dpr,pb=16*dpr;
   const X=x=>pl+x/tot*(W-pl-pr),Y=e=>H-pb-(e-eMin)/((eMax-eMin)||1)*(H-pt-pb);
   g.clearRect(0,0,W,H);
   g.beginPath();g.moveTo(X(0),H-pb);P.forEach(p=>g.lineTo(X(p.x),Y(p.e)));g.lineTo(X(tot),H-pb);g.closePath();g.fillStyle="#eef1f5";g.fill();
   g.lineWidth=3*dpr;g.lineCap="round";
-  for(let i=0;i<P.length-1;i++){if(!P[i].k)continue;g.strokeStyle=P[i].k==="flat"?"#e8b400":KCOL[P[i].k];g.beginPath();g.moveTo(X(P[i].x),Y(P[i].e));g.lineTo(X(P[i+1].x),Y(P[i+1].e));g.stroke()}
+  for(let i=0;i<P.length-1;i++){if(!P[i].k)continue;g.strokeStyle=KCOL[P[i].k];g.beginPath();g.moveTo(X(P[i].x),Y(P[i].e));g.lineTo(X(P[i+1].x),Y(P[i+1].e));g.stroke()}
   g.fillStyle="#6a7380";g.font=`600 ${10*dpr}px Montserrat,sans-serif`;g.textAlign="right";
   g.fillText(eMax+" m",pl-4*dpr,pt+8*dpr);g.fillText(eMin+" m",pl-4*dpr,H-pb);
   g.textAlign="left";g.fillText("0",pl,H-3*dpr);g.textAlign="right";g.fillText(fmtM(tot),W-pr,H-3*dpr);
 }
+const GPX_NAME={skin:"Skins up",boot:"Boot pack",down:"Descent",flat:"Flat"};
 function toGpx(name,res){
-  const seg=L=>`<trkseg>${L.c.map((p,k)=>`<trkpt lat="${p[1]}" lon="${p[0]}"><ele>${L.e[k]}</ele></trkpt>`).join("")}</trkseg>`;
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Get High Tour" xmlns="http://www.topografix.com/GPX/1/1">${res.legs.map((L,i)=>`<trk><name>${esc(name)} – ${L.mode==="up"?"upp":"ned"} ${i+1}</name>${seg(L)}</trk>`).join("")}</gpx>`;
+  const seg=(L,a,b)=>`<trkseg>${L.c.slice(a,b+1).map((p,q)=>`<trkpt lat="${p[1]}" lon="${p[0]}"><ele>${L.e[a+q]}</ele></trkpt>`).join("")}</trkseg>`;
+  const trks=[];
+  res.legs.forEach(L=>{
+    let k=0;while(k<L.cls.length){let j=k;while(j+1<L.cls.length&&rkey(L,j+1)===rkey(L,k))j++;
+      trks.push(`<trk><name>${esc(name)} – ${GPX_NAME[rkey(L,k)]}</name>${seg(L,k,j+1)}</trk>`);k=j+1}
+  });
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Get High Tour" xmlns="http://www.topografix.com/GPX/1/1">${trks.join("")}</gpx>`;
 }
 function dlGpx(name,res){
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([toGpx(name,res)],{type:"application/gpx+xml"}));
@@ -1734,7 +1780,7 @@ function renderCalcDetail(r,res){
   const s=calcStats(res);
   $("#sGain").textContent="≈"+Math.round(s.gain/10)*10;$("#sLen").textContent="≈"+((s.upLen+s.dnLen)/1000).toFixed(1).replace(".",",")+" km";
   $("#sCalc").textContent="Beräknat längs föreslagen väg upp och ned.";
-  $("#calcBox").innerHTML=resHTML(res,"dprof")+LEGEND+`<div class="btnrow"><button class="btn ghost sm" id="cEdit">Ändra</button><button class="btn ghost sm" id="cGpx">GPX</button></div><p class="disc">${CALC_DISC}</p>`;
+  $("#calcBox").innerHTML=resHTML(res,"dprof")+`<div class="btnrow"><button class="btn ghost sm" id="cEdit">Ändra</button><button class="btn ghost sm" id="cGpx">GPX</button></div><p class="disc">${CALC_DISC}</p>`;
   drawProfile($("#dprof"),res);
   $("#cGpx").onclick=()=>dlGpx(r.name,res);
   $("#cEdit").onclick=()=>derive(r).then(d=>{setDraft({pts:[r.t,d.top,r.t],over:{},name:r.name+" – egen variant"});location.hash="rita"});
@@ -1745,7 +1791,7 @@ function drawCalcDetail(r,res){
   if(!map||!mapReady||!map.getSource("calc")||cur!==r.id)return;
   map.getSource("calc").setData({type:"FeatureCollection",features:resFeatures(res,r.id)});
   ["route","route-casing"].forEach(l=>map.setLayoutProperty(l,"visibility","none"));
-  if(!store.get("gpx-"+r.id,null)){$("#mapnote").textContent="Blå = upp · Röd = ned · Gul = flackt · Bred färg under = lavinterräng";$("#mapnote").style.display=""}
+  if(!store.get("gpx-"+r.id,null)){$("#mapnote").textContent="Wide halo under the route = avalanche terrain";$("#mapnote").style.display=""}
 }
 
 /* =========================================================
@@ -1779,7 +1825,7 @@ function initOmap(){
     omapReady=true;
     addPlaces(omap);applyLyr(omap);
     const at=document.querySelector("#mapview .maplibregl-ctrl-attrib");if(at)at.classList.remove("maplibregl-compact-show");
-    omap.addLayer({id:"osm",type:"line",source:"osm",layout:{"line-join":"round"},paint:{"line-color":"#8e44d9","line-width":2.6,"line-dasharray":[2,1.4],"line-opacity":.9}});
+    omap.addLayer({id:"osm",type:"line",source:"osm",layout:{"line-join":"round"},paint:{"line-color":T.trackKnown,"line-width":1.6,"line-opacity":.45}});
     omap.addSource("ov-gpx",{type:"geojson",data:EMPTY});
     omap.addLayer({id:"ov-gpx",type:"line",source:"ov-gpx",paint:{"line-color":"#00c2b2","line-width":3.5}});
     omap.addSource("ov-paths",{type:"geojson",data:EMPTY});addPathLayers(omap,"ov-paths");
@@ -1943,7 +1989,7 @@ function renderPanel(err){
     const segs=n>1?`<div class="segs">${modes.map((m,i)=>`<div class="seg"><span>${i+1} → ${i+2}</span>${plan.over[i]?'<span class="small">ändrad</span>':'<span class="small">auto</span>'}<div class="tg2"><button data-s="${i}" data-m="up" class="u ${m==="up"?"on":""}">Upp</button><button data-s="${i}" data-m="down" class="d ${m==="down"?"on":""}">Ned</button></div></div>`).join("")}</div>`:"";
     const body=draftBusy?'<p class="p small" style="margin-top:12px"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> Räknar ut bästa vägen…</p>'
       :draftErr?`<p class="p" style="margin-top:12px;color:var(--r)">${esc(draftErr)}</p>`
-      :draftRes?resHTML(draftRes,"ovprof")+LEGEND:"";
+      :draftRes?resHTML(draftRes,"ovprof"):"";
     P.innerHTML=`<div class="ovh"><b>Rita egen rutt</b><button class="x" id="dExit" aria-label="Stäng">×</button></div>
       <p class="p small" style="margin-top:4px">${hint}</p>${segs}${body}
       <div class="btnrow"><button class="btn ghost sm" id="dUndo" ${n?"":"disabled"}>Ångra</button><button class="btn ghost sm" id="dHome" ${n>1?"":"disabled"}>Till start</button><button class="btn ghost sm" id="dClear" ${n?"":"disabled"}>Rensa</button></div>
@@ -1977,8 +2023,8 @@ function renderPanel(err){
     const near=r&&osmNear(r.s);
     P.innerHTML=`<div class="ovh"><b>${esc(name)}</b><button class="x" id="ovX" aria-label="Stäng">×</button></div>
       <div class="small">${r?esc(r.area.includes(AREA_NAME[r.region])?r.area:r.area+" · "+AREA_NAME[r.region]):"Egen rutt"}</div>
-      ${res?resHTML(res,"ovprof")+LEGEND:err?`<p class="p" style="margin-top:10px;color:var(--r)">${esc(err)}</p>`:'<p class="p small" style="margin-top:12px"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> Räknar ut väg upp och bästa nedfart…</p>'}
-      ${near?'<p class="small" style="margin:8px 0 0">Lila streckad linje i närheten = känt turspår i OpenStreetMap.</p>':""}
+      ${res?resHTML(res,"ovprof"):err?`<p class="p" style="margin-top:10px;color:var(--r)">${esc(err)}</p>`:'<p class="p small" style="margin-top:12px"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> Räknar ut väg upp och bästa nedfart…</p>'}
+      ${near?'<p class="small" style="margin:8px 0 0">A faint grey line nearby is a known ski track from OpenStreetMap.</p>':""}
       <div class="btnrow">${r?`<button class="btn dark sm" id="ovOpen">Öppna turen</button><button class="btn ghost sm bmbtn${favs.has(r.id)?" on":""}" id="ovBm">${BM_SVG}${favs.has(r.id)?"Bokmärkt":"Bokmärk"}</button><button class="btn ghost sm" id="ovEdit">Ändra</button>`
         :`<button class="btn dark sm" id="ovEdit">Redigera</button><button class="btn ghost sm" id="ovGpx">GPX</button><button class="btn ghost sm" id="ovDel">Ta bort</button>`}</div>`;
     if(res)drawProfile($("#ovprof"),res);
@@ -2001,7 +2047,7 @@ function renderPanel(err){
       <button id="mBm"><span class="mi">${BM_SVG}</span><span><b>Bokmärken</b><small>${nBm?nBm+(nBm===1?" tur":" turer"):"Inga än"}${custom.length?" · "+custom.length+" egna":""} · lägg till förslag</small></span><span class="chev">›</span></button>
       <button id="mDraw"><span class="mi"><svg class="i" viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16l-1 4z"/><path d="M14 7l3 3"/></svg></span><span><b>Rita egen rutt</b><small>Appen väljer bästa väg upp och ned</small></span><span class="chev">›</span></button>
     </div>
-    <div class="deskonly">${LEGEND}<p class="disc">Tryck på en topp för att se vägen upp och ned. Vita etiketter (+) är förslag som inte är bokmärkta än. Rosa linjer är GPS-spår från OpenStreetMap. Vinterkartan målas från Kartverkets höjd- och topodata. Beslutsstöd, inte beslut.</p></div>`;
+    <div class="deskonly"><p class="disc">Tryck på en topp för att se vägen upp och ned. Vita etiketter (+) är förslag som inte är bokmärkta än. Faint grey lines are GPS tracks from OpenStreetMap. Vinterkartan målas från Kartverkets höjd- och topodata. Beslutsstöd, inte beslut.</p></div>`;
   const sr=()=>{const q=ovQ.trim().toLowerCase(),R=$("#ovRes");if(!R)return;
     if(!q){R.innerHTML="";return}
     const hits=[...ROUTES.filter(r=>(r.name+" "+r.area+" "+AREA_NAME[r.region]).toLowerCase().includes(q)).map(r=>({id:r.id,n:r.name,a:areaOf(r)})),
@@ -2064,8 +2110,9 @@ function applyLyrAll(){
   $("#legend").classList.toggle("on",LYR.slope);
   ["#s2chip","#ovS2chip"].forEach(s=>$(s).classList.toggle("on",LYR.base==="s2"));
   if(LYR.base==="s2")s2Search(s2Mode).catch(()=>{});
-  updThumbs();renderLyr();
+  updThumbs();renderLyr();renderTrackLegend();
 }
+renderTrackLegend();
 function updThumbs(){
   const t=THUMB[LYR.base],nm=BASES.find(x=>x.id===LYR.base).n;
   document.querySelectorAll(".lyrthumb").forEach(el=>{const im=el.querySelector("img");if(t)im.src=t;im.style.filter=LYR.base==="bw"?"grayscale(1) contrast(1.2)":"";el.querySelector("span").textContent=nm.split(" ")[0]});
@@ -2092,7 +2139,7 @@ function renderLyr(){
   const row=(k,sw,t,d)=>`<button class="lrow${LYR[k]?" on":""}" data-tg="${k}"><span class="sw">${sw}</span><span class="tx"><b>${t}</b><small>${d}</small></span><span class="tgl"></span></button>`;
   $("#lyrRows").innerHTML=
     row("slope",'<svg viewBox="0 0 34 34" width="34" height="34"><rect width="34" height="34" rx="10" fill="#f4f5f7"/><path d="M4 28 L14 12 L19 19 L24 9 L30 28Z" fill="#f7e04b"/><path d="M14 12 L19 19 L16.5 22Z" fill="#f39a25"/><path d="M24 9 L27 19 L21.5 15Z" fill="#e3342a"/></svg>',"Bratthet","NVE: gult 27–29°, orange 30–34°, rött 35–39°, lila 40°+")+
-    row("gps",'<svg viewBox="0 0 34 34" width="34" height="34"><rect width="34" height="34" rx="10" fill="#f4f5f7"/><path d="M6 27c5-3 6-9 11-10s8-6 11-11" fill="none" stroke="#e0218a" stroke-width="2.6" stroke-linecap="round"/></svg>',"Spår","Publika GPS-spår från OpenStreetMap");
+    row("gps",'<svg viewBox="0 0 34 34" width="34" height="34"><rect width="34" height="34" rx="10" fill="#f4f5f7"/><path d="M6 27c5-3 6-9 11-10s8-6 11-11" fill="none" stroke="#9aa3ad" stroke-width="2.6" stroke-linecap="round"/></svg>',"Spår","Publika GPS-spår från OpenStreetMap");
 }
 function openLyr(){genThumbs();renderLyr();$("#lyrSheet").classList.add("on");$("#lyrSheet").setAttribute("aria-hidden","false");$("#lyrScrim").classList.add("on")}
 function closeLyr(){$("#lyrSheet").classList.remove("on");$("#lyrSheet").setAttribute("aria-hidden","true");$("#lyrScrim").classList.remove("on")}
