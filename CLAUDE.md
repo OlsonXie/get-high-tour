@@ -133,10 +133,10 @@ Oscars skiss: tre spårtyper med tydliga, olika linjestilar, så att typen syns 
 ### Regler
 - **Boot pack-tröskel (beslutad 35°):** ett uppförssegment klassas som boot pack när **terrängens lutning ≥ 35°** *eller* när lutningen i färdriktningen överstiger vägvalets befintliga gräns för "skidor på ryggen" (~26°). Lägg tröskeln i en konstant `BOOTPACK_DEG = 35` så att den går att ändra.
 - **Utjämning:** boot pack-sträckor kortare än ~30 m slås ihop med omgivningen, och luckor under ~30 m mellan två boot pack-sträckor fylls. Det ska inte "fladdra" mellan streck och prickar.
-- Workern ska returnera klass per segment även för uppben (`up`/`boot`), som `cls[]` redan gör för nedben.
+- Workern ska returnera klass per segment även för uppben (`skin`/`boot`), som `cls[]` redan gör för nedben.
 - **Nedfarten är en röd linje**, där flacka partier och motlut markeras som en **tjockare blå** sträcka (beslutat 2026-11-20, kan ändras senare). Dagens gula och orange markeringar försvinner, eftersom gult nu betyder boot pack. Board-bedömning, meter flackt och höjdprofil behålls. Alternativet som diskuterades (skins up blått och flackt tjockare grönt) hålls lätt att byta till via tokens.
 - Behåll den mörka, halvgenomskinliga kantlinjen (casing) under spåren så de syns på alla baskartor. Färdriktningspilarna på uppstigningen kan tas bort, eftersom den streckade stilen redan säger "upp" (fråga om du är osäker).
-- Höjdprofilen och GPX-exporten använder samma tre klasser och färger.
+- Höjdprofilen och GPX-exporten använder samma fyra klasser och färger.
 - Lavinterrängens rand under rutten (röd/orange/lila) krockar med nya färger. Se över den, t.ex. med en tunnare halo eller ett separat mönster, men lös det efter att spårstilen är klar.
 
 ### Kända spår (dagens rosa lager)
