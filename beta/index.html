@@ -1321,22 +1321,31 @@ function routerCore(){
     }
     return S;
   }
-  function cost(up,d,dz,sm,eB,tr){
+  // Heading sector (0–7, 45° each) per move, and which moves count as a kick turn from a sector:
+  // more than 60° between the sector's centre and the new move.
+  const SEC=NB.map(([dx,dy])=>((Math.round(Math.atan2(dy,dx)/(Math.PI/4))%8)+8)%8);
+  const TURN=new Uint8Array(128);
+  for(let h=0;h<8;h++)for(let q=0;q<16;q++){let d=Math.abs(h*Math.PI/4-Math.atan2(NB[q][1],NB[q][0]))%(2*Math.PI);if(d>Math.PI)d=2*Math.PI-d;TURN[h*16+q]=d>Math.PI/3+1e-6?1:0}
+  const KICK=40;                                       // a kick turn costs ~40 s
+  function cost(up,d,dz,sm,eB,tr,boot){
     let c;
     if(up){
-      if(dz>=0){
+      if(sm>=boot){                                    // boot pack: skis on the back, walk the direct line
+        c=dz>=0?d/0.9+dz/0.08:d/0.9+(-dz)/0.5;         // ca 290 höjdm/h
+        c*=sm<35?6:sm<40?14:sm<45?30:60;               // avoid ≥ boot terrain hard: take a longer way if there is one
+      }else if(dz>=0){
         const a=Math.atan2(dz,d)*DEG;
         c=d/1.1+dz/0.13;                               // ca 4 km/h + 470 höjdm/h
-        if(a>26)c*=6+(a-26)/2;                         // för brant att skinna: gå med skidorna på ryggen
-        else if(a>16){const k=(a-16)/5;c*=1+2*k*k}     // brant spår = jobbigt, ger sicksack
-      }else c=d/1.1+(-dz)/0.6;
-      c*=sm<25?1:sm<30?1.25:sm<35?3:sm<40?7:sm<45?12:20;        // undvik lavinterräng
+        if(a>26)c*=6+(a-26)/2;                         // too steep to skin
+        else if(a>16){const k=(a-16)/4;c*=1+3*k*k}     // 20° ×4, 24° ×13 → zigzag instead
+        if(sm>=25)c*=1.3;
+      }else c=(d/1.1+(-dz)/0.6)*(sm>=25?1.3:1);
     }else{
       if(dz<0){
         const a=Math.atan2(-dz,d)*DEG;
         const wgt=a<3?7:a<5?4:a<8?2:a<12?1.3:a<35?0.9:1.1;
         c=d*wgt/3;
-        c*=sm<35?1:sm<40?3.5:sm<45?10:sm<50?25:60;
+        c*=sm<35?1:sm<40?8:sm<45?25:sm<50?150:400;    // avoid > 35°, > 45° almost blocked
       }else{
         c=(d/1.1+dz/0.13)*1.4;                         // motlut: gå/skinna
         c*=sm<35?1:sm<40?2.5:8;
@@ -1346,13 +1355,53 @@ function routerCore(){
     if(tr)c*=up?(tr>1?0.35:0.6):(tr>1?0.5:0.8);        // följ spår där folk gått/åkt (2 = inritat skidspår)
     return c;
   }
-  function run({E,w,h,cell,segs,T,av}){
+  /* Uphill: A* over (cell, heading sector) so a kick turn has a cost. Without it, every zigzag
+     collapses into a 1-cell alternation that is a straight line up the fall line at map scale. */
+  function searchUp(E,w,h,cell,S,T,s,t,boot,U){
+    const {g,from,closed}=U,tx=t%w,ty=(t/w)|0,Et=E[t];
+    g.fill(Infinity);from.fill(-1);closed.fill(0);
+    // lower bound: climbing Δ needs ≥ Δ/tan16° of track (steeper or boot pack always costs more per metre)
+    const H=i=>{const dz=Math.max(0,Et-E[i]);return Math.max(Math.hypot(i%w-tx,((i/w)|0)-ty)*cell,dz*3.487)/1.1+dz/0.13};
+    let hi=U.hi,hf=U.hf,hn=0;
+    const push=(i,f)=>{if(hn===hi.length){const a=new Int32Array(hn*2),b=new Float32Array(hn*2);a.set(hi);b.set(hf);hi=U.hi=a;hf=U.hf=b}
+      let k=hn++;while(k>0){const p=(k-1)>>1;if(hf[p]<=f)break;hi[k]=hi[p];hf[k]=hf[p];k=p}hi[k]=i;hf[k]=f};
+    const pop=()=>{const top=hi[0],li=hi[--hn],lf=hf[hn];let k=0;
+      for(;;){const l=2*k+1,r=l+1;let m=-1,mf=lf;if(l<hn&&hf[l]<mf){m=l;mf=hf[l]}if(r<hn&&hf[r]<mf)m=r;if(m<0)break;hi[k]=hi[m];hf[k]=hf[m];k=m}
+      if(hn){hi[k]=li;hf[k]=lf}return top};
+    for(let d=0;d<8;d++){g[s*8+d]=0;push(s*8+d,H(s))}
+    let found=-1,it=0;
+    while(hn){
+      const st=pop();if(closed[st])continue;closed[st]=1;
+      const c=st>>3,hc=st&7;if(c===t){found=st;break}
+      if(++it>2.5e7)break;
+      const cx=c%w,cy=(c/w)|0,ec=E[c],sc=S[c],gc=g[st];
+      for(let q=0;q<16;q++){
+        const dx=NB[q][0],dy=NB[q][1],nx=cx+dx,ny=cy+dy;
+        if(nx<0||ny<0||nx>=w||ny>=h)continue;
+        // heading only matters where you would zigzag on skins (16° to boot); elsewhere it collapses and turning is free
+        const nb=ny*w+nx,ns=nb*8+(S[nb]<16||S[nb]>=boot?0:SEC[q]);if(closed[ns])continue;
+        let sm=sc>S[nb]?sc:S[nb];
+        if(q>=8){const m=(cy+Math.trunc(dy/2))*w+cx+Math.trunc(dx/2);if(S[m]>sm)sm=S[m]}
+        let cst=cost(true,Math.hypot(dx,dy)*cell,E[nb]-ec,sm,E[nb],T?T[nb]:0,boot);
+        if(sm<boot&&sc>=16&&sc<boot&&c!==s&&TURN[hc*16+q])cst+=KICK;
+        const ng=gc+cst;
+        if(ng<g[ns]){g[ns]=ng;from[ns]=st;push(ns,ng+H(nb))}
+      }
+    }
+    if(found<0)return null;
+    const p=[];for(let k=found;k!==-1;k=from[k])p.push(k>>3);p.reverse();
+    return {idx:Int32Array.from(p),s:Float32Array.from(p,k=>S[k])};
+  }
+  function run({E,w,h,cell,segs,T,av,boot}){
+    boot=boot||30;
     const n=w*h,S=slopes(E,w,h,cell);
     const g=new Float64Array(n),from=new Int32Array(n),closed=new Uint8Array(n);
+    const U=segs.some(sg=>sg.mode==="up")?{g:new Float32Array(n*8),from:new Int32Array(n*8),closed:new Uint8Array(n*8),hi:new Int32Array(1<<20),hf:new Float32Array(1<<20)}:null;
     const paths=[];
     for(const sg of segs){
+      if(sg.mode==="up"){paths.push(searchUp(E,w,h,cell,S,T,sg.a,sg.b,boot,U));continue}
       g.fill(Infinity);from.fill(-1);closed.fill(0);
-      const up=sg.mode==="up",s=sg.a,t=sg.b,tx=t%w,ty=(t/w)|0,Et=E[t];
+      const up=false,s=sg.a,t=sg.b,tx=t%w,ty=(t/w)|0,Et=E[t];
       const H=i=>{const d=Math.hypot(i%w-tx,((i/w)|0)-ty)*cell;return up?d/1.1+Math.max(0,Et-E[i])/0.13:d*0.28};
       let hi=[],hf=[];
       const push=(i,f)=>{hi.push(i);hf.push(f);let k=hi.length-1;while(k>0){const p=(k-1)>>1;if(hf[p]<=hf[k])break;let ti=hi[p];hi[p]=hi[k];hi[k]=ti;let tf=hf[p];hf[p]=hf[k];hf[k]=tf;k=p}};
@@ -1433,7 +1482,7 @@ function runRouter(data){
   return new Promise((res,rej)=>{const id=++rwId;rwP[id]={res,rej,data};RW.postMessage({...data,id})});
 }
 
-const RZ=13,CALCV=5;
+const RZ=13,CALCV=6;
 async function buildGrid(pts){
   const P=pts.map(([lat,lon])=>[lon2x(lon,RZ)*256,lat2y(lat,RZ)*256]);
   const latc=pts.reduce((a,p)=>a+p[0],0)/pts.length;
@@ -1516,23 +1565,36 @@ async function computeRoute(pts,over,osmLines){
   try{G.T=await traceGrid(G,osmLines||[])}catch(e){G.T=null}
   const cells=pts.map(G.cellOf),el=cells.map(k=>G.E[k]);
   let hiI=0;el.forEach((e,i)=>{if(e>el[hiI])hiI=i});
-  const auto=pts.slice(1).map((_,i)=>i<hiI?"up":"down");
+  // Up until the highest point; after it, a segment that climbs more than 20 m is also up
+  // (otherwise it would be routed as a descent and drawn as counter-slope/flat).
+  const auto=pts.slice(1).map((_,i)=>i<hiI||el[i+1]-el[i]>20?"up":"down");
   const modes=auto.map((m,i)=>(over&&over[i])||m);
   const segs=modes.map((m,i)=>({a:cells[i],b:cells[i+1],mode:m}));
-  const {paths,av}=await runRouter({E:G.E,w:G.w,h:G.h,cell:G.cell,segs,T:G.T,av:true});
+  const {paths,av}=await runRouter({E:G.E,w:G.w,h:G.h,cell:G.cell,segs,T:G.T,av:true,boot:BOOTPACK_DEG});
   const legs=paths.map((p,i)=>{
     if(!p)throw new Error(`Hittade ingen rimlig väg mellan punkt ${i+1} och ${i+2}.`);
     const ix=[...p.idx];
     const A=av&&av[i]?{c:[...av[i].c],a:[...av[i].a],lo:[...av[i].lo],hi:[...av[i].hi]}:null;
     return {mode:modes[i],c:smoothLine(ix.map(G.ll)),e:ix.map(k=>Math.round(G.E[k])),s:[...p.s].map(v=>Math.round(v)),av:A};
   });
-  return hydrate({v:CALCV,modes,auto,hi:hiI,legs});
+  const res=hydrate({v:CALCV,modes,auto,hi:hiI,legs});
+  logSlopes(res,G);
+  return res;
+}
+/* Terrain slope per track class (max/mean/min, length-weighted mean), logged for every computed route */
+function logSlopes(res,G){
+  const st={};
+  res.legs.forEach(L=>{for(let k=0;k<L.cls.length;k++){const key=rkey(L,k)==="down"?"descent":rkey(L,k),len=L.d[k+1]-L.d[k],t=Math.max(L.s[k],L.s[k+1]);
+    const s=st[key]||(st[key]={m:0,min:99,max:0,sum:0});s.m+=len;s.min=Math.min(s.min,t);s.max=Math.max(s.max,t);s.sum+=t*len}});
+  const rows={};for(const k of ["skin","boot","descent","flat"])if(st[k])rows[k]={metres:Math.round(st[k].m),max:st[k].max,mean:Math.round(st[k].sum/st[k].m),min:st[k].min};
+  console.log(`[route] terrain slope per class (°), grid ${G.cell.toFixed(1)} m (${G.src})`);console.table(rows);
 }
 const packRes=res=>({v:res.v,modes:res.modes,auto:res.auto,hi:res.hi,legs:res.legs.map(L=>({mode:L.mode,c:L.c,e:L.e,s:L.s,av:L.av||null}))});
-/* Boot pack: terrängens lutning >= BOOTPACK_DEG, eller lutningen i färdriktningen över
-   vägvalets gräns för "skidor på ryggen" (BOOTPACK_DIR_DEG, se cost()-funktionens 26°).
-   Utjämning: korta sträckor (<BOOTPACK_SMOOTH_M) slås ihop med föregående klass. */
-const BOOTPACK_DEG=35,BOOTPACK_DIR_DEG=26,BOOTPACK_SMOOTH_M=30;
+/* Boot pack: terrain slope >= BOOTPACK_DEG (also passed to the router, which avoids that terrain
+   hard and walks it straight when it can't), or direction-of-travel slope over the "skis on the
+   back" limit (BOOTPACK_DIR_DEG, cost()'s 26°). Runs shorter than BOOTPACK_SMOOTH_M take the
+   previous class, so it doesn't flicker. */
+const BOOTPACK_DEG=30,BOOTPACK_DIR_DEG=26,BOOTPACK_SMOOTH_M=30;
 function hydrate(res){
   res.legs.forEach(L=>{
     const n=L.c.length,D=[0];
@@ -1614,11 +1676,12 @@ function addPathLayers(m,src,before){
     paint:{"line-color":T.trackCasing,"line-width":["match",["get","k"],"flat",12,7.5],"line-opacity":.35}},before);
   const cls=(id,color,width,dash)=>m.addLayer({id:src+"-"+id,type:"line",source:src,filter:["==",["get","k"],id],
     layout:{"line-join":"round","line-cap":"round"},paint:Object.assign({"line-color":color,"line-width":width},dash?{"line-dasharray":dash}:{})},before);
-  cls("skin",T.trackSkin,4.2,[2.2,1.6]);
-  cls("boot",T.trackBootpack,4.6,[0,2]);
-  cls("flat",T.trackFlat,6.7);
-  cls("down",T.trackDescent,4.2);
+  cls("skin",T.trackSkin,PATH_W.skin,[2.2,1.6]);
+  cls("boot",T.trackBootpack,PATH_W.boot,[0,2]);
+  cls("flat",T.trackFlat,PATH_W.flat);
+  cls("down",T.trackDescent,PATH_W.down);
 }
+const PATH_W={skin:4.2,boot:4.6,flat:6.7,down:4.2};
 function resHTML(res,cid){
   const s=calcStats(res);
   const hasDown=res.legs.some(L=>L.mode==="down");
@@ -1878,11 +1941,12 @@ function refreshOvPaths(){
   custom.forEach(c=>{if(c.res&&(ovSel===c.id))f.push(...resFeatures(c.res,c.id))});
   omap.getSource("ov-paths").setData({type:"FeatureCollection",features:f});
   const sel=ovSel||"";
-  omap.setPaintProperty("ov-paths-ln","line-width",["case",["==",["get","rid"],sel],5,2.8]);
-  omap.setPaintProperty("ov-paths-cas","line-width",["case",["==",["get","rid"],sel],8.5,5]);
-  omap.setPaintProperty("ov-paths-ln","line-opacity",drawMode?.3:sel?["case",["==",["get","rid"],sel],1,.45]:.95);
-  omap.setPaintProperty("ov-paths-cas","line-opacity",drawMode?.1:sel?["case",["==",["get","rid"],sel],.4,.12]:.3);
-  omap.setPaintProperty("ov-paths-arr","icon-opacity",drawMode?.25:sel?["case",["==",["get","rid"],sel],1,.35]:.9);
+  const on=["==",["get","rid"],sel];
+  Object.entries(PATH_W).forEach(([k,wd])=>{
+    omap.setPaintProperty("ov-paths-"+k,"line-width",["case",on,wd*1.2,wd*.67]);
+    omap.setPaintProperty("ov-paths-"+k,"line-opacity",drawMode?.3:sel?["case",on,1,.45]:.95)});
+  omap.setPaintProperty("ov-paths-cas","line-width",["case",on,["match",["get","k"],"flat",11,8.5],["match",["get","k"],"flat",7,5]]);
+  omap.setPaintProperty("ov-paths-cas","line-opacity",drawMode?.1:sel?["case",on,.4,.12]:.3);
   const g=[];ROUTES.forEach(r=>{const x=store.get("gpx-"+r.id,null);if(x)g.push({type:"Feature",properties:{},geometry:{type:"LineString",coordinates:x.c}})});
   omap.getSource("ov-gpx").setData({type:"FeatureCollection",features:g});
   Object.entries(ovMarkers).forEach(([id,m])=>m.getElement().classList.toggle("sel",id===ovSel));
@@ -1926,6 +1990,8 @@ function selectOv(id){
   const fly=res=>{if(ovSel!==id)return;const b=res?resBounds(res):new maplibregl.LngLatBounds([r.t[1],r.t[0]],[r.t[1],r.t[0]]).extend([r.s[1],r.s[0]]);omap.fitBounds(b,{padding:padFor(),duration:900,maxZoom:14})};
   fly(res);
   if(r&&!res)calcKnown(r).then(x=>{if(ovSel===id){refreshOvPaths();renderPanel();fly(x)}}).catch(e=>{if(ovSel===id)renderPanel(e.message)});
+  // own routes saved by an older router version are recomputed with the current one
+  if(c&&(!res||res.v!==CALCV)){c.res=null;renderPanel();computeRoute(c.pts,c.over).then(x=>{c.res=x;saveCustom();if(ovSel===id){refreshOvPaths();renderPanel();fly(x)}}).catch(e=>{if(ovSel===id)renderPanel(e.message)})}
 }
 function applyMode(){
   $("#mapview").classList.toggle("drawing",drawMode);

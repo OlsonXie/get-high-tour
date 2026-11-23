@@ -112,8 +112,11 @@ Cache: Cache API `ght-tiles-v{PAINTV}`.
 
 ### Vägvalets regler
 - **Upp:** undvik terräng ≥ 30° kraftigt. Lutningen i färdriktningen hålls under ca 16–20° (sicksack). Det som ändå är ≥ 30°, eller över gränsen för "skidor på ryggen" (~26° i färdriktningen), är **boot pack** (`BOOTPACK_DEG = 30`, utjämning ±30 m).
-- **Ned:** följer fallinjen. Partier under 5° och motlut straffas och klassas som flat (bara på nedben). Terräng över 35° undviks (över 45° nästan spärrat).
-- Upp och ned får gå olika vägar. Vändpunkten är högsta punkten men kan ändras.
+  - Uppben söks med A* över (ruta, färdriktning i 8 sektorer), och en **kick turn kostar ~40 s** (`KICK`). Utan det kollapsar sicksacken till en 1-rutas-växling som på kartan blir en rak linje i fallinjen (felet 2026-11-23). Riktningen spelas bara roll i skin-terräng (16° till boot), annars är vändning gratis.
+  - I terräng ≥ `BOOTPACK_DEG` räknas boot pack: rak linje, ca 290 höjdm/h, gånger 6/14/30/60 för 30/35/40/45°+.
+- **Ned:** följer fallinjen. Partier under 5° och motlut straffas och klassas som flat (bara på nedben). Terräng över 35° undviks (gånger 8/25/150/400 för 35/40/45/50°+).
+- Upp och ned får gå olika vägar. Vändpunkten är högsta punkten men kan ändras. Efter högsta punkten räknas en sträcka som stiger mer än 20 m också som upp.
+- Varje framräknad rutt loggar terrängens lutning (max/medel/min) per klass i konsolen (`[route]`).
 
 ---
 
