@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Get High Tour – beta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <style>
 :root{
   --bg:#eef0f3;--surface:#f7f8fa;--card:#fff;--ink:#11161d;--muted:#6a7380;--line:#e2e5ea;
-  --dark:#14181d;--accent:#D60000;--accent-ink:#D60000;--serif:'Instrument Serif',Georgia,serif;--sans:Montserrat,system-ui,sans-serif;--outline:#c9ced6;
+  --dark:#14181d;--accent:#D60000;--accent-ink:#D60000;--font-heading:'Archivo Black','Arial Black',system-ui,sans-serif;--font-body:Montserrat,system-ui,sans-serif;--outline:#c9ced6;
   --g:#2f8a57;--gbg:#e3f3ea;--y:#a07400;--ybg:#fbf0d2;--o:#c4561c;--obg:#fbe4d6;--r:#b3261e;--rbg:#f9dedb;--n:#6a7380;--nbg:#e8ebef;
   --radius:26px;
   /* spår-tokens (tokens/tokens.json): primitiver */
@@ -23,7 +23,7 @@
   --aval-start:var(--color-avalanche-3);--aval-other:var(--color-avalanche-2);--aval-hatch:var(--ink);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Montserrat,system-ui,sans-serif;font-size:15px;line-height:1.45}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.45}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
 a{color:var(--accent-ink)}
 .app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--surface);position:relative;overflow-x:hidden}
@@ -242,11 +242,11 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
 .ovp input[type=text]{width:100%;height:42px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font:inherit;font-size:14px;background:var(--surface);margin-top:12px}
 .ovp .btn[disabled]{opacity:.4}
 .mylist .it{display:flex;width:100%;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px;font-weight:600;text-align:left}
-.ovm{background:#11161d;color:#fff;font:700 11px Montserrat,sans-serif;padding:5px 8px;border-radius:10px;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.3);cursor:pointer}
+.ovm{background:#11161d;color:#fff;font:700 11px var(--font-body);padding:5px 8px;border-radius:10px;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.3);cursor:pointer}
 .ovm.cu{background:#7a3fb5}.ovm.sel{background:var(--accent)}
 .drawing .ovm{opacity:.45;pointer-events:none}
 .drawing #omap canvas{cursor:crosshair}
-.wp{width:30px;height:30px;max-width:30px;overflow:hidden;line-height:1;border-radius:50%;background:#fff;border:3px solid #11161d;font:800 12px Montserrat,sans-serif;display:grid;place-items:center;box-shadow:0 3px 10px rgba(0,0,0,.35);cursor:grab;color:#11161d}
+.wp{width:30px;height:30px;max-width:30px;overflow:hidden;line-height:1;border-radius:50%;background:#fff;border:3px solid #11161d;font:800 12px var(--font-body);display:grid;place-items:center;box-shadow:0 3px 10px rgba(0,0,0,.35);cursor:grab;color:#11161d}
 .wp.wide{width:40px;max-width:40px;border-radius:15px;font-size:11px}
 .wp.s{background:#2f6fdc;color:#fff;border-color:#fff}.wp.pk{background:#11161d;color:#fff;border-color:#fff}
 .avbox .avhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
@@ -314,19 +314,15 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
   #detail .sheet{width:460px;flex:none;overflow-y:auto;padding:28px 28px 60px;background:var(--surface);box-shadow:-10px 0 30px rgba(0,0,0,.08)}
 }
 
-/* ---------- v0.7: accent #D60000, Instrument Serif-rubriker, kartlager-modul ---------- */
-.brand h1,.card .head h3,.sheet h2,.ovh>b,.ovp .brandw,.sec h4,.ovp h6,.status h5,.lsh h3,.lbody h4{font-family:var(--serif);font-weight:400;letter-spacing:0}
-.brand h1{font-size:40px;line-height:1}
-.card .head h3{font-size:28px;line-height:1.05}
-.sheet h2{font-size:38px;line-height:1.02}
-.ovh>b{font-size:28px;line-height:1.05}
-.ovp .brandw{font-size:34px;line-height:1;color:var(--ink)}
-.ovp .brandw span{font-family:var(--sans);font-size:12px;margin-top:6px}
-.sec h4,.ovp h6,.lbody h4{font-size:22px;text-transform:none;color:var(--ink);line-height:1.1}
+/* ---------- headings: --font-heading (Archivo Black, test 2026-11-23), body and buttons: --font-body ---------- */
+.sheet h2,.ovh>b,.sec h4,.ovp h6,.status h5{font-family:var(--font-heading);font-weight:400;letter-spacing:-.01em}
+.sheet h2{font-size:32px;line-height:1.05}
+.ovh>b{font-size:22px;line-height:1.1}
+.sec h4,.ovp h6{font-size:18px;text-transform:none;color:var(--ink);line-height:1.15}
 .ovp h6{margin:18px 0 6px}
-.status h5{font-size:20px;line-height:1.1}
-button,.btn,input,textarea,select{font-family:var(--sans)}
-.ovp h6 button{color:var(--accent);font-family:var(--sans)}
+.status h5{font-size:17px;line-height:1.15}
+button,.btn,input,textarea,select{font-family:var(--font-body)}
+.ovp h6 button{color:var(--accent);font-family:var(--font-body)}
 .menu .mi{background:var(--accent)}
 .lyropts{display:none}
 /* kartminiatyr som öppnar lagermodulen */
@@ -801,8 +797,8 @@ async function showOnMap(r){
   markers.forEach(m=>m.remove());markers=[];
   const top=[d.top[1],d.top[0]],st=[r.t[1],r.t[0]];
   map.getSource("route").setData({type:"Feature",geometry:{type:"LineString",coordinates:[st,top]}});
-  markers.push(new maplibregl.Marker({element:mk(`<div style="background:#11161d;color:#fff;font:700 12px Montserrat;padding:6px 10px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.3);white-space:nowrap">▲ ${esc(r.name.split(" /")[0])} · ${d.topE} m</div>`),anchor:"bottom",offset:[0,-6]}).setLngLat(top).addTo(map));
-  markers.push(new maplibregl.Marker({element:mk(`<div style="background:#D60000;color:#fff;font:700 11px Montserrat;padding:5px 9px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.3)">P Start</div>`),anchor:"bottom",offset:[0,-4]}).setLngLat(st).addTo(map));
+  markers.push(new maplibregl.Marker({element:mk(`<div style="background:#11161d;color:#fff;font:700 12px var(--font-body);padding:6px 10px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.3);white-space:nowrap">▲ ${esc(r.name.split(" /")[0])} · ${d.topE} m</div>`),anchor:"bottom",offset:[0,-6]}).setLngLat(top).addTo(map));
+  markers.push(new maplibregl.Marker({element:mk(`<div style="background:#D60000;color:#fff;font:700 11px var(--font-body);padding:5px 9px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.3)">P Start</div>`),anchor:"bottom",offset:[0,-4]}).setLngLat(st).addTo(map));
   setPaths(map,"calc",[]);
   const kn=r.osm&&OSM_TRK[r.osm];map.getSource("known").setData(kn?{type:"Feature",geometry:{type:"LineString",coordinates:kn.map(p=>[p[1],p[0]])}}:EMPTY);
   $("#mapnote").textContent="Streckad linje = fågelvägen, inte spåret";
