@@ -83,7 +83,7 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .mapbtn.home{top:calc(14px + env(safe-area-inset-top));left:66px}
 .mapbtn.fav{top:calc(14px + env(safe-area-inset-top));right:14px}
 .mapbtn.fav.on svg{fill:var(--dark)}
-.mapctl{position:absolute;right:14px;bottom:44px;z-index:3;display:flex;flex-direction:column;gap:8px}
+.mapctl{position:absolute;right:14px;top:calc(70px + env(safe-area-inset-top));z-index:3;display:flex;flex-direction:column;gap:8px}
 .mapctl .mapbtn{position:static;padding:0 10px}
 .mapctl .mapbtn.on{background:var(--dark);color:#fff}
 .layers{position:absolute;left:14px;bottom:44px;z-index:3;display:flex;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:14px;padding:4px;gap:2px;box-shadow:0 4px 14px rgba(0,0,0,.15)}
@@ -107,7 +107,8 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .maplegend.on{display:flex}
 .maplegend span{display:inline-flex;align-items:center;gap:4px}
 .maplegend b{width:12px;height:8px;border-radius:2px;display:inline-block}
-.tracklegend{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;z-index:4;display:flex;align-items:center;gap:8px;background:var(--surface);border-radius:999px;padding:5px 12px 5px 5px;box-shadow:0 4px 14px rgba(0,0,0,.15);max-width:calc(100% - 28px)}
+/* centred in the space left of the layer button, so the two never overlap */
+.tracklegend{position:absolute;left:14px;right:96px;margin:0 auto;width:max-content;max-width:calc(100% - 110px);bottom:14px;z-index:4;display:flex;align-items:center;gap:8px;background:var(--surface);border-radius:999px;padding:5px 12px 5px 5px;box-shadow:0 4px 14px rgba(0,0,0,.15)}
 .tracklegend .ti-wrap{display:flex;align-items:center;gap:10px;overflow-x:auto;scrollbar-width:none;min-width:0}
 .tracklegend .ti-wrap::-webkit-scrollbar{display:none}
 .tracklegend .ti{display:flex;align-items:center;gap:4px;flex:none;font-size:10.5px;font-weight:700;color:#3a4350;white-space:nowrap}
@@ -116,8 +117,20 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .tracklegend .lgtog{width:26px;height:26px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--muted);background:var(--bg)}
 .tracklegend.collapsed{padding:5px}
 .tracklegend.collapsed .ti-wrap{display:none}
-#mapview .tracklegend{bottom:calc(58% + 14px)}
-@media(min-width:768px){#mapview .tracklegend{bottom:14px}}
+#mapview .tracklegend,#mapview .lyrthumb{bottom:calc(14px + env(safe-area-inset-bottom))}
+/* phones: with a panel open the legend sits above it and the layer button steps aside (layers are one tap away after closing) */
+@media(max-width:767px){#mapview.haspanel .tracklegend{bottom:calc(58% + 14px)}#mapview.haspanel .lyrthumb{display:none}}
+/* attribution above the layer button */
+.maplibregl-ctrl-bottom-right{bottom:88px}
+#mapview .maplibregl-ctrl-bottom-right{bottom:calc(88px + env(safe-area-inset-bottom))}
+.navbtns{position:absolute;z-index:3;right:14px;top:calc(14px + env(safe-area-inset-top));display:flex;flex-direction:column;gap:8px}
+.rb{position:relative;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.95);color:var(--dark);display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.rb.on{background:var(--dark);color:#fff}
+.rb svg.i{width:21px;height:21px}
+@media(hover:hover){.rb[data-tip]:hover::after{content:attr(data-tip);position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);background:var(--dark);color:#fff;font-size:12px;font-weight:700;padding:6px 9px;border-radius:8px;white-space:nowrap;pointer-events:none}}
+.ovprog{position:absolute;z-index:3;top:calc(18px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:rgba(17,22,29,.72);color:#fff;font-size:11px;font-weight:600;padding:5px 10px;border-radius:999px;white-space:nowrap;display:none}
+.ovprog.on{display:block}
+.ovp.off{display:none}
 .mapnote{position:absolute;top:calc(68px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:3;background:rgba(17,22,29,.72);color:#fff;font-size:11px;font-weight:600;padding:5px 10px;border-radius:999px;white-space:nowrap}
 .maplibregl-ctrl-attrib{font-size:10px}
 .sheet{padding:22px 22px 60px}
@@ -253,7 +266,6 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
 /* ---------- v0.6: helskärmskarta som start, bokmärken, responsivt ---------- */
 .app{max-width:none!important;margin:0!important;min-height:100vh;border-radius:0!important;box-shadow:none!important;overflow:visible}
 #mapview{left:0!important;right:0!important;top:0!important;bottom:0!important;width:auto!important;border-radius:0!important}
-#mapview .ovtop #ovBack,#mapview .ovtop #ovHome,#mapview .ovtop .ovtitle{display:none}
 .ovp{max-height:58%}
 .ovp .brandw{font-weight:800;letter-spacing:.28em;font-size:12px;color:var(--dark)}
 .ovp .brandw span{display:block;letter-spacing:0;font-weight:600;font-size:12px;color:var(--muted);margin-top:2px}
@@ -318,22 +330,19 @@ button,.btn,input,textarea,select{font-family:var(--sans)}
 .menu .mi{background:var(--accent)}
 .lyropts{display:none}
 /* kartminiatyr som öppnar lagermodulen */
-.lyrthumb{position:absolute;z-index:3;left:14px;bottom:44px;width:60px;height:60px;border-radius:16px;overflow:hidden;background:#d6dbe1;border:3px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.25);padding:0}
+.lyrthumb{position:absolute;z-index:3;right:14px;bottom:14px;width:68px;height:68px;border-radius:18px;overflow:hidden;background:#d6dbe1;border:3px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.25);padding:0}
 .lyrthumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .lyrthumb img:not([src]){visibility:hidden}
-.lyrthumb span{position:absolute;left:0;right:0;bottom:0;padding:10px 0 3px;font-size:10.5px;font-weight:700;color:#fff;text-align:center;background:linear-gradient(transparent,rgba(0,0,0,.65))}
+.lyrthumb span{position:absolute;left:0;right:0;bottom:0;padding:12px 0 4px;font-size:11px;font-weight:700;color:#fff;text-align:center;background:linear-gradient(transparent,rgba(0,0,0,.65))}
 .lyrthumb:hover{transform:scale(1.04)}
-.ovtop .lyrthumb{position:relative;left:auto;bottom:auto;margin-left:auto;width:52px;height:52px;border-radius:14px}
-.ovctl{top:calc(76px + env(safe-area-inset-top))}
-.lscrim{position:fixed;inset:0;z-index:58;background:rgba(17,22,29,.28);opacity:0;pointer-events:none;transition:opacity .25s}
-.lscrim.on{opacity:1;pointer-events:auto}
-.lyrsheet{position:fixed;z-index:59;left:0;right:0;bottom:0;max-height:78vh;display:flex;flex-direction:column;background:var(--surface);border-radius:26px 26px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.25);transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
-.lyrsheet.on{transform:none}
-.lsh{display:flex;align-items:center;justify-content:space-between;padding:18px 18px 10px 22px;border-bottom:1px solid var(--line)}
-.lsh h3{margin:0;font-size:30px;line-height:1}
-.lsh .x{background:#fff;border:1px solid var(--outline)}
-.lbody{overflow:auto;padding:4px 18px calc(22px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
-.lbody h4{margin:18px 4px 10px}
+.ovctl{top:calc(174px + env(safe-area-inset-top))}
+/* Map layers: a full-screen view laid out like the detail sheet; on wide screens a right-hand sheet over the map, like the detail view */
+.lyrview{position:fixed;inset:0;z-index:60;background:var(--surface);overflow-y:auto;-webkit-overflow-scrolling:touch;display:none}
+.lyrview.on{display:block}
+.lyrbar{position:sticky;top:0;z-index:2;height:0;padding:calc(14px + env(safe-area-inset-top)) 14px 0}
+.lyrbar .mapbtn{position:relative;width:44px}
+.lyrbody{max-width:760px;margin:0 auto;padding-top:calc(74px + env(safe-area-inset-top))}
+.lyrbody .sec:first-of-type{margin-top:18px}
 .lgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .lcard{display:block;text-align:left;background:#fff;border:1px solid var(--line);border-radius:18px;padding:6px 6px 9px;transition:border-color .15s}
 .lcard .im{position:relative;display:block;aspect-ratio:16/10;border-radius:13px;overflow:hidden;background:#d6dbe1}
@@ -356,51 +365,13 @@ button,.btn,input,textarea,select{font-family:var(--sans)}
 .tgl::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
 .lrow.on .tgl{background:var(--accent)}
 .lrow.on .tgl::after{transform:translateX(18px)}
-@media(min-width:768px){
-  .lyrsheet{left:auto;top:16px;right:16px;bottom:16px;width:360px;max-height:none;border-radius:26px;transform:translateX(calc(100% + 30px))}
-  .lyrsheet.on{transform:none}
-  .lscrim{background:transparent}
-}
+@media(min-width:700px) and (max-width:1023px){.lyrbody .lgrid{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:1024px){.lyrview{left:auto;width:460px;box-shadow:-10px 0 30px rgba(0,0,0,.12)}}
 </style>
 </head>
 <body>
 <div class="app">
 
-<!-- ================= HOME ================= -->
-<section class="view on" id="home">
-  <div class="top">
-    <div class="chip-dark" id="wxchip" title="Just nu vid Lyngseidet">
-      <svg class="i" viewBox="0 0 24 24"><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg>
-      <span id="wxtxt">–</span>
-    </div>
-    <div class="spacer"></div>
-    <button class="chip-dark sq" id="searchBtn" aria-label="Sök"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
-    <button class="chip-dark sq" id="favBtn" aria-label="Favoriter"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8 3.3 4.5 7 4.5c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.7 0 6 3.5 4.5 7.2C19.5 16.4 12 21 12 21z"/></svg></button>
-  </div>
-  <div class="netwarn" id="netwarn"><b>Kartor och data blockeras här</b>Du verkar ha öppnat filen i en förhandsvisning som stoppar externa anslutningar. Ladda ner filen och öppna den i Chrome eller Safari, så laddas reliefbilder, höjddata, 3D-karta och lavinläge.</div>
-  <div class="brand">
-    <div class="wm">GET HIGH TOUR</div>
-    <h1>Upptäck</h1>
-    <p>Lyngen &amp; Tromsø · 15–21 mars 2027</p>
-  </div>
-  <div class="homeact">
-    <button class="dk" onclick="location.hash='karta'"><svg class="i" viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>Alla turer på kartan</button>
-    <button onclick="location.hash='rita'"><svg class="i" viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16l-1 4z"/><path d="M14 7l3 3"/></svg>Rita egen rutt</button>
-  </div>
-  <div class="search" id="searchBox"><input id="q" type="text" placeholder="Sök topp eller område…" autocomplete="off"></div>
-  <div class="filters" id="filters">
-    <button data-f="all" class="on">Alla</button>
-    <button data-f="kvaloya">Kvaløya</button>
-    <button data-f="fastland">Fastlandet</button>
-    <button data-f="lyngen">Lyngen</button>
-    <button data-f="fit">Passar oss bäst</button>
-    <button data-f="lag">Låg exponering</button>
-    <button data-f="board">Brädvänlig</button>
-    <button data-f="storm">Stormdag</button>
-  </div>
-  <div class="list" id="list"></div>
-  <p class="foot-note">Reliefbilderna ritas från höjddata (Mapzen/AWS Terrain Tiles). Siffror och bedömningar är utkast – kolla alltid karta, guidebok och Varsom.</p>
-</section>
 
 <!-- ================= DETAIL ================= -->
 <section class="view" id="detail">
@@ -493,32 +464,32 @@ button,.btn,input,textarea,select{font-family:var(--sans)}
 <!-- ================= KARTA ================= -->
 <section class="view" id="mapview">
   <div id="omap"></div>
-  <div class="ovtop">
-    <button class="mapbtn" id="ovBack" aria-label="Tillbaka"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
-    <button class="mapbtn" id="ovHome" aria-label="Till startsidan"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
-    <div class="ovtitle" id="ovTitle">Karta</div>
-    <button class="lyrthumb" id="lyrO" aria-label="Kartlager"><img alt=""><span>Karta</span></button>
+  <div class="navbtns" role="toolbar" aria-label="Map tools">
+    <button class="rb" id="nSearch" data-tip="Search" aria-label="Search tours" aria-pressed="false"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+    <button class="rb" id="nBm" data-tip="Bookmarks" aria-label="Bookmarks" aria-pressed="false"><svg class="i" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg></button>
+    <button class="rb" id="nDraw" data-tip="Draw route" aria-label="Draw your own route" aria-pressed="false"><svg class="i" viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16l-1 4z"/><path d="M14 7l3 3"/></svg></button>
   </div>
   <div class="ovctl">
-    <button class="mapbtn compass" id="ovNorth" aria-label="Kompass – tryck för norr uppåt"><svg class="needle" viewBox="0 0 24 24"><text x="12" y="5.6" text-anchor="middle" font-size="5.6" font-weight="800" fill="#e3342a" font-family="Montserrat,sans-serif">N</text><path d="M12 6.6l3.3 5.4H8.7z" fill="#e3342a"/><path d="M12 18l-3.3-6h6.6z" fill="#9aa3ad"/><text x="12" y="23" text-anchor="middle" font-size="5" font-weight="700" fill="#6b7480" font-family="Montserrat,sans-serif">S</text></svg></button>
+    <button class="mapbtn compass" id="ovNorth" aria-label="Compass – tap for north up"><svg class="needle" viewBox="0 0 24 24"><text x="12" y="5.6" text-anchor="middle" font-size="5.6" font-weight="800" fill="#e3342a" font-family="Montserrat,sans-serif">N</text><path d="M12 6.6l3.3 5.4H8.7z" fill="#e3342a"/><path d="M12 18l-3.3-6h6.6z" fill="#9aa3ad"/><text x="12" y="23" text-anchor="middle" font-size="5" font-weight="700" fill="#6b7480" font-family="Montserrat,sans-serif">S</text></svg></button>
     <button class="mapbtn on" id="ov3d">3D</button>
-    <button class="mapbtn" id="ovFit" aria-label="Visa allt"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
+    <button class="mapbtn" id="ovFit" aria-label="Show everything"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
   </div>
+  <div class="ovprog" id="ovProg" role="status"></div>
+  <button class="lyrthumb" id="lyrO" aria-label="Map layers"><img alt=""><span>Map</span></button>
   <div class="tracklegend" id="trackLegendO"></div>
   <div class="ovp" id="ovPanel"></div>
 </section>
 <div class="toast" id="toast"></div>
-<div class="lscrim" id="lyrScrim"></div>
-<aside class="lyrsheet" id="lyrSheet" aria-label="Kartlager" aria-hidden="true">
-  <div class="lsh"><h3>Kartlager</h3><button class="x" id="lyrX" aria-label="Stäng">×</button></div>
-  <div class="lbody">
-    <h4>Baskarta</h4>
-    <div class="lgrid" id="lyrGrid"></div>
-    <h4>Lager</h4>
-    <div class="lrows" id="lyrRows"></div>
-    <p class="disc">Svartvit är för känslan. Välj Vinterkarta eller Topo när ni planerar på riktigt.</p>
+<!-- ================= MAP LAYERS (full-screen view, same layout as the detail sheet) ================= -->
+<section class="lyrview" id="lyrSheet" aria-label="Map layers" aria-hidden="true">
+  <div class="lyrbar"><button class="mapbtn" id="lyrX" aria-label="Back to the map"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button></div>
+  <div class="sheet lyrbody">
+    <h2>Map layers</h2>
+    <div class="sec"><h4>Base map</h4><div class="lgrid" id="lyrGrid"></div></div>
+    <div class="sec"><h4>Overlays</h4><div class="lrows" id="lyrRows"></div></div>
+    <p class="disc">The winter map is painted in the app from Kartverket's height and topo data. Heatmap shows where people have gone, from public GPS tracks and ski tracks drawn in OpenStreetMap.</p>
   </div>
-</aside>
+</section>
 </div>
 
 <script>
@@ -654,46 +625,6 @@ async function derive(r){
   derived[r.id]=p;return p;
 }
 
-/* Reliefbild till korten: snöig hillshade ritad från höjddata */
-async function relief(r,canvas){
-  const dpr=Math.min(2,devicePixelRatio||1);
-  const W=canvas.width=Math.round(canvas.clientWidth*dpr),H=canvas.height=Math.round(canvas.clientHeight*dpr);
-  const d=await derive(r);
-  const cLat=d.top[0]*0.6+r.t[0]*0.4,cLon=d.top[1]*0.6+r.t[1]*0.4;
-  // skala i z12-pixlar per canvas-pixel, så att topp och start får plats
-  const sx=Math.abs(lon2x(d.top[1],12)-lon2x(r.t[1],12))*256,sy=Math.abs(lat2y(d.top[0],12)-lat2y(r.t[0],12))*256;
-  const s12=Math.max(sx/(W*0.6),sy/(H*0.36),0.3);
-  const z=Math.max(11,Math.min(14,12+Math.floor(Math.log2(1/s12))+1)),scale=s12*2**(z-12);
-  const cx=lon2x(cLon,z)*256,cy=lat2y(cLat,z)*256,x0=cx-W*scale/2,y0=cy-H*scale/2+H*scale*0.07;
-  const tx0=Math.floor(x0/256),ty0=Math.floor(y0/256),tx1=Math.floor((x0+W*scale)/256),ty1=Math.floor((y0+H*scale)/256),nx=tx1-tx0+1;
-  const tiles={};await Promise.all([...Array(nx*(ty1-ty0+1)).keys()].map(async i=>{const x=tx0+i%nx,y=ty0+Math.floor(i/nx);tiles[x+","+y]=await loadTile(z,x,y)}));
-  const px=(X,Y)=>{const tx=Math.floor(X/256),ty=Math.floor(Y/256),t=tiles[tx+","+ty];return t?t[(Y-ty*256)*256+(X-tx*256)]:0};
-  const sample=(X,Y)=>{const fx=Math.floor(X),fy=Math.floor(Y),ax=X-fx,ay=Y-fy;return px(fx,fy)*(1-ax)*(1-ay)+px(fx+1,fy)*ax*(1-ay)+px(fx,fy+1)*(1-ax)*ay+px(fx+1,fy+1)*ax*ay};
-  const E=new Float32Array(W*H);for(let y=0;y<H;y++)for(let x=0;x<W;x++)E[y*W+x]=sample(x0+x*scale,y0+y*scale);
-  const g=canvas.getContext("2d"),img=g.createImageData(W,H),o=img.data;
-  const mpp=156543.03*Math.cos(cLat*Math.PI/180)/2**z*scale;
-  const L=[[225,30,.65],[300,45,.35]].map(([a,h,w])=>[a*Math.PI/180,h*Math.PI/180,w]);
-  for(let y=0;y<H;y++)for(let x=0;x<W;x++){
-    const i=y*W+x,e=E[i];
-    const dzdx=(E[y*W+Math.min(W-1,x+1)]-E[y*W+Math.max(0,x-1)])/(2*mpp),dzdy=(E[Math.min(H-1,y+1)*W+x]-E[Math.max(0,y-1)*W+x])/(2*mpp);
-    const slope=Math.atan(Math.hypot(dzdx,dzdy)),asp=Math.atan2(dzdy,-dzdx);
-    let hs=0;for(const [az,alt,w] of L)hs+=w*Math.max(0,Math.cos(alt)*Math.cos(slope)+Math.sin(alt)*Math.sin(slope)*Math.cos(az-Math.PI/2-asp));
-    let t=Math.min(1,Math.max(0,(hs-.18)/.8));t=t*t*(3-2*t);
-    t*=1-Math.min(1,slope/1.1)*.25; // branta partier lite mörkare (klippor)
-    let R,G,B;
-    if(e<=1.5){R=40;G=56;B=82}
-    else{R=46+(247-46)*t;G=62+(250-62)*t;B=94+(254-94)*t;const lo=Math.max(0,1-e/300)*.22;R*=1-lo*.5;G*=1-lo*.4;B*=1-lo*.25}
-    o[i*4]=R;o[i*4+1]=G;o[i*4+2]=B;o[i*4+3]=255;
-  }
-  g.putImageData(img,0,0);
-  const toC=ll=>[(lon2x(ll[1],z)*256-x0)/scale,(lat2y(ll[0],z)*256-y0)/scale];
-  const [ax,ay]=toC(r.t),[bx,by]=toC(d.top);
-  g.lineCap="round";
-  g.lineWidth=5*dpr;g.strokeStyle="rgba(17,22,29,.45)";g.beginPath();g.moveTo(ax,ay);g.lineTo(bx,by);g.stroke();
-  g.setLineDash([5*dpr,6*dpr]);g.lineWidth=2.4*dpr;g.strokeStyle="#fff";g.beginPath();g.moveTo(ax,ay);g.lineTo(bx,by);g.stroke();g.setLineDash([]);
-  const dot=(x,y,c,s)=>{g.beginPath();g.arc(x,y,s*dpr,0,7);g.fillStyle=c;g.fill();g.lineWidth=2.2*dpr;g.strokeStyle="#fff";g.stroke()};
-  dot(ax,ay,"#D60000",5);dot(bx,by,"#11161d",6);
-}
 
 /* =========================================================
    LAVIN (Varsom) + VÄDER (Open-Meteo)
@@ -790,50 +721,8 @@ async function renderWx(r){
 /* =========================================================
    HOME
    ========================================================= */
-let filter="all",query="",onlyFav=false;
 const favs=new Set(store.get("favs",[]));
 const saveFavs=()=>store.set("favs",[...favs]);
-const regionAv={};
-function match(r){
-  if(onlyFav&&!favs.has(r.id))return false;
-  if(query&&!(r.name+" "+r.area).toLowerCase().includes(query))return false;
-  if(filter==="all")return true;
-  if(["lyngen","ost","kvaloya","fastland"].includes(filter))return r.region===filter;
-  if(filter==="fit")return r.fit===3;
-  if(filter==="lag")return r.exp==="g";
-  if(filter==="board")return r.board==="bra";
-  if(filter==="storm")return r.storm;
-}
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){io.unobserve(e.target);const r=ROUTES.find(x=>x.id===e.target.dataset.id);const c=e.target.querySelector("canvas");relief(r,c).then(()=>c.style.opacity=1).catch(()=>{})}}),{rootMargin:"300px"});
-function avPill(r){
-  const a=regionAv[REGION[r.region].id];
-  if(a===undefined)return `<span class="pill"><span class="dot"></span>Lavin …</span>`;
-  if(!a||!+a.DangerLevel)return `<span class="pill"><span class="dot"></span>Lavin – ingen prognos</span>`;
-  return `<span class="pill av${a.DangerLevel}"><span class="dot"></span>Lavinfara ${a.DangerLevel}</span>`;
-}
-function renderList(){
-  const L=$("#list");L.innerHTML="";
-  const list=ROUTES.filter(match).sort((a,b)=>b.fit-a.fit);
-  if(!list.length){L.innerHTML=`<div class="empty">${onlyFav?"Inga favoriter än – tryck på hjärtat på en tur.":"Inga turer matchar."}</div>`;return}
-  list.forEach(r=>{
-    const el=document.createElement("div");el.className="card";el.dataset.id=r.id;
-    el.innerHTML=`<div class="ph"></div><canvas style="opacity:0;transition:opacity .5s"></canvas><div class="shade"></div>
-      <div class="head"><h3>${esc(r.name)}</h3><div class="loc"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>${esc(r.area)}</div></div>
-      <button class="heart ${favs.has(r.id)?"on":""}" aria-label="Favorit"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8 3.3 4.5 7 4.5c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.7 0 6 3.5 4.5 7.2C19.5 16.4 12 21 12 21z"/></svg></button>
-      <div class="foot"><p class="desc">${esc(r.desc)}</p>
-        <div class="pills"><span class="pill hgt">▲ … m</span><span class="pill">Passar oss <span class="fitbar">${[1,2,3].map(n=>`<i class="${n<=r.fit?"on":""}"></i>`).join("")}</span></span>${avPill(r)}</div></div>`;
-    derive(r).then(d=>{const h=el.querySelector(".hgt");if(h)h.textContent="▲ "+d.topE+" m"}).catch(()=>{const h=el.querySelector(".hgt");if(h)h.remove()});
-    el.onclick=e=>{if(e.target.closest(".heart")){e.stopPropagation();favs.has(r.id)?favs.delete(r.id):favs.add(r.id);saveFavs();e.target.closest(".heart").classList.toggle("on");return}location.hash=r.id};
-    L.appendChild(el);io.observe(el);
-  });
-}
-$("#filters").onclick=e=>{const b=e.target.closest("button");if(!b)return;filter=b.dataset.f;document.querySelectorAll("#filters button").forEach(x=>x.classList.toggle("on",x===b));renderList()};
-$("#searchBtn").onclick=()=>{$("#searchBox").classList.toggle("on");if($("#searchBox").classList.contains("on"))$("#q").focus()};
-$("#q").oninput=e=>{query=e.target.value.trim().toLowerCase();renderList()};
-$("#favBtn").onclick=()=>{onlyFav=!onlyFav;$("#favBtn").style.background=onlyFav?"var(--accent)":"";renderList()};
-// lavin per region till korten + väderchip
-[...new Set(Object.values(REGION).map(x=>x.id))].forEach(id=>fetchAv(id,todayISO(),false).then(a=>{regionAv[id]=a}).catch(()=>{regionAv[id]=null}).finally(()=>{document.querySelectorAll(".card").forEach(el=>{const r=ROUTES.find(x=>x.id===el.dataset.id);if(REGION[r.region].id!==id)return;const pills=el.querySelectorAll(".pill");if(pills[2])pills[2].outerHTML=avPill(r)})}));
-fetch("https://api.open-meteo.com/v1/forecast?latitude=69.576&longitude=20.219&current=temperature_2m,weather_code&timezone=Europe%2FOslo").then(r=>r.json()).then(w=>{$("#wxtxt").textContent=Math.round(w.current.temperature_2m)+"°C · Lyngen"}).catch(()=>{$("#wxtxt").textContent="Lyngen"});
 
 /* =========================================================
    DETAIL + 3D-KARTA
@@ -1200,7 +1089,7 @@ $("#rSave").onclick=()=>{const r=ROUTES.find(x=>x.id===cur);if(!draft.snow||!dra
 
 async function openDetail(r){
   cur=r.id;stopSpin();
-  $("#home").classList.remove("on");$("#detail").classList.add("on");window.scrollTo(0,0);
+  $("#detail").classList.add("on");window.scrollTo(0,0);
   $("#dName").textContent=r.name;$("#dArea").textContent=r.area.includes(AREA_NAME[r.region])?r.area:r.area+" · "+AREA_NAME[r.region];
   $("#dFav").classList.toggle("on",favs.has(r.id));
   $("#dFit").innerHTML=[1,2,3].map(n=>`<i class="${n<=r.fit?"on":""}"></i>`).join("");
@@ -1228,15 +1117,25 @@ async function openDetail(r){
   $("#sCalc").textContent="Beräknat från höjddata och fågelvägen – ungefärligt tills vägen är beräknad.";}
 }
 $("#dFav").onclick=()=>{const id=cur;toggleBm(id);$("#dFav").classList.toggle("on",favs.has(id));toast(favs.has(id)?"Tillagd i bokmärken":"Borttagen från bokmärken")};
-let prevView="",curView=location.hash.slice(1);
+let prevView="",curView="";
 const goHome=()=>{if(location.hash.slice(1))location.hash="";else route()};
-$("#backBtn").onclick=()=>{location.hash=prevView==="bokmarken"?"bokmarken":""};
+$("#backBtn").onclick=()=>{location.hash=["bookmarks","search"].includes(prevView)?prevView:""};
 $("#homeBtn").onclick=goHome;
+/* Hash routes: "" / #map = full-screen map (start), #search, #bookmarks, #draw, #<route-id> = detail,
+   #layers = map layers on top of whatever is open. Old Swedish hashes redirect. */
+const HASH_ALIAS={bokmarken:"bookmarks",rita:"draw",karta:"map"};
+let lyrOpen=false,lyrInApp=false;
 function route(){
+  const id=decodeURIComponent(location.hash.slice(1));
+  if(HASH_ALIAS[id]){location.replace("#"+HASH_ALIAS[id]);return}
+  if(id==="layers"){
+    if(!$("#mapview").classList.contains("on")&&!$("#detail").classList.contains("on")){curView="";ovView=null;openOverview(false)}
+    showLyr();return}
+  if(lyrOpen){hideLyr();if(id===curView)return}     // back from the layer view: the view underneath is unchanged
   if(fsOn)setFs(false);
-  const id=location.hash.slice(1),r=ROUTES.find(x=>x.id===id);
+  const r=ROUTES.find(x=>x.id===id);
   if(id!==curView){prevView=curView;curView=id}
-  if(!r){ovView=id==="bokmarken"?"bm":null;openOverview(id==="rita");return}   // start = helskärmskarta
+  if(!r){ovView=id==="bookmarks"?"bm":id==="search"?"search":null;openOverview(id==="draw");return}
   closeOverview();
   openDetail(r);
 }
@@ -1900,7 +1799,7 @@ function renderCalcDetail(r,res){
   $("#calcBox").innerHTML=resHTML(res,"dprof")+`<div class="btnrow"><button class="btn ghost sm" id="cEdit">Ändra</button><button class="btn ghost sm" id="cGpx">GPX</button></div><p class="disc">${CALC_DISC}</p>`;
   drawProfile($("#dprof"),res);
   $("#cGpx").onclick=()=>dlGpx(r.name,res);
-  $("#cEdit").onclick=()=>derive(r).then(d=>{setDraft({pts:[r.t,d.top,r.t],over:{},name:r.name+" – egen variant"});location.hash="rita"});
+  $("#cEdit").onclick=()=>derive(r).then(d=>{setDraft({pts:[r.t,d.top,r.t],over:{},name:r.name+" – egen variant"});location.hash="draw"});
   drawCalcDetail(r,res);
   refreshAval(r);
 }
@@ -1924,10 +1823,10 @@ function setDraft(d){plan=d;draftRes=null;draftErr=null;store.set("plan",plan)}
 
 function openOverview(draw){
   cur=null;stopSpin();
-  $("#home").classList.remove("on");$("#detail").classList.remove("on");$("#mapview").classList.add("on");document.title="Get High Tour – beta";
+  $("#detail").classList.remove("on");$("#mapview").classList.add("on");document.title="Get High Tour – beta";
   document.body.style.overflow="hidden";
   drawMode=draw;if(draw){ovSel=null;stopAuto()}
-  if(!window.maplibregl){$("#ovPanel").innerHTML='<p class="p">Kartan kan inte laddas här. Öppna appen i Chrome eller Safari.</p>';return}
+  if(!window.maplibregl){setPanel(true);$("#ovPanel").innerHTML='<p class="p">The map can\'t load here. Open the app in Chrome or Safari.</p>';return}
   if(!omap)initOmap();else{omap.resize();applyMode()}
 }
 function closeOverview(){stopAuto();$("#mapview").classList.remove("on");document.body.style.overflow=""}
@@ -1946,6 +1845,10 @@ function initOmap(){
     omap.addSource("ov-gpx",{type:"geojson",data:EMPTY});
     omap.addLayer({id:"ov-gpx",type:"line",source:"ov-gpx",paint:{"line-color":"#00c2b2","line-width":3.5}});
     omap.addSource("ov-paths",{type:"geojson",data:EMPTY});addPathLayers(omap,"ov-paths");
+    // a route line (the wide casing is the hit area) opens that tour's detail view
+    omap.on("click","ov-paths-cas",e=>{if(!drawMode&&e.features.length)selectOv(e.features[0].properties.rid)});
+    omap.on("mouseenter","ov-paths-cas",()=>{if(!drawMode)omap.getCanvas().style.cursor="pointer"});
+    omap.on("mouseleave","ov-paths-cas",()=>{omap.getCanvas().style.cursor=""});
     omap.addSource("ov-plan",{type:"geojson",data:EMPTY});
     omap.addSource("ov-plan-line",{type:"geojson",data:EMPTY});
     omap.addLayer({id:"ov-plan-line",type:"line",source:"ov-plan-line",paint:{"line-color":"#11161d","line-width":2,"line-dasharray":[1,1.5],"line-opacity":.6}});
@@ -1976,7 +1879,9 @@ function fitAll(instant){
   ROUTES.forEach(r=>b.extend([r.s[1],r.s[0]]));custom.forEach(c=>c.pts.forEach(p=>b.extend([p[1],p[0]])));
   omap.fitBounds(b,{padding:padFor(),duration:instant?0:900,maxZoom:12});
 }
-function padFor(){const p=$("#ovPanel");if(innerWidth>=768)return {top:60,left:Math.min(440,(p?p.offsetWidth:390)+50),right:80,bottom:50};return {top:80,left:40,right:70,bottom:Math.min(window.innerHeight*.55,(p?p.offsetHeight:200)+30)}}
+function padFor(){const p=$("#ovPanel"),open=p&&!p.classList.contains("off");
+  if(innerWidth>=768)return {top:60,left:open?Math.min(440,p.offsetWidth+50):60,right:80,bottom:110};
+  return {top:80,left:40,right:70,bottom:open?Math.min(window.innerHeight*.55,p.offsetHeight+30):110}}
 /* Bokmärken: de 12 förberedda turerna kan läggas till/tas bort. Bokmärkta visas med väg på kartan. */
 function toggleBm(id){
   favs.has(id)?favs.delete(id):favs.add(id);saveFavs();
@@ -2013,7 +1918,7 @@ async function ovQueueRun(){
   refreshOvPaths();
   let done=0;
   for(const r of todo){
-    ovProg=`Beräknar vägar ${done}/${todo.length}…`;updProg();
+    ovProg=`Calculating routes ${done}/${todo.length}…`;updProg();
     try{await calcKnown(r)}catch(e){}
     done++;refreshOvPaths();
     if(ovSel===r.id)renderPanel();
@@ -2021,7 +1926,7 @@ async function ovQueueRun(){
   ovProg="";updProg();ovQueued=false;if(ovAgain)ovQueueRun();
 }
 let ovAgain=false;
-function updProg(){const e=$("#ovProg");if(e)e.textContent=ovProg}
+function updProg(){const e=$("#ovProg");if(e){e.textContent=ovProg;e.classList.toggle("on",!!ovProg)}}
 async function loadOsm(){
   const k="osm-skitour-v1",c=store.get(k,null);
   if(c&&Date.now()-c.at<7*864e5)return c.f;
@@ -2038,7 +1943,9 @@ async function loadOsm(){
 function osmNear(ll){
   return osmF.some(x=>x.geometry.coordinates.some(p=>hav([p[1],p[0]],ll)<400));
 }
+/* A tour opens its detail view directly; own routes (which have no detail view) open in the panel */
 function selectOv(id){
+  if(ROUTES.some(r=>r.id===id)){location.hash=id;return}
   ovSel=id;refreshOvPaths();renderPanel();
   const r=ROUTES.find(x=>x.id===id),c=custom.find(x=>x.id===id);
   const res=r?memCalc[r.id]:c&&c.res;
@@ -2050,7 +1957,6 @@ function selectOv(id){
 }
 function applyMode(){
   $("#mapview").classList.toggle("drawing",drawMode);
-  $("#ovTitle").textContent=drawMode?"Rita egen rutt":"Karta";
   dMarkers.forEach(m=>m.remove());dMarkers=[];
   if(drawMode&&omapReady&&omap.getPitch()<5){omap.setTerrain({source:"dem",exaggeration:1.3});omap.easeTo({pitch:55,duration:700});$("#ov3d").classList.add("on")}
   if(drawMode){rebuildDraftMarkers();if(plan.pts.length>=2&&!draftRes&&!draftBusy)scheduleDraft(0);drawDraft();
@@ -2099,25 +2005,29 @@ function draftModes(){
   return plan.pts.slice(1).map((_,i)=>plan.over[i]||(i<Math.max(1,Math.ceil((plan.pts.length-1)/2))?"up":"down"));
 }
 let ovInfoHidden=!!store.get("ovInfoHidden",false);
+function setPanel(on){$("#ovPanel").classList.toggle("off",!on);$("#mapview").classList.toggle("haspanel",on)}
+function navState(){
+  [["#nSearch",!drawMode&&ovView==="search"],["#nBm",!drawMode&&ovView==="bm"],["#nDraw",drawMode]].forEach(([sel,on])=>{const b=$(sel);if(b){b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)}});
+}
 function renderPanel(err){
   const P=$("#ovPanel");if(!P)return;
-  P.classList.remove("min");
+  navState();setPanel(true);P.classList.remove("min");
   if(drawMode){
     const n=plan.pts.length,modes=draftModes();
-    const hint=n===0?"Tryck i kartan där turen börjar, till exempel vid parkeringen."
-      :n===1?"Tryck där du vill upp, till exempel toppen. Fler punkter styr vägen."
-      :"Dra i punkterna för att flytta dem. Appen väljer själv var det blir upp och ned, men du kan ändra per sträcka.";
-    const segs=n>1?`<div class="segs">${modes.map((m,i)=>`<div class="seg"><span>${i+1} → ${i+2}</span>${plan.over[i]?'<span class="small">ändrad</span>':'<span class="small">auto</span>'}<div class="tg2"><button data-s="${i}" data-m="up" class="u ${m==="up"?"on":""}">Upp</button><button data-s="${i}" data-m="down" class="d ${m==="down"?"on":""}">Ned</button></div></div>`).join("")}</div>`:"";
-    const body=draftBusy?'<p class="p small" style="margin-top:12px"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> Räknar ut bästa vägen…</p>'
+    const hint=n===0?"Tap the map where the tour starts, for example at the parking."
+      :n===1?"Tap where you want to go up, for example the summit. More points steer the route."
+      :"Drag the points to move them. The app decides where it's up and down, but you can change it per stretch.";
+    const segs=n>1?`<div class="segs">${modes.map((m,i)=>`<div class="seg"><span>${i+1} → ${i+2}</span>${plan.over[i]?'<span class="small">changed</span>':'<span class="small">auto</span>'}<div class="tg2"><button data-s="${i}" data-m="up" class="u ${m==="up"?"on":""}">Up</button><button data-s="${i}" data-m="down" class="d ${m==="down"?"on":""}">Down</button></div></div>`).join("")}</div>`:"";
+    const body=draftBusy?'<p class="p small" style="margin-top:12px"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> Finding the best route…</p>'
       :draftErr?`<p class="p" style="margin-top:12px;color:var(--r)">${esc(draftErr)}</p>`
       :draftRes?resHTML(draftRes,"ovprof"):"";
-    P.innerHTML=`<div class="ovh"><b>Rita egen rutt</b><button class="x" id="dExit" aria-label="Stäng">×</button></div>
+    P.innerHTML=`<div class="ovh"><b>Draw route</b><button class="x" id="dExit" aria-label="Close">×</button></div>
       <p class="p small" style="margin-top:4px">${hint}</p>${segs}${body}
-      <div class="btnrow"><button class="btn ghost sm" id="dUndo" ${n?"":"disabled"}>Ångra</button><button class="btn ghost sm" id="dHome" ${n>1?"":"disabled"}>Till start</button><button class="btn ghost sm" id="dClear" ${n?"":"disabled"}>Rensa</button></div>
-      ${draftRes?`<input type="text" id="dNm" placeholder="Namn på rutten" value="${esc(plan.name||"")}"><div class="btnrow"><button class="btn dark sm" id="dSave">Spara</button><button class="btn ghost sm" id="dGpx">GPX</button></div>`:""}
+      <div class="btnrow"><button class="btn ghost sm" id="dUndo" ${n?"":"disabled"}>Undo</button><button class="btn ghost sm" id="dHome" ${n>1?"":"disabled"}>Back to start</button><button class="btn ghost sm" id="dClear" ${n?"":"disabled"}>Clear</button></div>
+      ${draftRes?`<input type="text" id="dNm" placeholder="Route name" value="${esc(plan.name||"")}"><div class="btnrow"><button class="btn dark sm" id="dSave">Save</button><button class="btn ghost sm" id="dGpx">GPX</button></div>`:""}
       ${draftRes?`<p class="disc">${CALC_DISC}</p>`:""}`;
     drawProfile($("#ovprof"),draftRes||{legs:[]});
-    $("#dExit").onclick=()=>{location.hash="karta"};
+    $("#dExit").onclick=()=>{location.hash=""};
     $("#dUndo").onclick=()=>{plan.pts.pop();onDraftChange()};
     $("#dHome").onclick=()=>{plan.pts.push(plan.pts[0].slice());onDraftChange()};
     $("#dClear").onclick=()=>{plan.pts=[];plan.over={};plan.name="";onDraftChange()};
@@ -2125,79 +2035,71 @@ function renderPanel(err){
       const auto=draftRes?draftRes.auto[i]:null;if(auto===m)delete plan.over[i];else plan.over[i]=m;onDraftChange()});
     if(draftRes){
       $("#dNm").oninput=e=>{plan.name=e.target.value;store.set("plan",plan)};
-      $("#dGpx").onclick=()=>dlGpx(plan.name||"Egen rutt",draftRes);
+      $("#dGpx").onclick=()=>dlGpx(plan.name||"Own route",draftRes);
       $("#dSave").onclick=()=>{
-        const name=(plan.name||"").trim()||"Egen rutt "+(custom.length+1);
+        const name=(plan.name||"").trim()||"Own route "+(custom.length+1);
         let c=plan.editId&&custom.find(x=>x.id===plan.editId);
         if(c)Object.assign(c,{name,pts:plan.pts,over:plan.over,res:draftRes});
         else{c={id:"c"+Date.now(),name,pts:plan.pts,over:plan.over,res:draftRes,at:Date.now()};custom.unshift(c)}
         saveCustom();addOvMarker(c.id,c.pts[c.res.hi],c.name,true);
-        setDraft({pts:[],over:{},name:""});toast("Rutten är sparad på den här enheten");
-        location.hash="karta";setTimeout(()=>selectOv(c.id),80);
+        setDraft({pts:[],over:{},name:""});toast("The route is saved on this device");
+        location.hash="";setTimeout(()=>selectOv(c.id),80);
       };
     }
     return;
   }
-  const r=ovSel&&ROUTES.find(x=>x.id===ovSel),c=ovSel&&custom.find(x=>x.id===ovSel);
-  if(r||c){
-    const res=r?memCalc[r.id]:c.res,name=r?r.name:c.name;
-    const near=r&&osmNear(r.s);
-    P.innerHTML=`<div class="ovh"><b>${esc(name)}</b><button class="x" id="ovX" aria-label="Stäng">×</button></div>
-      <div class="small">${r?esc(r.area.includes(AREA_NAME[r.region])?r.area:r.area+" · "+AREA_NAME[r.region]):"Egen rutt"}</div>
-      ${res?resHTML(res,"ovprof"):err?`<p class="p" style="margin-top:10px;color:var(--r)">${esc(err)}</p>`:'<p class="p small" style="margin-top:12px"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> Räknar ut väg upp och bästa nedfart…</p>'}
-      ${near?'<p class="small" style="margin:8px 0 0">There is a known ski track from OpenStreetMap nearby. Choose the Heatmap map to see it.</p>':""}
-      <div class="btnrow">${r?`<button class="btn dark sm" id="ovOpen">Öppna turen</button><button class="btn ghost sm bmbtn${favs.has(r.id)?" on":""}" id="ovBm">${BM_SVG}${favs.has(r.id)?"Bokmärkt":"Bokmärk"}</button><button class="btn ghost sm" id="ovEdit">Ändra</button>`
-        :`<button class="btn dark sm" id="ovEdit">Redigera</button><button class="btn ghost sm" id="ovGpx">GPX</button><button class="btn ghost sm" id="ovDel">Ta bort</button>`}</div>`;
+  const c=ovSel&&custom.find(x=>x.id===ovSel);
+  if(c){
+    const res=c.res;
+    P.innerHTML=`<div class="ovh"><b>${esc(c.name)}</b><button class="x" id="ovX" aria-label="Close">×</button></div>
+      <div class="small">Your own route</div>
+      ${res?resHTML(res,"ovprof"):err?`<p class="p" style="margin-top:10px;color:var(--r)">${esc(err)}</p>`:'<p class="p small" style="margin-top:12px"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> Finding the way up and the best descent…</p>'}
+      <div class="btnrow"><button class="btn dark sm" id="ovEdit">Edit</button><button class="btn ghost sm" id="ovGpx">GPX</button><button class="btn ghost sm" id="ovDel">Delete</button></div>`;
     if(res)drawProfile($("#ovprof"),res);
     $("#ovX").onclick=()=>{ovSel=null;refreshOvPaths();renderPanel()};
-    if(r){$("#ovOpen").onclick=()=>{location.hash=r.id};$("#ovBm").onclick=()=>{toggleBm(r.id);toast(favs.has(r.id)?"Tillagd i bokmärken":"Borttagen från bokmärken")};
-      $("#ovEdit").onclick=()=>derive(r).then(d=>{setDraft({pts:[r.t,d.top,r.t],over:{},name:r.name+" – egen variant"});location.hash="rita"})}
-    else{
-      $("#ovEdit").onclick=()=>{setDraft({pts:c.pts.map(p=>p.slice()),over:{...c.over},name:c.name,editId:c.id});draftRes=c.res;location.hash="rita"};
-      $("#ovGpx").onclick=()=>dlGpx(c.name,c.res);
-      $("#ovDel").onclick=()=>{if(!confirm(`Ta bort "${c.name}"?`))return;custom=custom.filter(x=>x.id!==c.id);saveCustom();if(ovMarkers[c.id]){ovMarkers[c.id].remove();delete ovMarkers[c.id]}ovSel=null;refreshOvPaths();renderPanel()};
-    }
+    $("#ovEdit").onclick=()=>{setDraft({pts:c.pts.map(p=>p.slice()),over:{...c.over},name:c.name,editId:c.id});draftRes=c.res;location.hash="draw"};
+    $("#ovGpx").onclick=()=>{if(c.res)dlGpx(c.name,c.res)};
+    $("#ovDel").onclick=()=>{if(!confirm(`Delete "${c.name}"?`))return;custom=custom.filter(x=>x.id!==c.id);saveCustom();if(ovMarkers[c.id]){ovMarkers[c.id].remove();delete ovMarkers[c.id]}ovSel=null;refreshOvPaths();renderPanel()};
     return;
   }
   if(ovView==="bm"){renderBm(P);return}
-  const nBm=ROUTES.filter(r=>favs.has(r.id)).length;
-  P.innerHTML=`<div class="ovh"><div class="brandw">Get High Tour<span>Tromsø &amp; Lyngen · 15–21 mars 2027</span></div><span class="small" id="ovProg">${ovProg}</span></div>
-    <label class="srch"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="ovQ" type="search" placeholder="Sök topp eller område" autocomplete="off" value="${esc(ovQ)}"></label>
-    <div id="ovRes"></div>
-    <div class="menu">
-      <button id="mBm"><span class="mi">${BM_SVG}</span><span><b>Bokmärken</b><small>${nBm?nBm+(nBm===1?" tur":" turer"):"Inga än"}${custom.length?" · "+custom.length+" egna":""} · lägg till förslag</small></span><span class="chev">›</span></button>
-      <button id="mDraw"><span class="mi"><svg class="i" viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16l-1 4z"/><path d="M14 7l3 3"/></svg></span><span><b>Rita egen rutt</b><small>Appen väljer bästa väg upp och ned</small></span><span class="chev">›</span></button>
-    </div>
-    <div class="deskonly"><p class="disc">Tryck på en topp för att se vägen upp och ned. Vita etiketter (+) är förslag som inte är bokmärkta än. Vinterkartan målas från Kartverkets höjd- och topodata. Beslutsstöd, inte beslut.</p></div>`;
+  if(ovView==="search"){renderSearch(P);return}
+  P.innerHTML="";setPanel(false);                     // start view: just the map
+}
+/* Search: every tour (and own route) by name or area; empty query lists them all */
+function renderSearch(P){
+  P.innerHTML=`<div class="ovh"><b>Search</b><button class="x" id="sX" aria-label="Close">×</button></div>
+    <label class="srch"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="ovQ" type="search" placeholder="Search for a peak or area" aria-label="Search for a peak or area" autocomplete="off" value="${esc(ovQ)}"></label>
+    <div id="ovRes"></div>`;
   const sr=()=>{const q=ovQ.trim().toLowerCase(),R=$("#ovRes");if(!R)return;
-    if(!q){R.innerHTML="";return}
-    const hits=[...ROUTES.filter(r=>(r.name+" "+r.area+" "+AREA_NAME[r.region]).toLowerCase().includes(q)).map(r=>({id:r.id,n:r.name,a:areaOf(r)})),
-      ...custom.filter(c=>c.name.toLowerCase().includes(q)).map(c=>({id:c.id,n:c.name,a:"Egen rutt"}))];
-    R.innerHTML=hits.length?`<div class="menu">${hits.slice(0,8).map(h=>`<button class="rrow" data-id="${h.id}"><span><b>${esc(h.n)}</b><small>${esc(h.a)}</small></span><span class="chev">›</span></button>`).join("")}</div>`:'<p class="small" style="margin:10px 2px 0">Inga träffar.</p>';
+    const all=[...ROUTES.map(r=>({id:r.id,n:r.name,a:areaOf(r)})),...custom.map(c=>({id:c.id,n:c.name,a:"Your own route"}))];
+    const hits=q?all.filter(h=>(h.n+" "+h.a).toLowerCase().includes(q)):all;
+    R.innerHTML=hits.length?`<div class="menu">${hits.map(h=>`<button class="rrow" data-id="${h.id}"><span><b>${esc(h.n)}</b><small>${esc(h.a)}</small></span><span class="chev">›</span></button>`).join("")}</div>`:'<p class="small" style="margin:10px 2px 0">No matches.</p>';
     R.querySelectorAll(".rrow").forEach(b=>b.onclick=()=>selectOv(b.dataset.id))};
   sr();
-  $("#ovQ").oninput=e=>{ovQ=e.target.value;sr()};
-  $("#mBm").onclick=()=>{location.hash="bokmarken"};
-  $("#mDraw").onclick=()=>{location.hash="rita"};
+  const q=$("#ovQ");q.oninput=e=>{ovQ=e.target.value;sr()};
+  if(matchMedia("(hover:hover)").matches)q.focus();
+  $("#sX").onclick=()=>{location.hash=""};
 }
 function renderBm(P){
   const mine=ROUTES.filter(r=>favs.has(r.id)),sug=ROUTES.filter(r=>!favs.has(r.id)&&(bmReg==="all"||r.region===bmReg));
-  const row=(r,on)=>`<div class="bmrow"><button class="bmmain" data-id="${r.id}"><b>${esc(r.name)}</b><small>${esc(areaOf(r))}${r.ele?" · "+r.ele+" m":""}</small></button><button class="bmtog${on?" on":""}" data-bm="${r.id}">${BM_SVG}${on?"Ta bort":"Lägg till"}</button></div>`;
-  P.innerHTML=`<div class="ovh"><b>Bokmärken</b><button class="x" id="bmX" aria-label="Stäng">×</button></div>
-    <h6>Mina turer (${mine.length})</h6>
-    ${mine.length?mine.map(r=>row(r,true)).join(""):'<p class="small" style="margin:0">Inga bokmärken än. Lägg till turer från förslagen nedan, så visas de med väg upp och ned på kartan.</p>'}
-    ${custom.length?`<h6>Egna rutter (${custom.length})</h6>${custom.map(c=>`<div class="bmrow"><button class="bmmain" data-id="${c.id}"><b>✏️ ${esc(c.name)}</b><small>${c.res?Math.round(calcStats(c.res).gain/10)*10+" hm · ":""}ritad av er</small></button></div>`).join("")}`:""}
-    <h6>Förslag – 12 förberedda turer ${ROUTES.some(r=>!favs.has(r.id))?'<button id="bmAll">Lägg till alla</button>':""}</h6>
-    <div class="chips">${[["all","Alla"],["kvaloya","Kvaløya"],["fastland","Fastlandet"],["lyngen","Lyngen"]].map(([k,t])=>`<button data-r="${k}" class="${bmReg===k?"on":""}">${t}</button>`).join("")}</div>
-    ${sug.length?sug.map(r=>row(r,false)).join(""):'<p class="small" style="margin:0">Alla förslag här är redan bokmärkta.</p>'}`;
+  const row=(r,on)=>`<div class="bmrow"><button class="bmmain" data-id="${r.id}"><b>${esc(r.name)}</b><small>${esc(areaOf(r))}${r.ele?" · "+r.ele+" m":""}</small></button><button class="bmtog${on?" on":""}" data-bm="${r.id}" aria-label="${on?"Remove from":"Add to"} bookmarks">${BM_SVG}${on?"Remove":"Add"}</button></div>`;
+  P.innerHTML=`<div class="ovh"><b>Bookmarks</b><button class="x" id="bmX" aria-label="Close">×</button></div>
+    <h6>My tours (${mine.length})</h6>
+    ${mine.length?mine.map(r=>row(r,true)).join(""):'<p class="small" style="margin:0">No bookmarks yet. Add tours from the suggestions below and they show on the map with the way up and down.</p>'}
+    ${custom.length?`<h6>Own routes (${custom.length})</h6>${custom.map(c=>`<div class="bmrow"><button class="bmmain" data-id="${c.id}"><b>✏️ ${esc(c.name)}</b><small>${c.res?Math.round(calcStats(c.res).gain/10)*10+" m up · ":""}drawn by you</small></button></div>`).join("")}`:""}
+    <h6>Suggestions – 12 prepared tours ${ROUTES.some(r=>!favs.has(r.id))?'<button id="bmAll">Add all</button>':""}</h6>
+    <div class="chips">${[["all","All"],["kvaloya","Kvaløya"],["fastland","Mainland"],["lyngen","Lyngen"]].map(([k,t])=>`<button data-r="${k}" class="${bmReg===k?"on":""}">${t}</button>`).join("")}</div>
+    ${sug.length?sug.map(r=>row(r,false)).join(""):'<p class="small" style="margin:0">All suggestions here are already bookmarked.</p>'}`;
   $("#bmX").onclick=()=>{location.hash=""};
   const ba=$("#bmAll");if(ba)ba.onclick=bmAll;
   P.querySelectorAll(".bmmain").forEach(b=>b.onclick=()=>selectOv(b.dataset.id));
   P.querySelectorAll("[data-bm]").forEach(b=>b.onclick=()=>toggleBm(b.dataset.bm));
   P.querySelectorAll(".chips button").forEach(b=>b.onclick=()=>{bmReg=b.dataset.r;renderPanel()});
 }
-$("#ovBack").onclick=()=>{if(drawMode){location.hash="karta";return}location.hash=ROUTES.some(r=>r.id===prevView)?prevView:""};
-$("#ovHome").onclick=goHome;
+$("#nSearch").onclick=()=>{location.hash=location.hash==="#search"?"":"search"};
+$("#nBm").onclick=()=>{location.hash=location.hash==="#bookmarks"?"":"bookmarks"};
+$("#nDraw").onclick=()=>{location.hash=location.hash==="#draw"?"":"draw"};
 $("#ovFit").onclick=()=>{if(!omapReady)return;if(drawMode&&plan.pts.length){const b=new maplibregl.LngLatBounds();plan.pts.forEach(p=>b.extend([p[1],p[0]]));omap.fitBounds(b,{padding:padFor(),maxZoom:14})}else if(ovSel)selectOv(ovSel);else fitAll()};
 $("#ov3d").onclick=()=>{if(!omapReady)return;const on=omap.getPitch()<5;omap.easeTo({pitch:on?60:0,duration:700});omap.setTerrain(on?{source:"dem",exaggeration:1.25}:null);$("#ov3d").classList.toggle("on",on)};
 
@@ -2260,17 +2162,18 @@ function renderLyr(){
   $("#lyrRows").innerHTML=
     row("slope",'<svg viewBox="0 0 34 34" width="34" height="34"><rect width="34" height="34" rx="10" fill="#f4f5f7"/><path d="M4 28 L14 12 L19 19 L24 9 L30 28Z" fill="#f7e04b"/><path d="M14 12 L19 19 L16.5 22Z" fill="#f39a25"/><path d="M24 9 L27 19 L21.5 15Z" fill="#e3342a"/></svg>',"Bratthet","NVE: gult 27–29°, orange 30–34°, rött 35–39°, lila 40°+");
 }
-function openLyr(){genThumbs();renderLyr();$("#lyrSheet").classList.add("on");$("#lyrSheet").setAttribute("aria-hidden","false");$("#lyrScrim").classList.add("on")}
-function closeLyr(){$("#lyrSheet").classList.remove("on");$("#lyrSheet").setAttribute("aria-hidden","true");$("#lyrScrim").classList.remove("on")}
+function showLyr(){lyrOpen=true;genThumbs();renderLyr();const v=$("#lyrSheet");v.classList.add("on");v.setAttribute("aria-hidden","false");v.scrollTop=0;document.body.style.overflow="hidden";$("#lyrX").focus()}
+function hideLyr(){lyrOpen=false;const v=$("#lyrSheet");v.classList.remove("on");v.setAttribute("aria-hidden","true");document.body.style.overflow=$("#mapview").classList.contains("on")?"hidden":""}
+function openLyr(){lyrInApp=true;location.hash="layers"}
+function closeLyr(){if(!lyrOpen)return;if(lyrInApp){lyrInApp=false;history.back()}else location.hash=curView}
 document.querySelectorAll(".lyrthumb").forEach(b=>b.onclick=openLyr);
-$("#lyrX").onclick=closeLyr;$("#lyrScrim").onclick=closeLyr;
+$("#lyrX").onclick=closeLyr;
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeLyr()});
 $("#lyrSheet").addEventListener("click",e=>{
   const c=e.target.closest("[data-base]"),t=e.target.closest("[data-tg]");
   if(c){LYR.base=c.dataset.base;applyLyrAll()}
   else if(t){LYR[t.dataset.tg]=!LYR[t.dataset.tg];applyLyrAll()}
 });
-window.addEventListener("hashchange",closeLyr);
 setTimeout(genThumbs,1500);
 
 /* Startvyn roterar långsamt i 3D tills man rör kartan */
