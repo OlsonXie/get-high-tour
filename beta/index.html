@@ -1672,9 +1672,11 @@ const EMPTY={type:"FeatureCollection",features:[]};
 const KCOL={skin:T.trackSkin,boot:T.trackBootpack,down:T.trackDescent,flat:T.trackFlat};
 /* Legend centrerad längst ned på kartan (startkarta, ritläge, detaljvy): swatcharna
    återger de riktiga linjestilarna med CSS-variabler (inline-SVG läser dem direkt). */
-const LEGEND_ITEMS=[["skin","Skins up",3,"4.5,3.2"],["boot","Boot pack",3,"0,5.6"],["down","Descent",3,null],["flat","Flat",4.8,null]];
+const LEGEND_ITEMS=[["skin","Skins up",2,null],["boot","Boot pack",3,"0,5.6"],["down","Descent",3,null],["flat","Flat",4.8,null]];
 const LEGEND_VAR={skin:"--track-skin",boot:"--track-bootpack",down:"--track-descent",flat:"--track-flat",known:"--track-known"};
-const trackSwatch=(v,w,dash)=>`<svg viewBox="0 0 28 10"><line x1="2" y1="5" x2="26" y2="5" stroke="var(${v})" stroke-width="${w}" stroke-linecap="round"${dash?` stroke-dasharray="${dash}"`:""}/></svg>`;
+const trackSwatch=(v,w,dash)=>v==="--track-skin"
+  ?`<svg viewBox="0 0 28 10"><g stroke="var(${v})" stroke-width="2" fill="none"><line x1="1" y1="2.8" x2="27" y2="2.8" stroke-dasharray="6,3"/><line x1="1" y1="7.2" x2="27" y2="7.2" stroke-dasharray="1.5,3,4.5,0"/></g></svg>`
+  :`<svg viewBox="0 0 28 10"><line x1="2" y1="5" x2="26" y2="5" stroke="var(${v})" stroke-width="${w}" stroke-linecap="round"${dash?` stroke-dasharray="${dash}"`:""}/></svg>`;
 function trackLegendHTML(){
   const items=LEGEND_ITEMS.map(([k,label,w,dash])=>`<span class="ti">${trackSwatch(LEGEND_VAR[k],w,dash)}<b>${label}</b></span>`).join("");
   const kn=`<span class="ti kn${LYR.gps?"":" off"}">${trackSwatch(LEGEND_VAR.known,2,null)}<b>Known tracks</b></span>`;
@@ -1699,23 +1701,27 @@ function resFeatures(res,rid){
   });
   return f;
 }
-/* Fyra klasser, var sin lager (MapLibre kan inte göra line-dasharray data-driven per feature).
-   Uppstigningen (skin/boot) läggs först, nedfarten (flat/down) ovanpå – den streckade stilen
-   på uppstigningen räcker för att visa riktning, så pilarna (tidigare up-arrow) är borttagna. */
+/* One layer per line style (MapLibre can't make line-dasharray data-driven per feature).
+   Skins up = two parallel dashed lines like a skin track, dashes staggered half a period
+   (MapLibre has no dash offset, so line b starts mid-pattern: 0.75 + gap + 2.25 = 3 dash).
+   Ascent is added first, descent on top. */
+const TRACK_LAYERS=[
+  {id:"skin-a",k:"skin",w:3,off:-2.9,dash:[3,1.5],cap:"butt"},
+  {id:"skin-b",k:"skin",w:3,off:2.9,dash:[0.75,1.5,2.25,0],cap:"butt"},
+  {id:"boot",k:"boot",w:4.6,dash:[0,2]},
+  {id:"flat",k:"flat",w:6.7},
+  {id:"down",k:"down",w:4.2}];
 function addPathLayers(m,src,before){
   m.addLayer({id:src+"-cas",type:"line",source:src,layout:{"line-join":"round","line-cap":"round"},
-    paint:{"line-color":T.trackCasing,"line-width":["match",["get","k"],"flat",12,7.5],"line-opacity":.35}},before);
-  const cls=(id,color,width,dash)=>m.addLayer({id:src+"-"+id,type:"line",source:src,filter:["==",["get","k"],id],
-    layout:{"line-join":"round","line-cap":"round"},paint:Object.assign({"line-color":color,"line-width":width},dash?{"line-dasharray":dash}:{})},before);
-  cls("skin",T.trackSkin,PATH_W.skin,[2.2,1.6]);
-  cls("boot",T.trackBootpack,PATH_W.boot,[0,2]);
-  cls("flat",T.trackFlat,PATH_W.flat);
-  cls("down",T.trackDescent,PATH_W.down);
+    paint:{"line-color":T.trackCasing,"line-width":["match",["get","k"],"flat",12,"skin",10.5,7.5],"line-opacity":.35}},before);
+  const COL={skin:T.trackSkin,boot:T.trackBootpack,flat:T.trackFlat,down:T.trackDescent};
+  TRACK_LAYERS.forEach(L=>m.addLayer({id:src+"-"+L.id,type:"line",source:src,filter:["==",["get","k"],L.k],
+    layout:{"line-join":"round","line-cap":L.cap||"round"},
+    paint:Object.assign({"line-color":COL[L.k],"line-width":L.w},L.off?{"line-offset":L.off}:{},L.dash?{"line-dasharray":L.dash}:{})},before));
   m.addLayer({id:src+"-flatlab",type:"symbol",source:src,filter:["has","lab"],minzoom:11.5,
     layout:{"symbol-placement":"line-center","text-field":["get","lab"],"text-font":["Open Sans Semibold"],"text-size":11.5,"text-offset":[0,-1.1],"text-keep-upright":true},
     paint:{"text-color":T.trackFlat,"text-halo-color":T.trackHalo,"text-halo-width":1.6}},before);
 }
-const PATH_W={skin:4.2,boot:4.6,flat:6.7,down:4.2};
 function resHTML(res,cid){
   const s=calcStats(res);
   const hasDown=res.legs.some(L=>L.mode==="down");
@@ -1976,10 +1982,11 @@ function refreshOvPaths(){
   omap.getSource("ov-paths").setData({type:"FeatureCollection",features:f});
   const sel=ovSel||"";
   const on=["==",["get","rid"],sel];
-  Object.entries(PATH_W).forEach(([k,wd])=>{
-    omap.setPaintProperty("ov-paths-"+k,"line-width",["case",on,wd*1.2,wd*.67]);
-    omap.setPaintProperty("ov-paths-"+k,"line-opacity",drawMode?.3:sel?["case",on,1,.45]:.95)});
-  omap.setPaintProperty("ov-paths-cas","line-width",["case",on,["match",["get","k"],"flat",11,8.5],["match",["get","k"],"flat",7,5]]);
+  TRACK_LAYERS.forEach(L=>{const id="ov-paths-"+L.id;
+    omap.setPaintProperty(id,"line-width",["case",on,L.w*1.2,L.w*.67]);
+    if(L.off)omap.setPaintProperty(id,"line-offset",["case",on,L.off*1.2,L.off*.67]);
+    omap.setPaintProperty(id,"line-opacity",drawMode?.3:sel?["case",on,1,.45]:.95)});
+  omap.setPaintProperty("ov-paths-cas","line-width",["case",on,["match",["get","k"],"flat",11,"skin",12,8.5],["match",["get","k"],"flat",7,"skin",7,5]]);
   omap.setPaintProperty("ov-paths-cas","line-opacity",drawMode?.1:sel?["case",on,.4,.12]:.3);
   const g=[];ROUTES.forEach(r=>{const x=store.get("gpx-"+r.id,null);if(x)g.push({type:"Feature",properties:{},geometry:{type:"LineString",coordinates:x.c}})});
   omap.getSource("ov-gpx").setData({type:"FeatureCollection",features:g});

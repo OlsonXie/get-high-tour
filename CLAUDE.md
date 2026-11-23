@@ -159,7 +159,7 @@ Tokensystem med **primitiver → semantiska tokens**. Komponenter använder bara
 
 | Typ | Stil | Token | När |
 |---|---|---|---|
-| **Skins up** | Två parallella streckade linjer bredvid varandra (offset ±~2 px), avlånga streck omlott, som två skidspår | `--track-skin` | Uppstigning med stighudar |
+| **Skins up** | Två parallella streckade linjer bredvid varandra, som två skidspår: bredd 3 px, `line-offset` ±2,9 px, streck `[3, 1.5]` med `line-cap: butt`. Strecken ligger omlott: MapLibre saknar dash-offset, så den andra linjen har mönstret `[0.75, 1.5, 2.25, 0]` (ett halvt varv förskjutet). Kantlinjen är 10,5 px under skins. Allt ligger i `TRACK_LAYERS` | `--track-skin` | Uppstigning med stighudar |
 | **Boot pack** | Gula prickar | `--track-bootpack` | Uppför där terrängen är ≥ 30° och inte gick att undvika |
 | **Descent** | En röd heldragen linje | `--track-descent` | Nedfart |
 | **Flat** | Heldragen, tjockare (~1,6×) blå linje, plus etikett med längd och lutning när partiet är ≥ 60 m | `--track-flat` | Bara nedfart: < 5° och motlut (snowboard) |
