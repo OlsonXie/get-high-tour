@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -371,22 +371,22 @@ button,.btn,input,textarea,select{font-family:var(--font-body)}
 
 <!-- ================= DETAIL ================= -->
 <section class="view" id="detail">
-  <div class="netwarn" id="netwarn2" style="margin:0;border-radius:0"><b>Kartan kan inte laddas här</b>Öppna filen i Chrome eller Safari i stället för i en förhandsvisning.</div>
+  <div class="netwarn" id="netwarn2" style="margin:0;border-radius:0"><b>The map can't load here</b>Open the file in Chrome or Safari instead of a preview.</div>
   <div class="mapwrap">
     <div id="map"></div>
-    <button class="mapbtn back" id="backBtn" aria-label="Tillbaka"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
-    <button class="mapbtn home" id="homeBtn" aria-label="Till startsidan"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
-    <button class="mapbtn fav" id="dFav" aria-label="Favorit"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8 3.3 4.5 7 4.5c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.7 0 6 3.5 4.5 7.2C19.5 16.4 12 21 12 21z"/></svg></button>
-    <div class="mapnote" id="mapnote">Streckad linje = fågelvägen, inte spåret</div>
-    <div class="maplegend" id="legend"><span>NVE bratthet:</span><span><b style="background:#f7e04b"></b>27–29°</span><span><b style="background:#f39a25"></b>30–34°</span><span><b style="background:#e3342a"></b>35–39°</span><span><b style="background:#9b3fb5"></b>40°+</span></div>
+    <button class="mapbtn back" id="backBtn" aria-label="Back"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button class="mapbtn home" id="homeBtn" aria-label="To the map"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
+    <button class="mapbtn fav" id="dFav" aria-label="Bookmark"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8 3.3 4.5 7 4.5c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.7 0 6 3.5 4.5 7.2C19.5 16.4 12 21 12 21z"/></svg></button>
+    <div class="mapnote" id="mapnote">Dashed line = straight line, not the track</div>
+    <div class="maplegend" id="legend"><span>NVE slope:</span><span><b style="background:#f7e04b"></b>27–29°</span><span><b style="background:#f39a25"></b>30–34°</span><span><b style="background:#e3342a"></b>35–39°</span><span><b style="background:#9b3fb5"></b>40°+</span></div>
     <div class="tracklegend" id="trackLegendD"></div>
-    <button class="lyrthumb" id="lyrD" aria-label="Kartlager"><img alt=""><span>Karta</span></button>
+    <button class="lyrthumb" id="lyrD" aria-label="Map layers"><img alt=""><span>Map</span></button>
     <div class="mapctl">
-      <button class="mapbtn compass" id="bNorth" aria-label="Kompass – tryck för norr uppåt"><svg class="needle" viewBox="0 0 24 24"><text x="12" y="5.6" text-anchor="middle" font-size="5.6" font-weight="800" fill="#e3342a" font-family="Montserrat,sans-serif">N</text><path d="M12 6.6l3.3 5.4H8.7z" fill="#e3342a"/><path d="M12 18l-3.3-6h6.6z" fill="#9aa3ad"/><text x="12" y="23" text-anchor="middle" font-size="5" font-weight="700" fill="#6b7480" font-family="Montserrat,sans-serif">S</text></svg></button>
-      <button class="mapbtn" id="bFs" aria-label="Helskärm"></button>
+      <button class="mapbtn compass" id="bNorth" aria-label="Compass – tap for north up"><svg class="needle" viewBox="0 0 24 24"><text x="12" y="5.6" text-anchor="middle" font-size="5.6" font-weight="800" fill="#e3342a" font-family="Montserrat,sans-serif">N</text><path d="M12 6.6l3.3 5.4H8.7z" fill="#e3342a"/><path d="M12 18l-3.3-6h6.6z" fill="#9aa3ad"/><text x="12" y="23" text-anchor="middle" font-size="5" font-weight="700" fill="#6b7480" font-family="Montserrat,sans-serif">S</text></svg></button>
+      <button class="mapbtn" id="bFs" aria-label="Full screen"></button>
       <button class="mapbtn on" id="b3d">3D</button>
-      <button class="mapbtn" id="bSpin" aria-label="Flyg runt"><svg class="i" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
-      <button class="mapbtn" id="bFit" aria-label="Visa rutten"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
+      <button class="mapbtn" id="bSpin" aria-label="Fly around"><svg class="i" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
+      <button class="mapbtn" id="bFit" aria-label="Show the route"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
     </div>
   </div>
 
@@ -395,21 +395,21 @@ button,.btn,input,textarea,select{font-family:var(--font-body)}
     <div class="loc"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span id="dArea"></span></div>
 
     <div class="stats">
-      <div class="stat"><div class="lab"><svg class="i" viewBox="0 0 24 24"><path d="M3 20l6-10 4 6 3-4 5 8z"/></svg>Topp</div><div class="val" id="sTop">–</div></div>
-      <div class="stat"><div class="lab"><svg class="i" viewBox="0 0 24 24"><path d="M4 18l6-6 4 4 6-8"/><path d="M15 8h5v5"/></svg>Höjdm.</div><div class="val" id="sGain">–</div></div>
-      <div class="stat"><div class="lab"><svg class="i" viewBox="0 0 24 24"><path d="M4 12h16M4 8v8M20 8v8"/></svg>Längd</div><div class="val" id="sLen">–</div></div>
-      <div class="stat"><div class="lab"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3l2.5 9L12 21l-2.5-9z"/></svg>Sida</div><div class="val" id="sAsp">–</div></div>
+      <div class="stat"><div class="lab"><svg class="i" viewBox="0 0 24 24"><path d="M3 20l6-10 4 6 3-4 5 8z"/></svg>Summit</div><div class="val" id="sTop">–</div></div>
+      <div class="stat"><div class="lab"><svg class="i" viewBox="0 0 24 24"><path d="M4 18l6-6 4 4 6-8"/><path d="M15 8h5v5"/></svg>Ascent</div><div class="val" id="sGain">–</div></div>
+      <div class="stat"><div class="lab"><svg class="i" viewBox="0 0 24 24"><path d="M4 12h16M4 8v8M20 8v8"/></svg>Length</div><div class="val" id="sLen">–</div></div>
+      <div class="stat"><div class="lab"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3l2.5 9L12 21l-2.5-9z"/></svg>Aspect</div><div class="val" id="sAsp">–</div></div>
     </div>
     <div class="calc" id="sCalc"></div>
 
     <div class="sec">
-      <h4>Väg upp &amp; ned</h4>
+      <h4>Way up &amp; down</h4>
       <div class="box" id="calcBox"></div>
       <div class="box" id="avTerr" style="margin-top:12px"></div>
     </div>
 
     <div class="sec">
-      <h4>Passar oss</h4>
+      <h4>How it suits us</h4>
       <div class="box">
         <div class="fitrow"><div class="fitbig" id="dFit"></div><b id="dFitTxt"></b></div>
         <p class="p" id="dFitWhy" style="margin-top:10px"></p>
@@ -418,40 +418,40 @@ button,.btn,input,textarea,select{font-family:var(--font-body)}
     </div>
 
     <div class="sec">
-      <h4>Om turen</h4>
+      <h4>About the tour</h4>
       <div class="box"><p class="p" id="dDesc"></p><p class="small src" id="dSrc" style="margin:10px 0 0"></p></div>
     </div>
 
     <div class="sec">
-      <h4>Lavinläge</h4>
+      <h4>Avalanche forecast</h4>
       <div class="box" id="avBox"></div>
       <div class="box" id="savedStatus" style="display:none"></div>
     </div>
 
     <div class="sec">
-      <h4>Väder på toppen</h4>
+      <h4>Weather on the summit</h4>
       <div class="box" id="wxBox"></div>
     </div>
 
     <div class="sec">
-      <h4>Spår (GPX)</h4>
+      <h4>Track (GPX)</h4>
       <div class="box">
-        <p class="p small" id="gpxInfo">Inget riktigt spår ännu. Ladda upp en GPX från Strava, Garmin eller FATMAP så ritas den i 3D-kartan.</p>
+        <p class="p small" id="gpxInfo">No real track yet. Upload a GPX from Strava, Garmin or FATMAP and it is drawn on the 3D map.</p>
         <div class="btnrow">
-          <label class="btn ghost sm" style="cursor:pointer"><input type="file" accept=".gpx,application/gpx+xml" id="gpxIn" hidden>Ladda upp</label>
-          <button class="btn ghost sm" id="gpxClear" style="display:none">Ta bort</button>
+          <label class="btn ghost sm" style="cursor:pointer"><input type="file" accept=".gpx,application/gpx+xml" id="gpxIn" hidden>Upload</label>
+          <button class="btn ghost sm" id="gpxClear" style="display:none">Remove</button>
         </div>
       </div>
     </div>
 
     <div class="sec">
-      <h4>Betyg efter turen</h4>
+      <h4>Rating after the tour</h4>
       <div class="box rate" id="rateBox">
-        <div><label>Snö &amp; åkning</label><div class="scale" data-k="snow"></div></div>
-        <div><label>Uppstigning &amp; utsikt</label><div class="scale" data-k="up"></div></div>
-        <div><label>Kommentar</label><textarea id="rTxt" placeholder="Hur var snön, vilken variant åkte ni, något att tänka på?"></textarea></div>
-        <div><label>Namn</label><input type="text" id="rWho" placeholder="Ditt namn"></div>
-        <button class="btn dark" id="rSave">Spara betyg</button>
+        <div><label>Snow &amp; skiing</label><div class="scale" data-k="snow"></div></div>
+        <div><label>Ascent &amp; views</label><div class="scale" data-k="up"></div></div>
+        <div><label>Comment</label><textarea id="rTxt" placeholder="How was the snow, which variant did you ski, anything to keep in mind?"></textarea></div>
+        <div><label>Name</label><input type="text" id="rWho" placeholder="Your name"></div>
+        <button class="btn dark" id="rSave">Save rating</button>
         <div id="rList"></div>
       </div>
     </div>
@@ -495,52 +495,52 @@ button,.btn,input,textarea,select{font-family:var(--font-body)}
    ========================================================= */
 const ROUTES=[
  {id:"rodtinden",ele:470,name:"Rødtinden",area:"Storelva, Kvaløysletta",region:"kvaloya",s:[69.7015,18.7526],t:[69.68794,18.79335],osm:1371229727,fit:2,exp:"g",board:"ok",storm:true,
-  desc:"Tromsøs närmaste klassiker, med start ovanför Storelva skistadion på Kvaløysletta. Kort, relativt lavinsäker och bra för en resdag eller när läget är dåligt.",
-  boardNote:"Kort tur, några flackare partier i början.",
+  desc:"Tromsø's closest classic, starting above Storelva ski stadium on Kvaløysletta. Short, relatively avalanche-safe and good for a travel day or when conditions are poor.",
+  boardNote:"Short tour, some flatter stretches at the start.",
   src:[["Visit Tromsø","https://www.visittromso.no/no/topptur"],["Tromsø Outdoor","https://www.tromsooutdoor.no/articles/where-to-go-ski-touring-in-tromso-area"]]},
  {id:"finnlandsfjellet",ele:521,name:"Finnlandsfjellet",area:"Storelva, Kvaløysletta",region:"kvaloya",s:[69.7018,18.7995],t:[69.6876,18.7933],fit:2,exp:"g",board:"ok",storm:true,
-  desc:"Lätt och kort tur från samma start som Rødtinden. En av de populära topparna nära stan, bra som kvällstur eller uppvärmning.",
-  boardNote:"Mjuk terräng, kan ha flacka partier.",
+  desc:"Easy, short tour from the same start as Rødtinden. One of the popular peaks close to town, good as an evening tour or a warm-up.",
+  boardNote:"Gentle terrain, may have flat stretches.",
   src:[["Tromsø Outdoor","https://www.tromsooutdoor.no/articles/where-to-go-ski-touring-in-tromso-area"]]},
- {id:"kjolen",ele:790,name:"Kjølen",area:"Finnvikvatnet, norra Kvaløya",region:"kvaloya",s:[69.7337,18.7876],t:[69.7542,18.8677],unsure:true,fit:2,exp:"g",board:"bra",storm:true,
-  desc:"En av Kvaløyas mest besökta toppar. Inga vassa eggar, men fin och jämn skidåkning. Gå mot radarn på toppen och följ snöfälten ner.",
-  boardNote:"Jämn lutning, undvik bäckraviner och terrängfällor på vägen ner.",
+ {id:"kjolen",ele:790,name:"Kjølen",area:"Finnvikvatnet, northern Kvaløya",region:"kvaloya",s:[69.7337,18.7876],t:[69.7542,18.8677],unsure:true,fit:2,exp:"g",board:"bra",storm:true,
+  desc:"One of Kvaløya's most visited peaks. No sharp ridges, but nice, even skiing. Head for the radar on the summit and follow the snowfields down.",
+  boardNote:"Even slope; avoid stream gullies and terrain traps on the way down.",
   src:[["ut.no","https://ut.no/turforslag/118113"]]},
  {id:"buren",ele:802,name:"Buren",area:"Ersfjordbotn, Kvaløya",region:"kvaloya",s:[69.7142,18.5864],t:[69.6936,18.617],unsure:true,fit:3,exp:"y",board:"ok",storm:false,
-  desc:"Den perfekta toppen efter jobbet, med varierad åkning. Partier på 25–30° högre upp.",
-  boardNote:"Varierad nedfart, ingen lång transport.",
-  src:[["FATMAP (arkiv)","https://fatmap.com/discover/route/norway/troms/ski-touring/buren-802m/448410"]]},
+  desc:"The perfect after-work peak, with varied skiing. Sections of 25–30° higher up.",
+  boardNote:"Varied descent, no long run-out.",
+  src:[["FATMAP (archive)","https://fatmap.com/discover/route/norway/troms/ski-touring/buren-802m/448410"]]},
  {id:"steinskarstinden",ele:818,name:"Steinskarstinden",area:"Kattfjordeidet, Kvaløya",region:"kvaloya",s:[69.6478,18.5881],t:[69.6517,18.5362],unsure:true,fit:3,exp:"y",board:"bra",storm:false,
-  desc:"Förstahandsvalet på pudderdagar. Ungefär en timme upp och lätt, varierad åkning ner. Mycket besökt hela säsongen.",
-  boardNote:"Kort och jämn, bra för bräda.",
-  src:[["FATMAP (arkiv)","https://fatmap.com/routeid/442380"],["Peakbook","https://peakbook.org/tour/302457/Steinskartinden.html"]]},
+  desc:"First choice on powder days. About an hour up and easy, varied skiing down. Very popular all season.",
+  boardNote:"Short and even, good for a board.",
+  src:[["FATMAP (archive)","https://fatmap.com/routeid/442380"],["Peakbook","https://peakbook.org/tour/302457/Steinskartinden.html"]]},
  {id:"lille-blamannen",ele:861,name:"Lille Blåmannen",area:"Håkøybotn, Kvaløya",region:"kvaloya",s:[69.6441,18.5985],t:[69.655,18.705],fit:3,exp:"g",board:"bra",storm:true,
-  desc:"Den mest åkta fjällsidan i Tromsø. Normalvägen går via en bred, mjuk östrygg och räknas som säker – brantare varianter finns.",
-  boardNote:"Kort flackt parti genom skogen vid starten.",
-  src:[["FATMAP (arkiv)","https://fatmap.com/discover/route/norway/troms/ski-touring/lille-blamannen/31532"]]},
+  desc:"The most skied mountainside in Tromsø. The normal route follows a broad, gentle east ridge and counts as safe – steeper variants exist.",
+  boardNote:"Short flat stretch through the forest at the start.",
+  src:[["FATMAP (archive)","https://fatmap.com/discover/route/norway/troms/ski-touring/lille-blamannen/31532"]]},
  {id:"skittentinden",ele:1042,name:"Skittentinden",area:"Kattfjordeidet, Kvaløya",region:"kvaloya",s:[69.6757,18.4425],t:[69.64857,18.48208],osm:1365622091,fit:3,exp:"y",board:"bra",storm:false,
-  desc:"Den mest ikoniska toppen på Kvaløya, med en lång nedfart samma väg ner mot Kattfjordvatnet.",
-  boardNote:"Upp och ner samma väg i fallinje.",
-  src:[["FATMAP (arkiv)","https://fatmap.com/discover/route/norway/troms/ski-touring/skittentinden-1042m/436511"]]},
- {id:"tromsdalstinden",ele:1238,name:"Tromsdalstinden",area:"Ramfjordmoen, Tromsø fastland",region:"fastland",s:[69.6071,19.1458],t:[69.5835,19.2118],unsure:true,fit:2,exp:"y",board:"ok",storm:false,
-  desc:"Tromsøs hemberg (1238 m). Normalvägen på skidor går upp till sadeln och längs sydvästryggen. Nedfarten är en fin sydvästvänd sluttning och sedan skålar och skog. Håll avstånd till skavlarna mot östväggen.",
-  boardNote:"Toppen är nästan platt, och det finns en kort sidledsförflyttning ur sista skålen.",
-  src:[["FATMAP (arkiv)","https://fatmap.com/routeid/31530"],["iso-maps","https://www.iso-maps.com/en/ski-de-randonnee/norway/mainland-tromso-norvege/tromsdalstinden-versant-s-voie-normale-278591"]]},
- {id:"fagerfjellet",ele:957,name:"Fagerfjellet",area:"Ramfjorden, Tromsø fastland",region:"fastland",s:[69.5453,19.2781],t:[69.5596,19.2263],fit:3,exp:"g",board:"ok",storm:true,
-  desc:"Lättillgänglig topp som fungerar när lavinfaran är hög. Normalvägen går upp nordvästsidan och sedan längs ryggen mot toppen. Den nedre delen är skog.",
-  boardNote:"Skogen längst ner kan vara jobbig i djup snö.",
+  desc:"The most iconic peak on Kvaløya, with a long descent the same way down towards Kattfjordvatnet.",
+  boardNote:"Up and down the same way, in the fall line.",
+  src:[["FATMAP (archive)","https://fatmap.com/discover/route/norway/troms/ski-touring/skittentinden-1042m/436511"]]},
+ {id:"tromsdalstinden",ele:1238,name:"Tromsdalstinden",area:"Ramfjordmoen, Tromsø mainland",region:"fastland",s:[69.6071,19.1458],t:[69.5835,19.2118],unsure:true,fit:2,exp:"y",board:"ok",storm:false,
+  desc:"Tromsø's home mountain (1238 m). The normal ski route goes up to the saddle and along the south-west ridge. The descent is a fine south-west-facing slope, then bowls and forest. Keep clear of the cornices above the east face.",
+  boardNote:"The summit is almost flat, and there is a short traverse out of the last bowl.",
+  src:[["FATMAP (archive)","https://fatmap.com/routeid/31530"],["iso-maps","https://www.iso-maps.com/en/ski-de-randonnee/norway/mainland-tromso-norvege/tromsdalstinden-versant-s-voie-normale-278591"]]},
+ {id:"fagerfjellet",ele:957,name:"Fagerfjellet",area:"Ramfjorden, Tromsø mainland",region:"fastland",s:[69.5453,19.2781],t:[69.5596,19.2263],fit:3,exp:"g",board:"ok",storm:true,
+  desc:"Easy-access peak that works when the avalanche danger is high. The normal route goes up the north-west side and then along the ridge to the summit. The lower part is forest.",
+  boardNote:"The forest at the bottom can be hard work in deep snow.",
   src:[["Outmap","https://outmap.pro/route/fagerfjellet-e4XHpV6esF49VFHaQzaohi"],["Summitpost","https://summitpost.org/fagerfjell/853530"]]},
- {id:"stormheimfjellet",name:"Stormheimfjellet",area:"Breivikeidet, Tromsø fastland",region:"fastland",s:[69.5937,19.499],t:[69.62506,19.59539],osm:1371236252,fit:2,exp:"y",board:"?",storm:false,
-  desc:"Längre tur på fastlandet via Breivikeidet. Ett skidspår är inritat i OpenStreetMap hela vägen från vägen till toppen. Lite mindre känd, så kolla guidebok och Varsom extra noga.",
-  boardNote:"Lång anmarsch, kolla flacka partier i profilen.",
+ {id:"stormheimfjellet",name:"Stormheimfjellet",area:"Breivikeidet, Tromsø mainland",region:"fastland",s:[69.5937,19.499],t:[69.62506,19.59539],osm:1371236252,fit:2,exp:"y",board:"?",storm:false,
+  desc:"Longer tour on the mainland via Breivikeidet. A ski track is drawn in OpenStreetMap all the way from the road to the summit. A little less known, so check the guidebook and Varsom extra carefully.",
+  boardNote:"Long approach; check the flat stretches in the profile.",
   src:[["OpenStreetMap","https://www.openstreetmap.org/way/1371236252"]]},
  {id:"rornestinden",name:"Rørnestinden",area:"Lyngseidet",region:"lyngen",s:[69.5733,20.112],t:[69.56717,20.18549],osm:1365622087,fit:3,exp:"y",board:"bra",storm:false,
-  desc:"Går direkt från Lyngseidet med utsikt över både Lyngenfjorden och Kjosen. Medelsvår med några brantare partier runt 30°. Kan kombineras med Goalsevárri.",
-  boardNote:"Splitboardrutt finns beskriven. Kort skogsväg i början.",
+  desc:"Starts right from Lyngseidet with views over both Lyngenfjorden and Kjosen. Intermediate, with some steeper sections around 30°. Can be combined with Goalsevárri.",
+  boardNote:"A splitboard route is described. Short forest road at the start.",
   src:[["Splitboarding.eu","https://www.splitboarding.eu/en/routes/rornestinden-or-kavringtinden/"],["OpenStreetMap","https://www.openstreetmap.org/way/1365622087"]]},
- {id:"fastdalstinden",name:"Fastdalstinden",area:"Lyngen, norr om Lyngseidet",region:"lyngen",s:[69.6293,20.168],t:[69.60283,20.25505],osm:1365624329,fit:2,exp:"y",board:"?",storm:false,
-  desc:"Bland guidebolagens favoriter i Lyngen. Ett skidspår är inritat i OpenStreetMap från vägen till toppen.",
-  boardNote:"Okänt än, kolla profilen.",
+ {id:"fastdalstinden",name:"Fastdalstinden",area:"Lyngen, north of Lyngseidet",region:"lyngen",s:[69.6293,20.168],t:[69.60283,20.25505],osm:1365624329,fit:2,exp:"y",board:"?",storm:false,
+  desc:"Among the guiding companies' favourites in Lyngen. A ski track is drawn in OpenStreetMap from the road to the summit.",
+  boardNote:"Unknown so far; check the profile.",
   src:[["Explore-Share","https://www.explore-share.com/trip/Guided-ski-touring-tromso-Lyngen/"],["OpenStreetMap","https://www.openstreetmap.org/way/1365624329"]]}
 ];
 /* Skidspår inritade i OpenStreetMap (piste:type=skitour), © OpenStreetMap-bidragsgivare, ODbL. [lat,lon] */
@@ -556,10 +556,11 @@ const OSM_TRK={
 const SAVED_STATUS={};
 
 const REGION={lyngen:{id:3010,name:"Lyngen",varsom:"Lyngen"},ost:{id:3010,name:"Lyngen",varsom:"Lyngen"},kvaloya:{id:3011,name:"Tromsø",varsom:"Tromsø"},fastland:{id:3011,name:"Tromsø",varsom:"Tromsø"}};
-const AREA_NAME={lyngen:"Lyngen",ost:"Kåfjord",kvaloya:"Kvaløya",fastland:"Tromsø fastland"};
-const EXP={g:["Låg exponering","tg"],y:["Medel exponering","ty"],r:["Hög exponering","tr"]};
-const BOARD={bra:["Bräda: bra","tg"],ok:["Bräda: ok","ty"],jobbig:["Bräda: jobbig","tr"],"?":["Bräda: okänt","tn"]};
-const ASP=["N","NO","O","SO","S","SV","V","NV"];
+const AREA_NAME={lyngen:"Lyngen",ost:"Kåfjord",kvaloya:"Kvaløya",fastland:"Tromsø mainland"};
+const EXP={g:["Low exposure","tg"],y:["Medium exposure","ty"],r:["High exposure","tr"]};
+// keys are the board ratings used in the code (bra = good, jobbig = hard)
+const BOARD={bra:["Board: good","tg"],ok:["Board: ok","ty"],jobbig:["Board: hard","tr"],"?":["Board: unknown","tn"]};
+const ASP=["N","NE","E","SE","S","SW","W","NW"];
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const store={get(k,d){try{return JSON.parse(localStorage.getItem("ght-"+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem("ght-"+k,JSON.stringify(v))}catch(e){}}};
@@ -608,7 +609,7 @@ async function derive(r){
     const jobs=[];
     for(let i=-steps;i<=steps;i++)for(let j=-steps;j<=steps;j++){if(i*i+j*j>steps*steps)continue;const ll=[r.s[0]+dLat*i/steps,r.s[1]+dLon*j/steps];jobs.push(elevAt(...ll).then(e=>{if(e!=null&&e>best.e)best={e,ll}}))}
     await Promise.all(jobs);
-    if(best.e<-1e8)throw new Error("Ingen höjddata");
+    if(best.e<-1e8)throw new Error("No height data");
     const top=best.ll,topE=r.ele||Math.round(best.e);   // ele = officiell topphöjd (OSM/Kartverket) när den finns
     let startE=await elevAt(...r.t);startE=Math.max(0,Math.round(startE??0));
     // profil längs fågelvägen: summera stigning
@@ -628,18 +629,18 @@ async function derive(r){
 const avCache={};
 function fetchAv(regionId,date,detail=true){
   const k=regionId+date+detail;
-  if(!avCache[k])avCache[k]=fetch(`https://api01.nve.no/hydrology/forecast/avalanche/v6.3.0/api/AvalancheWarningByRegion/${detail?"Detail":"Simple"}/${regionId}/1/${date}/${date}`)
+  if(!avCache[k])avCache[k]=fetch(`https://api01.nve.no/hydrology/forecast/avalanche/v6.3.0/api/AvalancheWarningByRegion/${detail?"Detail":"Simple"}/${regionId}/2/${date}/${date}`)
     .then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(a=>a&&a[0]?a[0]:null)
     .catch(e=>{delete avCache[k];throw e});
   return avCache[k];
 }
 function heightMatch(p,lo,hi){
   const h1=p.ExposedHeight1,h2=p.ExposedHeight2,f=p.ExposedHeightFill;
-  if(!f||h1==null)return {ok:true,txt:"alla höjder"};
-  if(f===1)return {ok:hi>h1,txt:`över ${h1} m`};
-  if(f===2)return {ok:lo<h1,txt:`under ${h1} m`};
-  if(f===3)return {ok:hi>h1||lo<h2,txt:`över ${h1} m och under ${h2} m`};
-  if(f===4)return {ok:hi>h2&&lo<h1,txt:`mellan ${h2} och ${h1} m`};
+  if(!f||h1==null)return {ok:true,txt:"all elevations"};
+  if(f===1)return {ok:hi>h1,txt:`above ${h1} m`};
+  if(f===2)return {ok:lo<h1,txt:`below ${h1} m`};
+  if(f===3)return {ok:hi>h1||lo<h2,txt:`above ${h1} m and below ${h2} m`};
+  if(f===4)return {ok:hi>h2&&lo<h1,txt:`between ${h2} and ${h1} m`};
   return {ok:true,txt:""};
 }
 function roseSVG(exp,routeIdx){
@@ -660,42 +661,42 @@ function verdict(w,r,d){
   const hit=probs.some(x=>x.hit);
   let c="g";
   if(lvl>=4)c="r";else if(lvl===3)c=hit||r.exp!=="g"?"r":"y";else if(lvl===2)c=hit?(r.exp==="r"?"r":"y"):(r.exp==="r"?"y":"g");else if(lvl===1)c=r.exp==="r"&&hit?"y":"g";
-  const why=lvl===0?"Ingen faregrad.":hit?`Minst ett lavinproblem gäller ruttens huvudsida (${d.asp}) och höjd.`:`Inget av lavinproblemen verkar träffa ruttens huvudsida (${d.asp}) och höjd.`;
-  const head={g:"Grön – ser hanterbart ut",y:"Gul – var noggrann med vägval",r:"Röd – avstå eller välj säkrare tur"}[c];
+  const why=lvl===0?"No danger level.":hit?`At least one avalanche problem applies to the route's main aspect (${d.asp}) and elevation.`:`None of the avalanche problems seem to hit the route's main aspect (${d.asp}) and elevation.`;
+  const head={g:"Green – looks manageable",y:"Yellow – be careful with route choice",r:"Red – skip it or pick a safer tour"}[c];
   return {c,probs,why,head};
 }
 async function renderAv(r,date){
   const box=$("#avBox"),reg=REGION[r.region];
-  box.innerHTML=`<div class="status"><div class="lvl"><span class="spin"></span></div><div><h5>Hämtar prognos från Varsom…</h5><div class="meta">Region ${reg.name} · ${date}</div></div></div>`;
+  box.innerHTML=`<div class="status"><div class="lvl"><span class="spin"></span></div><div><h5>Getting the forecast from Varsom…</h5><div class="meta">Region ${reg.name} · ${date}</div></div></div>`;
   let d;try{d=await derive(r)}catch(e){d={startE:0,topE:2000,asp:"?",aspIdx:0}}
   let w=null,err=null;
   try{w=await fetchAv(reg.id,date)}catch(e){err=e}
   if(cur!==r.id)return;
   avState={rid:r.id,date,w};refreshAval(r);
-  const dateRow=`<div class="btnrow" style="align-items:center;justify-content:space-between"><span class="small">Datum</span><input type="date" id="avDate" value="${date}"></div>`;
+  const dateRow=`<div class="btnrow" style="align-items:center;justify-content:space-between"><span class="small">Date</span><input type="date" id="avDate" value="${date}"></div>`;
   if(w&&+w.DangerLevel>0){
     const v=verdict(w,r,d);
     box.innerHTML=`
       <div class="status"><div class="lvl l${w.DangerLevel}">${w.DangerLevel}</div>
-        <div><h5>${esc(w.DangerLevelName||"Faregrad "+w.DangerLevel)}</h5><div class="meta">Varsom · region ${esc(w.RegionName)} · ${new Date(w.ValidFrom).toLocaleDateString("sv-SE",{weekday:"short",day:"numeric",month:"short",year:"numeric"})}</div></div></div>
+        <div><h5>${esc(w.DangerLevelName||"Danger level "+w.DangerLevel)}</h5><div class="meta">Varsom · region ${esc(w.RegionName)} · ${new Date(w.ValidFrom).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"})}</div></div></div>
       <p class="p" style="margin-top:12px">${esc(w.MainText||"")}</p>
-      <div class="verdict v-${v.c}"><b>${v.head}</b>${v.why} Ruttens sida räknas grovt som riktningen från toppen mot starten (${d.asp}), höjd ${d.startE}–${d.topE} m.</div>
-      <div style="margin-top:8px">${v.probs.map(x=>`<div class="prob">${roseSVG(x.p.ValidExpositions,d.aspIdx)}<div><div class="t">${esc(x.p.AvalancheProblemTypeName||"")}</div><div class="s">${esc(x.hm.txt)}${x.p.DestructiveSizeName?" · "+esc(x.p.DestructiveSizeName):""}</div><div class="m" style="color:${x.hit?"var(--r)":"var(--g)"}">${x.hit?"Träffar rutten":"Träffar inte ruttens huvudsida/höjd"}</div></div></div>`).join("")}</div>
+      <div class="verdict v-${v.c}"><b>${v.head}</b>${v.why} The route's aspect is roughly the direction from the summit to the start (${d.asp}), elevation ${d.startE}–${d.topE} m.</div>
+      <div style="margin-top:8px">${v.probs.map(x=>`<div class="prob">${roseSVG(x.p.ValidExpositions,d.aspIdx)}<div><div class="t">${esc(x.p.AvalancheProblemTypeName||"")}</div><div class="s">${esc(x.hm.txt)}${x.p.DestructiveSizeName?" · "+esc(x.p.DestructiveSizeName):""}</div><div class="m" style="color:${x.hit?"var(--r)":"var(--g)"}">${x.hit?"Hits the route":"Doesn't hit the route's main aspect/elevation"}</div></div></div>`).join("")}</div>
       ${dateRow}
       <div class="btnrow"><a class="btn ghost sm" href="https://varsom.no/en/snow/forecast/warning/${encodeURIComponent(reg.varsom)}/${date}" target="_blank" rel="noopener">Varsom</a></div>
-      <p class="disc">Beslutsstöd, inte ett beslut. Ersätter aldrig egen bedömning på plats. Den blå pricken i rosen = ruttens ungefärliga sida.</p>`;
+      <p class="disc">Decision support, not a decision. Never replaces your own judgement on the spot. The red dot in the rose = the route's approximate aspect.</p>`;
   }else{
-    const reason=err?"Kunde inte nå Varsom just nu.":"Ingen lavinprognos publicerad för den här dagen (säsongen i norr börjar runt 1 december).";
+    const reason=err?"Couldn't reach Varsom right now.":"No avalanche forecast published for this day (the season in the north starts around 1 December).";
     box.innerHTML=`
-      <div class="status"><div class="lvl">–</div><div><h5>Ingen live-prognos</h5><div class="meta">${reason}</div></div></div>
-      <p class="p" style="margin-top:12px">Hämta läget på annat sätt:</p>
-      <div class="btnrow"><button class="btn sm" id="askClaude">Fråga Claude</button></div>
-      <div class="btnrow"><a class="btn ghost sm" href="https://varsom.no/en/snow/forecast/warning/${encodeURIComponent(reg.varsom)}" target="_blank" rel="noopener">Öppna Varsom</a><button class="btn ghost sm" id="demoAv">Exempel</button></div>
+      <div class="status"><div class="lvl">–</div><div><h5>No live forecast</h5><div class="meta">${reason}</div></div></div>
+      <p class="p" style="margin-top:12px">Get the conditions another way:</p>
+      <div class="btnrow"><button class="btn sm" id="askClaude">Ask Claude</button></div>
+      <div class="btnrow"><a class="btn ghost sm" href="https://varsom.no/en/snow/forecast/warning/${encodeURIComponent(reg.varsom)}" target="_blank" rel="noopener">Open Varsom</a><button class="btn ghost sm" id="demoAv">Example</button></div>
       ${dateRow}
-      <p class="disc">"Be Claude" kopierar en färdig fråga – klistra in den i Troemse-projektet så hämtar Claude prognos och väder och skriver in en grön/gul/röd-bedömning med tidsstämpel.</p>`;
+      <p class="disc">"Ask Claude" copies a ready-made question – paste it into the Troemse project and Claude gets the forecast and weather and writes a green/yellow/red assessment with a timestamp.</p>`;
     $("#askClaude").onclick=()=>{
-      const txt=`Statuskoll för rutt: ${r.name} (${r.area}). Datum: ${date}. Region Varsom: ${reg.name}. Toppen ca ${d.topE} m, start ca ${d.startE} m, huvudsida ${d.asp}. Kör statuskollen enligt CONTEXT.md och skriv in resultatet i appen.`;
-      (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast("Frågan är kopierad – klistra in den hos Claude")).catch(()=>{prompt("Kopiera frågan:",txt)});
+      const txt=`Check status for route: ${r.name} (${r.area}). Date: ${date}. Varsom region: ${reg.name}. Summit about ${d.topE} m, start about ${d.startE} m, main aspect ${d.asp}. Run the status check as described in CLAUDE.md and write the result into the app.`;
+      (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast("The question is copied – paste it to Claude")).catch(()=>{prompt("Copy the question:",txt)});
     };
     $("#demoAv").onclick=()=>renderAv(r,"2026-03-12");
   }
@@ -708,10 +709,10 @@ async function renderWx(r){
     const u=`https://api.open-meteo.com/v1/forecast?latitude=${d.top[0]}&longitude=${d.top[1]}&elevation=${d.topE}&daily=temperature_2m_max,temperature_2m_min,wind_speed_10m_max,wind_gusts_10m_max,snowfall_sum,weather_code&past_days=3&forecast_days=3&wind_speed_unit=ms&timezone=Europe%2FOslo`;
     const w=await fetch(u).then(x=>x.json());if(cur!==r.id)return;
     const D=w.daily,news=D.snowfall_sum.slice(0,3).reduce((a,b)=>a+(b||0),0);
-    const days=[3,4,5].map(i=>({dn:new Date(D.time[i]).toLocaleDateString("sv-SE",{weekday:"short"}),tmax:Math.round(D.temperature_2m_max[i]),tmin:Math.round(D.temperature_2m_min[i]),wind:Math.round(D.wind_speed_10m_max[i]),gust:Math.round(D.wind_gusts_10m_max[i]),snow:D.snowfall_sum[i]}));
-    box.innerHTML=`<div class="wx">${days.map((x,i)=>`<div class="d"><div class="dn">${i===0?"Idag":x.dn}</div><div class="tt">${x.tmin}° / ${x.tmax}°</div><div class="mi"><span>Vind ${x.wind} (${x.gust}) m/s</span><span>Snö ${x.snow?x.snow.toFixed(1).replace(".",","):0} cm</span></div></div>`).join("")}</div>
-      <p class="small" style="margin:10px 0 0">Nysnö senaste 3 dygnen: <b>${news.toFixed(1).replace(".",",")} cm</b> · modell för ${d.topE} m ö.h. (Open-Meteo). <a href="https://www.yr.no/nb/s%C3%B8k?q=${encodeURIComponent(r.name)}" target="_blank" rel="noopener">Yr</a></p>`;
-  }catch(e){box.innerHTML='<p class="p small">Kunde inte hämta väder just nu. <a href="https://www.yr.no" target="_blank" rel="noopener">Öppna Yr</a></p>'}
+    const days=[3,4,5].map(i=>({dn:new Date(D.time[i]).toLocaleDateString("en-GB",{weekday:"short"}),tmax:Math.round(D.temperature_2m_max[i]),tmin:Math.round(D.temperature_2m_min[i]),wind:Math.round(D.wind_speed_10m_max[i]),gust:Math.round(D.wind_gusts_10m_max[i]),snow:D.snowfall_sum[i]}));
+    box.innerHTML=`<div class="wx">${days.map((x,i)=>`<div class="d"><div class="dn">${i===0?"Today":x.dn}</div><div class="tt">${x.tmin}° / ${x.tmax}°</div><div class="mi"><span>Wind ${x.wind} (${x.gust}) m/s</span><span>Snow ${x.snow?x.snow.toFixed(1):0} cm</span></div></div>`).join("")}</div>
+      <p class="small" style="margin:10px 0 0">New snow last 3 days: <b>${news.toFixed(1)} cm</b> · model for ${d.topE} m a.s.l. (Open-Meteo). <a href="https://www.yr.no/en/search?q=${encodeURIComponent(r.name)}" target="_blank" rel="noopener">Yr</a></p>`;
+  }catch(e){box.innerHTML='<p class="p small">Couldn\'t get the weather right now. <a href="https://www.yr.no/en" target="_blank" rel="noopener">Open Yr</a></p>'}
 }
 
 /* =========================================================
@@ -727,12 +728,12 @@ let map=null,cur=null,spinning=false,spinRAF=null,mapReady=false;
 const STYLE={version:8,
   glyphs:"https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
   sources:{
-    gps:{type:"raster",tiles:["gpsh://{z}/{x}/{y}"],tileSize:256,maxzoom:18,attribution:"GPS-spår © OpenStreetMap-bidragsgivare"},
-    paint:{type:"raster",tiles:["vmal://{z}/{x}/{y}"],tileSize:256,minzoom:8,maxzoom:16,attribution:"Vinterkarta målad av Get High Tour från Kartverkets höjd- och topodata"},
-    sat:{type:"raster",tiles:["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],tileSize:256,maxzoom:18,attribution:"Bild © Esri, Maxar, Earthstar Geographics"},
+    gps:{type:"raster",tiles:["gpsh://{z}/{x}/{y}"],tileSize:256,maxzoom:18,attribution:"GPS tracks © OpenStreetMap contributors"},
+    paint:{type:"raster",tiles:["vmal://{z}/{x}/{y}"],tileSize:256,minzoom:8,maxzoom:16,attribution:"Winter map painted by Get High Tour from Kartverket height and topo data"},
+    sat:{type:"raster",tiles:["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],tileSize:256,maxzoom:18,attribution:"Imagery © Esri, Maxar, Earthstar Geographics"},
     topo:{type:"raster",tiles:["https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png"],tileSize:256,maxzoom:18,attribution:"© Kartverket"},
-    slope:{type:"raster",tiles:["https://gis3.nve.no/arcgis/rest/services/wmts/Bratthet_2024/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=png32&transparent=true&layers=show:0&f=image"],tileSize:256,attribution:"Bratthet © NVE"},
-    dem:{type:"raster-dem",tiles:["kvdem://{z}/{x}/{y}"],tileSize:256,maxzoom:15,encoding:"terrarium",attribution:"Höjd © Kartverket (DTM), utanför Norge Mapzen/AWS"}
+    slope:{type:"raster",tiles:["https://gis3.nve.no/arcgis/rest/services/wmts/Bratthet_2024/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=png32&transparent=true&layers=show:0&f=image"],tileSize:256,attribution:"Slope © NVE"},
+    dem:{type:"raster-dem",tiles:["kvdem://{z}/{x}/{y}"],tileSize:256,maxzoom:15,encoding:"terrarium",attribution:"Elevation © Kartverket (DTM), outside Norway Mapzen/AWS"}
   },
   layers:[
     {id:"bg",type:"background",paint:{"background-color":"#cfd7e0"}},
@@ -801,7 +802,7 @@ async function showOnMap(r){
   markers.push(new maplibregl.Marker({element:mk(`<div style="background:#D60000;color:#fff;font:700 11px var(--font-body);padding:5px 9px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.3)">P Start</div>`),anchor:"bottom",offset:[0,-4]}).setLngLat(st).addTo(map));
   setPaths(map,"calc",[]);
   const kn=r.osm&&OSM_TRK[r.osm];map.getSource("known").setData(kn?{type:"Feature",geometry:{type:"LineString",coordinates:kn.map(p=>[p[1],p[0]])}}:EMPTY);
-  $("#mapnote").textContent="Streckad linje = fågelvägen, inte spåret";
+  $("#mapnote").textContent="Dashed line = straight line, not the track";
   drawGpx(r);
   if(memCalc[r.id]){drawCalcDetail(r,memCalc[r.id]);refreshAval(r)}
   fitRoute(r,d,true);
@@ -834,7 +835,7 @@ async function kvFetch(bb,w,h,signal){
   const small=w*h<=300000,ck="dem/"+u.split("?")[1];
   let buf=small?await cacheGet(ck):null;
   if(!buf){const r=await fetch(u,{signal});if(!r.ok)throw new Error("HTTP "+r.status);
-    buf=await r.arrayBuffer();if(buf.byteLength<w*h*4)throw new Error("Ofullständig höjddata");
+    buf=await r.arrayBuffer();if(buf.byteLength<w*h*4)throw new Error("Incomplete height data");
     if(small)cachePut(ck,buf.slice(0),"application/octet-stream")}
   return new Float32Array(buf,0,w*h);
 }
@@ -1043,7 +1044,7 @@ const ICON_EXPAND='<svg class="i" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-
 const ICON_SHRINK='<svg class="i" viewBox="0 0 24 24"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>';
 function setFs(on){
   fsOn=on;$(".mapwrap").classList.toggle("fs",on);document.body.style.overflow=on?"hidden":"";
-  const b=$("#bFs");b.innerHTML=on?ICON_SHRINK:ICON_EXPAND;b.classList.toggle("on",on);b.setAttribute("aria-label",on?"Stäng helskärm":"Helskärm");
+  const b=$("#bFs");b.innerHTML=on?ICON_SHRINK:ICON_EXPAND;b.classList.toggle("on",on);b.setAttribute("aria-label",on?"Exit full screen":"Full screen");
   try{if(on&&document.documentElement.requestFullscreen&&!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});
       if(!on&&document.fullscreenElement)document.exitFullscreen().catch(()=>{})}catch(e){}
   setTimeout(()=>map&&map.resize(),80);setTimeout(()=>map&&map.resize(),400);
@@ -1058,7 +1059,7 @@ function parseGpx(txt){
   const x=new DOMParser().parseFromString(txt,"application/xml");
   let pts=[...x.getElementsByTagName("trkpt")];if(!pts.length)pts=[...x.getElementsByTagName("rtept")];
   const c=pts.map(p=>[+(+p.getAttribute("lon")).toFixed(5),+(+p.getAttribute("lat")).toFixed(5)]).filter(p=>!isNaN(p[0]));
-  if(c.length<2)throw new Error("Inga punkter");
+  if(c.length<2)throw new Error("No points");
   const step=Math.max(1,Math.floor(c.length/1500));return c.filter((_,i)=>i%step===0||i===c.length-1);
 }
 function drawGpx(r){
@@ -1066,10 +1067,10 @@ function drawGpx(r){
   if(map&&map.getSource("gpx"))map.getSource("gpx").setData(g?{type:"Feature",geometry:{type:"LineString",coordinates:g.c}}:{type:"FeatureCollection",features:[]});
   if(map&&map.getLayer("route"))["route","route-casing"].forEach(l=>map.setLayoutProperty(l,"visibility",g||memCalc[r.id]?"none":"visible"));
   $("#mapnote").style.display=g?"none":"";
-  if(g){let len=0;for(let i=1;i<g.c.length;i++)len+=hav([g.c[i-1][1],g.c[i-1][0]],[g.c[i][1],g.c[i][0]]);$("#gpxInfo").innerHTML=`<b>${esc(g.name)}</b> · ${(len/1000).toFixed(1)} km spår (${g.c.length} punkter). Visas som turkos linje i kartan.`;$("#gpxClear").style.display=""}
-  else{$("#gpxInfo").textContent="Inget riktigt spår ännu. Ladda upp en GPX från Strava, Garmin eller FATMAP så ritas den i 3D-kartan.";$("#gpxClear").style.display="none"}
+  if(g){let len=0;for(let i=1;i<g.c.length;i++)len+=hav([g.c[i-1][1],g.c[i-1][0]],[g.c[i][1],g.c[i][0]]);$("#gpxInfo").innerHTML=`<b>${esc(g.name)}</b> · ${(len/1000).toFixed(1)} km track (${g.c.length} points). Shown as a turquoise line on the map.`;$("#gpxClear").style.display=""}
+  else{$("#gpxInfo").textContent="No real track yet. Upload a GPX from Strava, Garmin or FATMAP and it is drawn on the 3D map.";$("#gpxClear").style.display="none"}
 }
-$("#gpxIn").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=ROUTES.find(x=>x.id===cur);f.text().then(t=>{const c=parseGpx(t);store.set("gpx-"+r.id,{name:f.name,c});drawGpx(r);derive(r).then(d=>fitRoute(r,d,false));toast("Spåret är sparat på den här enheten")}).catch(()=>toast("Kunde inte läsa GPX-filen"));e.target.value=""};
+$("#gpxIn").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=ROUTES.find(x=>x.id===cur);f.text().then(t=>{const c=parseGpx(t);store.set("gpx-"+r.id,{name:f.name,c});drawGpx(r);derive(r).then(d=>fitRoute(r,d,false));toast("The track is saved on this device")}).catch(()=>toast("Couldn't read the GPX file"));e.target.value=""};
 $("#gpxClear").onclick=()=>{const r=ROUTES.find(x=>x.id===cur);try{localStorage.removeItem("ght-gpx-"+r.id)}catch(e){}drawGpx(r)};
 
 /* Betyg */
@@ -1077,11 +1078,11 @@ let draft={snow:0,up:0};
 document.querySelectorAll(".scale").forEach(s=>{s.innerHTML=[1,2,3,4,5].map(n=>`<button data-n="${n}">${n}</button>`).join("");s.onclick=e=>{const b=e.target.closest("button");if(!b)return;draft[s.dataset.k]=+b.dataset.n;s.querySelectorAll("button").forEach(x=>x.classList.toggle("on",+x.dataset.n<=draft[s.dataset.k]))}});
 function renderRatings(r){
   const list=store.get("ratings-"+r.id,[]);
-  $("#rList").innerHTML=list.length?list.map(x=>`<div class="rv"><div class="who">${esc(x.who||"Anonym")} <span class="sc">· ${new Date(x.at).toLocaleDateString("sv-SE")}</span></div><div class="sc">Snö &amp; åkning ${x.snow}/5 · Uppstigning &amp; utsikt ${x.up}/5</div>${x.txt?`<div style="margin-top:4px">${esc(x.txt)}</div>`:""}</div>`).join(""):'<p class="small" style="margin:0">Inga betyg än. I det här utkastet sparas betyg bara på den här enheten.</p>';
+  $("#rList").innerHTML=list.length?list.map(x=>`<div class="rv"><div class="who">${esc(x.who||"Anonymous")} <span class="sc">· ${new Date(x.at).toLocaleDateString("en-GB")}</span></div><div class="sc">Snow &amp; skiing ${x.snow}/5 · Ascent &amp; views ${x.up}/5</div>${x.txt?`<div style="margin-top:4px">${esc(x.txt)}</div>`:""}</div>`).join(""):'<p class="small" style="margin:0">No ratings yet. In this draft, ratings are only saved on this device.</p>';
 }
-$("#rSave").onclick=()=>{const r=ROUTES.find(x=>x.id===cur);if(!draft.snow||!draft.up)return toast("Sätt båda betygen först");
+$("#rSave").onclick=()=>{const r=ROUTES.find(x=>x.id===cur);if(!draft.snow||!draft.up)return toast("Set both ratings first");
   const list=store.get("ratings-"+r.id,[]);list.unshift({...draft,txt:$("#rTxt").value.trim(),who:$("#rWho").value.trim(),at:Date.now()});store.set("ratings-"+r.id,list);store.set("who",$("#rWho").value.trim());
-  draft={snow:0,up:0};document.querySelectorAll(".scale button").forEach(b=>b.classList.remove("on"));$("#rTxt").value="";renderRatings(r);toast("Betyget är sparat")};
+  draft={snow:0,up:0};document.querySelectorAll(".scale button").forEach(b=>b.classList.remove("on"));$("#rTxt").value="";renderRatings(r);toast("The rating is saved")};
 
 async function openDetail(r){
   cur=r.id;stopSpin();
@@ -1089,30 +1090,30 @@ async function openDetail(r){
   $("#dName").textContent=r.name;$("#dArea").textContent=r.area.includes(AREA_NAME[r.region])?r.area:r.area+" · "+AREA_NAME[r.region];
   $("#dFav").classList.toggle("on",favs.has(r.id));
   $("#dFit").innerHTML=[1,2,3].map(n=>`<i class="${n<=r.fit?"on":""}"></i>`).join("");
-  $("#dFitTxt").textContent=["","Nischad – kräver rätt dag","Bra alternativ","Mycket bra match"][r.fit];
-  const expWhy={g:"Rutten går mest utanför eller vid sidan av lavinterräng.",y:"Delar av rutten går i lavinterräng – vägval och läge avgör.",r:"Mycket av rutten går i eller under brant lavinterräng."}[r.exp];
-  $("#dFitWhy").textContent=`${expWhy} ${r.boardNote}${r.storm?" Funkar som stormdagsalternativ.":""}`;
-  $("#dTags").innerHTML=[EXP[r.exp],BOARD[r.board]].map(x=>`<span class="tag ${x[1]}">${x[0]}</span>`).join("")+(r.storm?'<span class="tag tg">Stormdag</span>':"")+(r.unsure?'<span class="tag tn">Topp-position ej verifierad</span>':"");
+  $("#dFitTxt").textContent=["","Niche – needs the right day","Good option","Very good match"][r.fit];
+  const expWhy={g:"The route mostly stays out of or beside avalanche terrain.",y:"Parts of the route are in avalanche terrain – route choice and conditions decide.",r:"Much of the route is in or below steep avalanche terrain."}[r.exp];
+  $("#dFitWhy").textContent=`${expWhy} ${r.boardNote}${r.storm?" Works as a stormy-day option.":""}`;
+  $("#dTags").innerHTML=[EXP[r.exp],BOARD[r.board]].map(x=>`<span class="tag ${x[1]}">${x[0]}</span>`).join("")+(r.storm?'<span class="tag tg">Stormy day</span>':"")+(r.unsure?'<span class="tag tn">Summit position not verified</span>':"");
   $("#dDesc").textContent=r.desc;
-  $("#dSrc").innerHTML="Källa: "+r.src.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${esc(s[0])}</a>`).join(" · ")
-    +`<br>Var folk åker: <a href="https://www.strava.com/maps/global-heatmap?sport=BackcountrySki&style=dark#14/${r.s[0]}/${r.s[1]}" target="_blank" rel="noopener">Stravas värmekarta, topptur</a> (kräver Strava-inloggning)`
-    +(r.osm?" · Vägen följer ett skidspår inritat i OpenStreetMap.":"")+(r.unsure?" · Startpunkten är ungefärlig.":"");
+  $("#dSrc").innerHTML="Source: "+r.src.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${esc(s[0])}</a>`).join(" · ")
+    +`<br>Where people ski: <a href="https://www.strava.com/maps/global-heatmap?sport=BackcountrySki&style=dark#14/${r.s[0]}/${r.s[1]}" target="_blank" rel="noopener">Strava heatmap, backcountry ski</a> (needs a Strava login)`
+    +(r.osm?" · The route follows a ski track drawn in OpenStreetMap.":"")+(r.unsure?" · The start point is approximate.":"");
   ["#sTop","#sGain","#sLen","#sAsp"].forEach(s=>$(s).textContent="…");$("#sCalc").textContent="";
   $("#rWho").value=store.get("who","");renderRatings(r);
   const ss=SAVED_STATUS[r.id];$("#savedStatus").style.display=ss?"":"none";
-  if(ss)$("#savedStatus").innerHTML=`<div class="verdict v-${ss.c}" style="margin:0"><b>Claudes statuskoll · ${esc(ss.at)}</b>${esc(ss.txt)}</div>`;
+  if(ss)$("#savedStatus").innerHTML=`<div class="verdict v-${ss.c}" style="margin:0"><b>Claude's status check · ${esc(ss.at)}</b>${esc(ss.txt)}</div>`;
   if(window.maplibregl){if(!map)initMap();else{map.resize();showOnMap(r)}}
   renderAv(r,todayISO());renderWx(r);
-  $("#calcBox").innerHTML='<p class="p small"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> Räknar ut enklaste vägen upp och bästa nedfarten…</p>';
+  $("#calcBox").innerHTML='<p class="p small"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> Finding the easiest way up and the best descent…</p>';
   $("#avTerr").innerHTML="";if(map&&mapReady&&map.getSource("aval"))map.getSource("aval").setData(EMPTY);
-  calcKnown(r).then(res=>{if(cur===r.id)renderCalcDetail(r,res)}).catch(e=>{if(cur===r.id)$("#calcBox").innerHTML=`<p class="p small">Kunde inte beräkna vägen: ${esc(e.message||"okänt fel")}</p>`});
-  let d;try{d=await derive(r)}catch(e){delete derived[r.id];["#sTop","#sGain","#sLen","#sAsp"].forEach(s=>$(s).textContent="–");$("#sCalc").textContent="Kunde inte hämta höjddata just nu.";return}
+  calcKnown(r).then(res=>{if(cur===r.id)renderCalcDetail(r,res)}).catch(e=>{if(cur===r.id)$("#calcBox").innerHTML=`<p class="p small">Couldn't calculate the route: ${esc(e.message||"unknown error")}</p>`});
+  let d;try{d=await derive(r)}catch(e){delete derived[r.id];["#sTop","#sGain","#sLen","#sAsp"].forEach(s=>$(s).textContent="–");$("#sCalc").textContent="Couldn't get height data right now.";return}
   if(cur!==r.id)return;
   $("#sTop").textContent=d.topE+" m";$("#sAsp").textContent=d.asp;
   if(!memCalc[r.id]){$("#sGain").textContent="≈"+Math.round(d.gain/10)*10;$("#sLen").textContent="≈"+(d.dist*2*1.35/1000).toFixed(0)+" km";
-  $("#sCalc").textContent="Beräknat från höjddata och fågelvägen – ungefärligt tills vägen är beräknad.";}
+  $("#sCalc").textContent="From height data and the straight line – approximate until the route is calculated.";}
 }
-$("#dFav").onclick=()=>{const id=cur;toggleBm(id);$("#dFav").classList.toggle("on",favs.has(id));toast(favs.has(id)?"Tillagd i bokmärken":"Borttagen från bokmärken")};
+$("#dFav").onclick=()=>{const id=cur;toggleBm(id);$("#dFav").classList.toggle("on",favs.has(id));toast(favs.has(id)?"Added to bookmarks":"Removed from bookmarks")};
 let prevView="",curView="";
 const goHome=()=>{if(location.hash.slice(1))location.hash="";else route()};
 $("#backBtn").onclick=()=>{location.hash=["bookmarks","search"].includes(prevView)?prevView:""};
@@ -1346,7 +1347,7 @@ async function buildGrid(pts){
   const mpp=156543.03*Math.cos(latc*Math.PI/180)/2**RZ;
   let x0=Math.min(...P.map(p=>p[0])),x1=Math.max(...P.map(p=>p[0])),y0=Math.min(...P.map(p=>p[1])),y1=Math.max(...P.map(p=>p[1]));
   const ext=Math.max(x1-x0,y1-y0)*mpp;
-  if(ext>30000)throw new Error("Rutten är för stor – håll punkterna inom 30 km.");
+  if(ext>30000)throw new Error("The route is too big – keep the points within 30 km.");
   const m=Math.max(1500,ext*0.3)/mpp;x0-=m;x1+=m;y0-=m;y1+=m;
   // Kartverket: 5–8 m/cell (max 600 000 celler, ca 2,4 MB per tur). Reserv: AWS z13, ca 13 m/cell.
   let G=null;try{G=await kvGrid(x0,y0,x1,y1,mpp)}catch(e){G=null}
@@ -1357,7 +1358,7 @@ async function buildGrid(pts){
   const tiles={},jobs=[];
   for(let x=tx0;x<=tx1;x++)for(let y=ty0;y<=ty1;y++)jobs.push(loadTile(RZ,x,y).then(t=>{tiles[x+","+y]=t}));
   await Promise.all(jobs);
-  if(Object.values(tiles).some(t=>!t))throw new Error("Kunde inte hämta höjddata just nu.");
+  if(Object.values(tiles).some(t=>!t))throw new Error("Couldn't get height data right now.");
   const E=new Float32Array(w*h);
   for(let j=0;j<h;j++){const py=Math.floor(y0+j*step+step/2),ty=py>>8,oy=py&255;
     for(let i=0;i<w;i++){const px=Math.floor(x0+i*step+step/2),t=tiles[(px>>8)+","+ty];E[j*w+i]=t?t[oy*256+(px&255)]:0}}
@@ -1378,7 +1379,7 @@ async function kvGrid(x0,y0,x1,y1,mpp){
   const raw=await kvFetch(bb,w,h);
   const E=new Float32Array(w*h);let nd=0;
   for(let i=0;i<w*h;i++){const v=raw[i];if(isND(v)){E[i]=NaN;nd++}else E[i]=v}
-  if(nd>0.6*w*h)throw new Error("För lite Kartverket-data här");
+  if(nd>0.6*w*h)throw new Error("Too little Kartverket data here");
   if(nd){const k=2**(14-RZ),S=await awsSampler(14,x0*k,y0*k,(x0+w*step)*k,(y0+h*step)*k);
     for(let j=0;j<h;j++)for(let i=0;i<w;i++){const q=j*w+i;if(isNaN(E[q])){const v=S((x0+(i+.5)*step)*k,(y0+(j+.5)*step)*k);E[q]=v<0.5?0:v}}}
   // En lätt 3x3-utjämning (ca 15 m), så att enstaka block inte räknas som brant terräng
@@ -1417,7 +1418,7 @@ async function traceGrid(G,osmLines){
 }
 /* pts: [[lat,lon],…], over: {segIndex:"up"|"down"} (null = automatiskt vid högsta punkten) */
 async function computeRoute(pts,over,osmLines){
-  if(pts.length<2)throw new Error("Minst två punkter behövs.");
+  if(pts.length<2)throw new Error("At least two points are needed.");
   const G=await buildGrid(pts);
   try{G.T=await traceGrid(G,osmLines||[])}catch(e){G.T=null}
   const cells=pts.map(G.cellOf),el=cells.map(k=>G.E[k]);
@@ -1429,7 +1430,7 @@ async function computeRoute(pts,over,osmLines){
   const segs=modes.map((m,i)=>({a:cells[i],b:cells[i+1],mode:m}));
   const {paths,av}=await runRouter({E:G.E,w:G.w,h:G.h,cell:G.cell,segs,T:G.T,av:true,boot:BOOTPACK_DEG});
   const legs=paths.map((p,i)=>{
-    if(!p)throw new Error(`Hittade ingen rimlig väg mellan punkt ${i+1} och ${i+2}.`);
+    if(!p)throw new Error(`Found no reasonable route between point ${i+1} and ${i+2}.`);
     const ix=[...p.idx];
     const A=av&&av[i]?{c:[...av[i].c],a:[...av[i].a],lo:[...av[i].lo],hi:[...av[i].hi]}:null;
     return {mode:modes[i],c:smoothLine(ix.map(G.ll)),e:ix.map(k=>Math.round(G.E[k])),s:[...p.s].map(v=>Math.round(v)),av:A};
@@ -1517,8 +1518,8 @@ function trackLegendHTML(el){
 }
 function renderTrackLegend(){document.querySelectorAll(".tracklegend").forEach(el=>el.innerHTML=trackLegendHTML(el))}
 document.addEventListener("click",e=>{const b=e.target.closest(".lgtog");if(!b)return;const box=b.closest(".tracklegend"),collapsed=box.classList.toggle("collapsed");b.setAttribute("aria-expanded",collapsed?"false":"true")});
-const CALC_DISC="Beräknat från Kartverkets höjddata (ca 5 m rutnät). Uppför hålls spåret under ca 16–20° i färdriktningen och terräng över 30° undviks så långt det går. Nedför följer vägen fallinjen, och terräng över 35° undviks. Höjddata vet inget om skavlar, block, skog, glaciärsprickor eller dagens snö. Det här är beslutsstöd, inte beslut.";
-const fmtM=m=>m>=1000?(m/1000).toFixed(1).replace(".",",")+" km":Math.round(m/10)*10+" m";
+const CALC_DISC="Calculated from Kartverket height data (about 5 m grid). Uphill the track zigzags to stay under about 16–20° in the direction of travel, and terrain over 30° is avoided as far as possible (boot pack where it can't be). Downhill the route follows the fall line and avoids terrain over 35°. Height data knows nothing about cornices, boulders, forest, crevasses or today's snow. This is decision support, not a decision.";
+const fmtM=m=>m>=1000?(m/1000).toFixed(1)+" km":Math.round(m/10)*10+" m";
 const fmtT=h=>{const m=Math.round(h*60/10)*10;return m<60?m+" min":Math.floor(m/60)+" h"+(m%60?" "+m%60+" min":"")};
 /* Flat stretches are pointed out, not avoided: how long and how flat (mean angle; negative = counter-slope) */
 const FLAT_LABEL_M=60;
@@ -1566,16 +1567,16 @@ function resHTML(res,cid){
   const hasDown=res.legs.some(L=>L.mode==="down");
   let flat="";
   if(hasDown){
-    flat=s.flats.length?`<b>${fmtM(s.flat)} flackt eller motlut</b> på nedfarten. Längst: ${s.flats.slice(0,3).map(f=>`${fmtM(f.len)} ${f.k==="mot"?"motlut":"flackt"} ${fmtDeg(f.deg)} (${f.e0}→${f.e1} m)`).join(" · ")}.`
-      :s.flat>0?`Bara korta flacka partier, ${fmtM(s.flat)} totalt.`:"Inga flacka partier hittades.";
-    flat=`<div class="flatinfo"><span class="tag ${{bra:"tg",ok:"ty",jobbig:"tr"}[s.board]}">🏂 Bräda: ${s.board} (beräknat)</span><p class="p" style="margin-top:6px;font-size:13.5px">${flat}</p></div>`;
+    flat=s.flats.length?`<b>${fmtM(s.flat)} flat or uphill</b> on the descent. Longest: ${s.flats.slice(0,3).map(f=>`${fmtM(f.len)} ${f.k==="mot"?"uphill":"flat"} ${fmtDeg(f.deg)} (${f.e0}→${f.e1} m)`).join(" · ")}.`
+      :s.flat>0?`Only short flat stretches, ${fmtM(s.flat)} in total.`:"No flat stretches found.";
+    flat=`<div class="flatinfo"><span class="tag ${{bra:"tg",ok:"ty",jobbig:"tr"}[s.board]}">🏂 ${BOARD[s.board][0]} (calculated)</span><p class="p" style="margin-top:6px;font-size:13.5px">${flat}</p></div>`;
   }
-  const warn=s.steep>=20?`<div class="flatinfo"><span class="tag tr">⚠ Ca ${fmtM(s.steep)} brantare än 40°</span><p class="p" style="margin-top:6px;font-size:13.5px">Vägen kommer inte runt allt brant här – räkna med att gå eller klättra, och kolla terrängen noga.</p></div>`:"";
+  const warn=s.steep>=20?`<div class="flatinfo"><span class="tag tr">⚠ About ${fmtM(s.steep)} steeper than 40°</span><p class="p" style="margin-top:6px;font-size:13.5px">The route can't get around all the steep terrain here – expect to walk or climb, and check the terrain carefully.</p></div>`:"";
   return `<div class="rs">
-    <div><b>↑ ${Math.round(s.gain/10)*10} m</b><span>Upp · ${fmtM(s.upLen)}</span></div>
-    <div><b>↓ ${Math.round(s.drop/10)*10} m</b><span>Ned · ${hasDown?fmtM(s.dnLen):"–"}</span></div>
-    <div><b>${fmtT(s.time)}</b><span>Ungefärlig tid</span></div>
-    <div><b>${s.maxUp||"–"}° / ${hasDown?s.maxDn+"°":"–"}</b><span>Brantast terräng upp / ned</span></div>
+    <div><b>↑ ${Math.round(s.gain/10)*10} m</b><span>Up · ${fmtM(s.upLen)}</span></div>
+    <div><b>↓ ${Math.round(s.drop/10)*10} m</b><span>Down · ${hasDown?fmtM(s.dnLen):"–"}</span></div>
+    <div><b>${fmtT(s.time)}</b><span>Approximate time</span></div>
+    <div><b>${s.maxUp||"–"}° / ${hasDown?s.maxDn+"°":"–"}</b><span>Steepest terrain up / down</span></div>
   </div><canvas class="prof" id="${cid}"></canvas>${warn}${flat}`;
 }
 function drawProfile(cv,res){
@@ -1606,7 +1607,7 @@ function toGpx(name,res){
 }
 function dlGpx(name,res){
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([toGpx(name,res)],{type:"application/gpx+xml"}));
-  a.download=(name.replace(/[^\wåäöÅÄÖøØæÆ -]/g,"").trim().replace(/\s+/g,"-")||"rutt")+".gpx";
+  a.download=(name.replace(/[^\wåäöÅÄÖøØæÆ -]/g,"").trim().replace(/\s+/g,"-")||"route")+".gpx";
   document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);
 }
 const memCalc={},calcP={};
@@ -1629,9 +1630,9 @@ function resBounds(res){const b=new maplibregl.LngLatBounds();res.legs.forEach(L
    Sträckorna jämförs sedan med Varsoms lavinproblem (väderstreck + höjd).
    ========================================================= */
 /* Avalanche terrain is drawn as a hatched area: start zone orange, other avalanche terrain yellow */
-const AVK={2:["Startzon","st","Vägen går i terräng brantare än 30°, där skred kan lossna."],
-  1:["Under startzon","","Brant terräng ovanför lutar mot vägen – ett skred där uppe kan nå hit."],
-  3:["Terrängfälla","","Svacka eller ravin under brant terräng – även ett litet skred kan begrava djupt."]};
+const AVK={2:["Start zone","st","The route goes through terrain steeper than 30°, where avalanches can release."],
+  1:["Below start zone","","Steep terrain above slopes towards the route – an avalanche up there can reach this far."],
+  3:["Terrain trap","","A hollow or gully below steep terrain – even a small avalanche can bury deeply."]};
 const avSw=c=>`<i class="avsw ${AVK[c][1]}"></i>`;
 let avState={rid:null,date:null,w:null},avShow=store.get("avShow",true),avOnMap=[];
 function avSegs(res){
@@ -1670,7 +1671,7 @@ function avAsps(s){const m=Math.max(...s.h);return s.h.map((v,i)=>[v,i]).filter(
 function avHits(s,w){
   if(!w||!(+w.DangerLevel>0))return null;
   const asps=avAsps(s);
-  return (w.AvalancheProblems||[]).filter(p=>{const am=!p.ValidExpositions||asps.some(i=>p.ValidExpositions[i]==="1");return am&&heightMatch(p,s.lo,s.hi).ok}).map(p=>p.AvalancheProblemTypeName||"Lavinproblem");
+  return (w.AvalancheProblems||[]).filter(p=>{const am=!p.ValidExpositions||asps.some(i=>p.ValidExpositions[i]==="1");return am&&heightMatch(p,s.lo,s.hi).ok}).map(p=>p.AvalancheProblemTypeName||"Avalanche problem");
 }
 /* Avalanche terrain as areas within AV_BAND_M of the route. All stretches go on one grid so each
    spot is drawn once: start zone wins over other terrain, and a stretch that hits today's forecast
@@ -1736,19 +1737,19 @@ function avHTML(r,res){
   if(!res.legs.some(L=>L.av))return "";
   const tot={1:0,2:0,3:0};segs.forEach(s=>tot[s.c]+=s.len);
   const hitN=hasW?segs.filter(s=>avHits(s,w).length).length:0;
-  const head=!segs.length?`<p class="p" style="margin:0">Ingen tydlig lavinterräng hittades längs vägen.</p>`
+  const head=!segs.length?`<p class="p" style="margin:0">No clear avalanche terrain found along the route.</p>`
     :`<div class="avsum">${[2,1,3].filter(c=>tot[c]).map(c=>`<span>${avSw(c)}${AVK[c][0]} <b>${fmtM(tot[c])}</b></span>`).join("")}</div>`;
-  const vs=!segs.length?"":hasW?`<div class="verdict v-${hitN?"r":"g"}" style="margin:10px 0 4px"><b>${hitN?`${hitN} av ${segs.length} sträckor träffar ett lavinproblem`:"Ingen sträcka träffar dagens lavinproblem"}</b>Jämfört med Varsom (${esc(w.RegionName)}, faregrad ${w.DangerLevel}, ${esc(avState.date)}): väderstreck och höjd för varje sträcka mot prognosens utsatta sidor och höjder.</div>`
-    :`<p class="small" style="margin:8px 0 4px">Ingen lavinprognos för valt datum, så bara terrängen visas. Välj ett datum med prognos i lavinrutan nedan (eller "Visa exempel") så jämförs varje sträcka med prognosen.</p>`;
+  const vs=!segs.length?"":hasW?`<div class="verdict v-${hitN?"r":"g"}" style="margin:10px 0 4px"><b>${hitN?`${hitN} of ${segs.length} stretches hit an avalanche problem`:"No stretch hits today's avalanche problems"}</b>Compared with Varsom (${esc(w.RegionName)}, danger level ${w.DangerLevel}, ${esc(avState.date)}): aspect and elevation of each stretch against the forecast's exposed aspects and elevations.</div>`
+    :`<p class="small" style="margin:8px 0 4px">No avalanche forecast for the chosen date, so only the terrain is shown. Pick a date with a forecast in the avalanche box below (or "Example") and each stretch is compared with the forecast.</p>`;
   const rows=segs.map((s,i)=>{
     const hits=hasW?avHits(s,w):null,asp=avAsps(s).map(a=>ASP[a]).join("/");
-    const ht=s.c===2?`${Math.round(Math.min(s.e0,s.e1))}–${Math.round(Math.max(s.e0,s.e1))} m`:`skred från ${Math.round(s.lo/10)*10}–${Math.round(s.hi/10)*10} m`;
-    return `<button class="avrow" data-i="${i}">${avSw(s.c)}<span><b>${AVK[s.c][0]}</b> · ${fmtM(s.len)} · ${s.mode==="up"?"upp":"ned"} · ${asp}-sida · ${ht}
-      ${hits?`<em class="${hits.length?"hit":"ok"}">${hits.length?"Träffar: "+hits.map(esc).join(", "):"Inget lavinproblem träffar"}</em>`:""}</span></button>`}).join("");
-  return `<div class="avbox"><div class="avhead"><b>Lavinterräng längs vägen</b><span class="tag ty" style="margin:0">Test</span>
-    <label class="avtog"><input type="checkbox" id="avTog" ${avShow?"checked":""}> Visa på kartan</label></div>
+    const ht=s.c===2?`${Math.round(Math.min(s.e0,s.e1))}–${Math.round(Math.max(s.e0,s.e1))} m`:`avalanches from ${Math.round(s.lo/10)*10}–${Math.round(s.hi/10)*10} m`;
+    return `<button class="avrow" data-i="${i}">${avSw(s.c)}<span><b>${AVK[s.c][0]}</b> · ${fmtM(s.len)} · ${s.mode==="up"?"up":"down"} · ${asp} aspect · ${ht}
+      ${hits?`<em class="${hits.length?"hit":"ok"}">${hits.length?"Hits: "+hits.map(esc).join(", "):"No avalanche problem hits"}</em>`:""}</span></button>`}).join("");
+  return `<div class="avbox"><div class="avhead"><b>Avalanche terrain along the route</b><span class="tag ty" style="margin:0">Test</span>
+    <label class="avtog"><input type="checkbox" id="avTog" ${avShow?"checked":""}> Show on map</label></div>
     ${head}${vs}<div class="avlist">${rows}</div>
-    <p class="disc">${[2,1,3].map(c=>`<b>${AVK[c][0]}:</b> ${AVK[c][2]}`).join(" ")} Beräknat från Kartverkets höjddata (ca 5 m rutnät) med en förenklad modell. Skog, snödjup, vind och skredstorlek ingår inte. Svagare skraffering på kartan = träffar inte dagens prognos. Beslutsstöd, inte beslut.</p></div>`;
+    <p class="disc">${[2,1,3].map(c=>`<b>${AVK[c][0]}:</b> ${AVK[c][2]}`).join(" ")} Calculated from Kartverket height data (about 5 m grid) with a simplified model. Forest, snow depth, wind and avalanche size are not included. Fainter hatching on the map = doesn't hit today's forecast. Decision support, not a decision.</p></div>`;
 }
 function refreshAval(r){
   const res=memCalc[r.id];if(!res||cur!==r.id)return;
@@ -1790,12 +1791,12 @@ function addAvalLayer(m,before){
 /* ---------- detaljvyn ---------- */
 function renderCalcDetail(r,res){
   const s=calcStats(res);
-  $("#sGain").textContent="≈"+Math.round(s.gain/10)*10;$("#sLen").textContent="≈"+((s.upLen+s.dnLen)/1000).toFixed(1).replace(".",",")+" km";
-  $("#sCalc").textContent="Beräknat längs föreslagen väg upp och ned.";
-  $("#calcBox").innerHTML=resHTML(res,"dprof")+`<div class="btnrow"><button class="btn ghost sm" id="cEdit">Ändra</button><button class="btn ghost sm" id="cGpx">GPX</button></div><p class="disc">${CALC_DISC}</p>`;
+  $("#sGain").textContent="≈"+Math.round(s.gain/10)*10;$("#sLen").textContent="≈"+((s.upLen+s.dnLen)/1000).toFixed(1)+" km";
+  $("#sCalc").textContent="Calculated along the suggested way up and down.";
+  $("#calcBox").innerHTML=resHTML(res,"dprof")+`<div class="btnrow"><button class="btn ghost sm" id="cEdit">Edit</button><button class="btn ghost sm" id="cGpx">GPX</button></div><p class="disc">${CALC_DISC}</p>`;
   drawProfile($("#dprof"),res);
   $("#cGpx").onclick=()=>dlGpx(r.name,res);
-  $("#cEdit").onclick=()=>derive(r).then(d=>{setDraft({pts:[r.t,d.top,r.t],over:{},name:r.name+" – egen variant"});location.hash="draw"});
+  $("#cEdit").onclick=()=>derive(r).then(d=>{setDraft({pts:[r.t,d.top,r.t],over:{},name:r.name+" – own variant"});location.hash="draw"});
   drawCalcDetail(r,res);
   refreshAval(r);
 }
@@ -1830,7 +1831,7 @@ function closeOverview(){stopAuto();$("#mapview").classList.remove("on");documen
 function initOmap(){
   regProtocols();
   const st=JSON.parse(JSON.stringify(STYLE));
-  st.sources.osm={type:"geojson",data:EMPTY,attribution:"Turspår © OpenStreetMap"};
+  st.sources.osm={type:"geojson",data:EMPTY,attribution:"Ski tracks © OpenStreetMap"};
   omap=new maplibregl.Map({container:"omap",style:st,center:[19.6,69.65],zoom:8.4,pitch:55,maxPitch:80,attributionControl:{compact:true}});
   wireCompass(omap,"#ovNorth");
   omap.on("load",()=>{
@@ -1932,7 +1933,7 @@ async function loadOsm(){
     const ac=new AbortController(),to=setTimeout(()=>ac.abort(),20000);
     try{j=await fetch(u,{method:"POST",signal:ac.signal,headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"data="+encodeURIComponent(q)}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()});break}catch(e){}finally{clearTimeout(to)}
   }
-  if(!j)throw new Error("OSM ej nåbart");
+  if(!j)throw new Error("OSM not reachable");
   const f=(j.elements||[]).filter(e=>e.geometry&&e.geometry.length>1).map(e=>({type:"Feature",properties:{name:(e.tags&&e.tags.name)||""},geometry:{type:"LineString",coordinates:e.geometry.map(p=>[+p.lon.toFixed(5),+p.lat.toFixed(5)])}}));
   store.set(k,{at:Date.now(),f});return f;
 }
@@ -1986,7 +1987,7 @@ function scheduleDraft(ms){
   draftT=setTimeout(()=>{
     const tok=++draftTok;
     computeRoute(plan.pts,plan.over).then(res=>{if(tok!==draftTok)return;draftRes=res;draftErr=null})
-      .catch(e=>{if(tok!==draftTok)return;draftRes=null;draftErr=e.message||"Något gick fel."})
+      .catch(e=>{if(tok!==draftTok)return;draftRes=null;draftErr=e.message||"Something went wrong."})
       .finally(()=>{if(tok!==draftTok)return;draftBusy=false;if(drawMode){rebuildDraftMarkers();drawDraft();renderPanel()}});
   },ms);
 }
@@ -2104,9 +2105,9 @@ $("#ov3d").onclick=()=>{if(!omapReady)return;const on=omap.getPitch()<5;omap.eas
    Gemensamt läge för båda kartorna. Start = svartvit topo.
    ========================================================= */
 const BASES=[
-  {id:"paint",n:"Vinterkarta",d:"Målad från Kartverkets data"},
-  {id:"topo",n:"Topo",d:"Kartverkets topokarta"},
-  {id:"sat",n:"Satellit",d:"Esri, sommarbild"},
+  {id:"paint",n:"Winter map",d:"Painted from Kartverket data"},
+  {id:"topo",n:"Topo",d:"Kartverket topographic map"},
+  {id:"sat",n:"Satellite",d:"Esri, summer imagery"},
   {id:"heat",n:"Heatmap",d:"Known tracks on a toned-down winter map"}];
 const LYR={base:"paint",slope:false};
 const THUMB={},TZ=12,TX=2276,TY=929;
@@ -2156,7 +2157,7 @@ function renderLyr(){
   G.innerHTML=BASES.map(b=>`<button class="lcard${LYR.base===b.id?" on":""}" data-base="${b.id}"><span class="im">${THUMB[b.id]?`<img src="${THUMB[b.id]}" alt="">`:""}<span class="ck">✓</span></span><b>${b.n}</b><small>${b.d}</small></button>`).join("");
   const row=(k,sw,t,d)=>`<button class="lrow${LYR[k]?" on":""}" data-tg="${k}"><span class="sw">${sw}</span><span class="tx"><b>${t}</b><small>${d}</small></span><span class="tgl"></span></button>`;
   $("#lyrRows").innerHTML=
-    row("slope",'<svg viewBox="0 0 34 34" width="34" height="34"><rect width="34" height="34" rx="10" fill="#f4f5f7"/><path d="M4 28 L14 12 L19 19 L24 9 L30 28Z" fill="#f7e04b"/><path d="M14 12 L19 19 L16.5 22Z" fill="#f39a25"/><path d="M24 9 L27 19 L21.5 15Z" fill="#e3342a"/></svg>',"Bratthet","NVE: gult 27–29°, orange 30–34°, rött 35–39°, lila 40°+");
+    row("slope",'<svg viewBox="0 0 34 34" width="34" height="34"><rect width="34" height="34" rx="10" fill="#f4f5f7"/><path d="M4 28 L14 12 L19 19 L24 9 L30 28Z" fill="#f7e04b"/><path d="M14 12 L19 19 L16.5 22Z" fill="#f39a25"/><path d="M24 9 L27 19 L21.5 15Z" fill="#e3342a"/></svg>',"Slope","NVE: yellow 27–29°, orange 30–34°, red 35–39°, purple 40°+");
 }
 function showLyr(){lyrOpen=true;genThumbs();renderLyr();const v=$("#lyrSheet");v.classList.add("on");v.setAttribute("aria-hidden","false");v.scrollTop=0;document.body.style.overflow="hidden";$("#lyrX").focus()}
 function hideLyr(){lyrOpen=false;const v=$("#lyrSheet");v.classList.remove("on");v.setAttribute("aria-hidden","true");document.body.style.overflow=$("#mapview").classList.contains("on")?"hidden":""}
