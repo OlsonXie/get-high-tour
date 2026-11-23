@@ -112,9 +112,10 @@ Cache: Cache API `ght-tiles-v{PAINTV}`.
 
 ### Vägvalets regler
 - **Upp:** undvik terräng ≥ 30° kraftigt. Lutningen i färdriktningen hålls under ca 16–20° (sicksack). Det som ändå är ≥ 30°, eller över gränsen för "skidor på ryggen" (~26° i färdriktningen), är **boot pack** (`BOOTPACK_DEG = 30`, utjämning ±30 m).
-  - Uppben söks med A* över (ruta, färdriktning i 8 sektorer), och en **kick turn kostar ~40 s** (`KICK`). Utan det kollapsar sicksacken till en 1-rutas-växling som på kartan blir en rak linje i fallinjen (felet 2026-11-23). Riktningen spelas bara roll i skin-terräng (16° till boot), annars är vändning gratis.
+  - Uppben räknas i två steg. Först en **mittlinje** med A* över rutor (där är sicksack gratis, så linjen går där en sicksack skulle gå). Sedan A* över (ruta, färdriktning i 8 sektorer) i en **korridor ±150 m** runt mittlinjen (`CORR`), där en **kick turn kostar ~40 s** (`KICK`) och ben som går längre än 40 m från mittlinjen kostar mer (`LAT0`, `LATK`). Det ger sicksack med ben på ungefär 70–250 m (beslut 2026-11-23: hellre lite kortare ben). Utan vändkostnaden kollapsar sicksacken till en 1-rutas-växling som på kartan blir en rak linje i fallinjen (felet 2026-11-23). Riktningen spelar bara roll i skin-terräng (16° till boot), annars är vändning gratis.
   - I terräng ≥ `BOOTPACK_DEG` räknas boot pack: rak linje, ca 290 höjdm/h, gånger 6/14/30/60 för 30/35/40/45°+.
-- **Ned:** följer fallinjen. Partier under 5° och motlut straffas och klassas som flat (bara på nedben). Terräng över 35° undviks (gånger 8/25/150/400 för 35/40/45/50°+).
+- **Ned:** följer fallinjen. Partier under 5° och motlut klassas som flat (bara på nedben). Terräng över 35° undviks (gånger 8/25/150/400 för 35/40/45/50°+).
+- **Flackt är upplysning, inte ett krav** (beslut 2026-11-23). Vägvalet behöver inte undvika flacka partier till varje pris, men de ska **pekas ut**: var de är, hur långa och hur flacka (medellutning, motlut visas som uphill). Flacka partier ≥ 60 m (`FLAT_LABEL_M`) får en etikett på kartan, t.ex. `220 m flat · 2°`, och listas i panelen med längd, lutning och höjder.
 - Upp och ned får gå olika vägar. Vändpunkten är högsta punkten men kan ändras. Efter högsta punkten räknas en sträcka som stiger mer än 20 m också som upp.
 - Varje framräknad rutt loggar terrängens lutning (max/medel/min) per klass i konsolen (`[route]`).
 
@@ -161,7 +162,7 @@ Tokensystem med **primitiver → semantiska tokens**. Komponenter använder bara
 | **Skins up** | Två parallella streckade linjer bredvid varandra (offset ±~2 px), avlånga streck omlott, som två skidspår | `--track-skin` | Uppstigning med stighudar |
 | **Boot pack** | Gula prickar | `--track-bootpack` | Uppför där terrängen är ≥ 30° och inte gick att undvika |
 | **Descent** | En röd heldragen linje | `--track-descent` | Nedfart |
-| **Flat** | Heldragen, tjockare (~1,6×) blå linje | `--track-flat` | Bara nedfart: < 5° och motlut (snowboard) |
+| **Flat** | Heldragen, tjockare (~1,6×) blå linje, plus etikett med längd och lutning när partiet är ≥ 60 m | `--track-flat` | Bara nedfart: < 5° och motlut (snowboard) |
 
 - Behåll den mörka, halvgenomskinliga kantlinjen (casing) under spåren.
 - Höjdprofilen och GPX-exporten använder samma klasser och färger.
@@ -184,7 +185,7 @@ Tokensystem med **primitiver → semantiska tokens**. Komponenter använder bara
 ## 6. Övriga beslut som gäller
 
 - **Kärnflöde:** sök tur → se rutten → "Check status for route" (lavin, väder och snö matchat mot ruttens aspekter/höjder) → åk → betygsätt (snö och åkning, uppstigning och utsikt, fritext och bilder).
-- **En i gruppen åker snowboard:** långa flacka partier och traverser på nedfarten flaggas (board-bedömning: bra < 150 m flackt, ok < 500 m, annars jobbig).
+- **En i gruppen åker snowboard:** långa flacka partier och traverser på nedfarten flaggas (board-bedömning: bra < 150 m flackt, ok < 500 m, annars jobbig). De pekas ut med längd och lutning men är inget krav för vägvalet.
 - **Statuskoll** görs av Claude på begäran och skrivs in i `SAVED_STATUS`. Det är beslutsstöd, inte ett beslut.
 - **12 förberedda turer:** Kvaløya: Rødtinden, Finnlandsfjellet, Kjølen, Buren, Steinskarstinden, Lille Blåmannen, Skittentinden. Fastlandet: Tromsdalstinden, Fagerfjellet, Stormheimfjellet. Lyngen: Rørnestinden, Fastdalstinden.
 - Allt sparas i dag i `localStorage` (bokmärken `favs`, egna rutter, betyg och GPX). **Delad data** (t.ex. Supabase, ingen inloggning, bara en delad länk) kommer efter att kartan och UI:t känns rätt.

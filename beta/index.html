@@ -15,10 +15,10 @@
   --g:#2f8a57;--gbg:#e3f3ea;--y:#a07400;--ybg:#fbf0d2;--o:#c4561c;--obg:#fbe4d6;--r:#b3261e;--rbg:#f9dedb;--n:#6a7380;--nbg:#e8ebef;
   --radius:26px;
   /* spår-tokens (tokens/tokens.json): primitiver */
-  --color-green-track:#6DAE8A;--color-red-track:#E0504A;--color-yellow-track:#E8B24E;--color-blue-flat:#3B7DD8;--color-neutral-known:#8A8F97;
+  --color-green-track:#6DAE8A;--color-red-track:#E0504A;--color-yellow-track:#E8B24E;--color-blue-flat:#3B7DD8;--color-neutral-known:#8A8F97;--color-white:#ffffff;
   /* spår-tokens: semantiska, pekar på primitiverna ovan (eller på --ink för casing) */
   --track-skin:var(--color-green-track);--track-descent:var(--color-red-track);--track-flat:var(--color-blue-flat);
-  --track-bootpack:var(--color-yellow-track);--track-known:var(--color-neutral-known);--track-casing:var(--ink);
+  --track-bootpack:var(--color-yellow-track);--track-known:var(--color-neutral-known);--track-casing:var(--ink);--track-halo:var(--color-white);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Montserrat,system-ui,sans-serif;font-size:15px;line-height:1.45}
@@ -607,7 +607,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const store={get(k,d){try{return JSON.parse(localStorage.getItem("ght-"+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem("ght-"+k,JSON.stringify(v))}catch(e){}}};
 /* MapLibre och canvas kan inte läsa CSS-variabler – läs spår-tokens en gång till ett JS-objekt */
 const T=(()=>{const s=getComputedStyle(document.documentElement),g=n=>s.getPropertyValue(n).trim();
-  return {trackSkin:g("--track-skin"),trackDescent:g("--track-descent"),trackFlat:g("--track-flat"),trackBootpack:g("--track-bootpack"),trackKnown:g("--track-known"),trackCasing:g("--track-casing")}})();
+  return {trackSkin:g("--track-skin"),trackDescent:g("--track-descent"),trackFlat:g("--track-flat"),trackBootpack:g("--track-bootpack"),trackKnown:g("--track-known"),trackCasing:g("--track-casing"),trackHalo:g("--track-halo")}})();
 const hexToRgb=h=>{const m=h.replace("#","").match(/.{2}/g);return m?m.slice(0,3).map(x=>parseInt(x,16)):[138,143,151]};
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("on"),2600)}
 const todayISO=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
@@ -1327,6 +1327,9 @@ function routerCore(){
   const TURN=new Uint8Array(128);
   for(let h=0;h<8;h++)for(let q=0;q<16;q++){let d=Math.abs(h*Math.PI/4-Math.atan2(NB[q][1],NB[q][0]))%(2*Math.PI);if(d>Math.PI)d=2*Math.PI-d;TURN[h*16+q]=d>Math.PI/3+1e-6?1:0}
   const KICK=40;                                       // a kick turn costs ~40 s
+  const CORR=150,LAT0=40,LATK=60;                      // zigzag corridor ±150 m; legs pay more beyond 40 m from the centre line
+  const LEN=NB.map(([dx,dy])=>Math.hypot(dx,dy)),MX=NB.map(([dx])=>Math.trunc(dx/2)),MY=NB.map(([,dy])=>Math.trunc(dy/2));
+  const tn=a=>Math.tan(a/DEG),T3=tn(3),T5=tn(5),T8=tn(8),T12=tn(12),T16=tn(16),T35=tn(35);
   function cost(up,d,dz,sm,eB,tr,boot){
     let c;
     if(up){
@@ -1334,16 +1337,15 @@ function routerCore(){
         c=dz>=0?d/0.9+dz/0.08:d/0.9+(-dz)/0.5;         // ca 290 höjdm/h
         c*=sm<35?6:sm<40?14:sm<45?30:60;               // avoid ≥ boot terrain hard: take a longer way if there is one
       }else if(dz>=0){
-        const a=Math.atan2(dz,d)*DEG;
         c=d/1.1+dz/0.13;                               // ca 4 km/h + 470 höjdm/h
-        if(a>26)c*=6+(a-26)/2;                         // too steep to skin
-        else if(a>16){const k=(a-16)/4;c*=1+3*k*k}     // 20° ×4, 24° ×13 → zigzag instead
+        if(dz>d*T16){const a=Math.atan(dz/d)*DEG;
+          if(a>26)c*=6+(a-26)/2;                       // too steep to skin
+          else{const k=(a-16)/4;c*=1+3*k*k}}           // 20° ×4, 24° ×13 → zigzag instead
         if(sm>=25)c*=1.3;
       }else c=(d/1.1+(-dz)/0.6)*(sm>=25?1.3:1);
     }else{
       if(dz<0){
-        const a=Math.atan2(-dz,d)*DEG;
-        const wgt=a<3?7:a<5?4:a<8?2:a<12?1.3:a<35?0.9:1.1;
+        const r=-dz/d,wgt=r<T3?7:r<T5?4:r<T8?2:r<T12?1.3:r<T35?0.9:1.1;
         c=d*wgt/3;
         c*=sm<35?1:sm<40?8:sm<45?25:sm<50?150:400;    // avoid > 35°, > 45° almost blocked
       }else{
@@ -1355,77 +1357,100 @@ function routerCore(){
     if(tr)c*=up?(tr>1?0.35:0.6):(tr>1?0.5:0.8);        // följ spår där folk gått/åkt (2 = inritat skidspår)
     return c;
   }
-  /* Uphill: A* over (cell, heading sector) so a kick turn has a cost. Without it, every zigzag
-     collapses into a 1-cell alternation that is a straight line up the fall line at map scale. */
-  function searchUp(E,w,h,cell,S,T,s,t,boot,U){
-    const {g,from,closed}=U,tx=t%w,ty=(t/w)|0,Et=E[t];
-    g.fill(Infinity);from.fill(-1);closed.fill(0);
-    // lower bound: climbing Δ needs ≥ Δ/tan16° of track (steeper or boot pack always costs more per metre)
-    const H=i=>{const dz=Math.max(0,Et-E[i]);return Math.max(Math.hypot(i%w-tx,((i/w)|0)-ty)*cell,dz*3.487)/1.1+dz/0.13};
-    let hi=U.hi,hf=U.hf,hn=0;
-    const push=(i,f)=>{if(hn===hi.length){const a=new Int32Array(hn*2),b=new Float32Array(hn*2);a.set(hi);b.set(hf);hi=U.hi=a;hf=U.hf=b}
-      let k=hn++;while(k>0){const p=(k-1)>>1;if(hf[p]<=f)break;hi[k]=hi[p];hf[k]=hf[p];k=p}hi[k]=i;hf[k]=f};
-    const pop=()=>{const top=hi[0],li=hi[--hn],lf=hf[hn];let k=0;
-      for(;;){const l=2*k+1,r=l+1;let m=-1,mf=lf;if(l<hn&&hf[l]<mf){m=l;mf=hf[l]}if(r<hn&&hf[r]<mf)m=r;if(m<0)break;hi[k]=hi[m];hf[k]=hf[m];k=m}
-      if(hn){hi[k]=li;hf[k]=lf}return top};
-    for(let d=0;d<8;d++){g[s*8+d]=0;push(s*8+d,H(s))}
-    let found=-1,it=0;
-    while(hn){
-      const st=pop();if(closed[st])continue;closed[st]=1;
-      const c=st>>3,hc=st&7;if(c===t){found=st;break}
-      if(++it>2.5e7)break;
-      const cx=c%w,cy=(c/w)|0,ec=E[c],sc=S[c],gc=g[st];
+  function makeHeap(){
+    let hi=new Int32Array(1<<16),hf=new Float32Array(1<<16),n=0;
+    return {size:()=>n,clear(){n=0},
+      push(i,f){if(n===hi.length){const a=new Int32Array(n*2),b=new Float32Array(n*2);a.set(hi);b.set(hf);hi=a;hf=b}
+        let k=n++;while(k>0){const p=(k-1)>>1;if(hf[p]<=f)break;hi[k]=hi[p];hf[k]=hf[p];k=p}hi[k]=i;hf[k]=f},
+      pop(){const top=hi[0],li=hi[--n],lf=hf[n];let k=0;
+        for(;;){const l=2*k+1,r=l+1;let m=-1,mf=lf;if(l<n&&hf[l]<mf){m=l;mf=hf[l]}if(r<n&&hf[r]<mf)m=r;if(m<0)break;hi[k]=hi[m];hf[k]=hf[m];k=m}
+        if(n){hi[k]=li;hf[k]=lf}return top}};
+  }
+  // lower bound uphill: climbing Δ needs ≥ Δ/tan16° of track (steeper or boot pack always costs more per metre)
+  const hUp=(E,w,cell,tx,ty,Et)=>i=>{const dz=Math.max(0,Et-E[i]);return Math.max(Math.hypot(i%w-tx,((i/w)|0)-ty)*cell,dz*3.487)/1.1+dz/0.13};
+  /* A* over cells. Uphill this is the centre line: zigzag is free here (it collapses into a
+     1-cell alternation), so the line follows where a zigzag would go. */
+  function searchCell(E,w,h,cell,S,T,s,t,up,boot,B){
+    const {g,from,closed,Q}=B,tx=t%w,ty=(t/w)|0;
+    g.fill(Infinity);from.fill(-1);closed.fill(0);Q.clear();
+    const H=up?hUp(E,w,cell,tx,ty,E[t]):i=>Math.hypot(i%w-tx,((i/w)|0)-ty)*cell*0.28;
+    g[s]=0;Q.push(s,H(s));let found=s===t,it=0;
+    while(Q.size()&&!found){
+      const c=Q.pop();if(closed[c])continue;closed[c]=1;if(c===t){found=true;break}
+      if(++it>5e6)break;
+      const cx=c%w,cy=(c/w)|0,ec=E[c],sc=S[c],gc=g[c];
       for(let q=0;q<16;q++){
-        const dx=NB[q][0],dy=NB[q][1],nx=cx+dx,ny=cy+dy;
+        const nx=cx+NB[q][0],ny=cy+NB[q][1];
         if(nx<0||ny<0||nx>=w||ny>=h)continue;
-        // heading only matters where you would zigzag on skins (16° to boot); elsewhere it collapses and turning is free
-        const nb=ny*w+nx,ns=nb*8+(S[nb]<16||S[nb]>=boot?0:SEC[q]);if(closed[ns])continue;
+        const nb=ny*w+nx;if(closed[nb])continue;
         let sm=sc>S[nb]?sc:S[nb];
-        if(q>=8){const m=(cy+Math.trunc(dy/2))*w+cx+Math.trunc(dx/2);if(S[m]>sm)sm=S[m]}
-        let cst=cost(true,Math.hypot(dx,dy)*cell,E[nb]-ec,sm,E[nb],T?T[nb]:0,boot);
-        if(sm<boot&&sc>=16&&sc<boot&&c!==s&&TURN[hc*16+q])cst+=KICK;
+        if(q>=8){const m=(cy+MY[q])*w+cx+MX[q];if(S[m]>sm)sm=S[m]}
+        const ng=gc+cost(up,LEN[q]*cell,E[nb]-ec,sm,E[nb],T?T[nb]:0,boot);
+        if(ng<g[nb]){g[nb]=ng;from[nb]=c;Q.push(nb,ng+H(nb))}
+      }
+    }
+    if(!found)return null;
+    const p=[];for(let k=t;k!==-1;k=from[k])p.push(k);p.reverse();
+    return Int32Array.from(p);
+  }
+  /* Cells within CORR m of the centre line (chamfer distance), with compact ids */
+  function corridor(w,h,cell,line){
+    const n=w*h,D=new Float32Array(n).fill(Infinity),r2=Math.SQRT2;
+    for(const k of line)D[k]=0;
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=y*w+x;let v=D[i];
+      if(x>0&&D[i-1]+1<v)v=D[i-1]+1;
+      if(y>0){if(D[i-w]+1<v)v=D[i-w]+1;if(x>0&&D[i-w-1]+r2<v)v=D[i-w-1]+r2;if(x<w-1&&D[i-w+1]+r2<v)v=D[i-w+1]+r2}D[i]=v}
+    for(let y=h-1;y>=0;y--)for(let x=w-1;x>=0;x--){const i=y*w+x;let v=D[i];
+      if(x<w-1&&D[i+1]+1<v)v=D[i+1]+1;
+      if(y<h-1){if(D[i+w]+1<v)v=D[i+w]+1;if(x<w-1&&D[i+w+1]+r2<v)v=D[i+w+1]+r2;if(x>0&&D[i+w-1]+r2<v)v=D[i+w-1]+r2}D[i]=v}
+    const id=new Int32Array(n).fill(-1),R=CORR/cell;let K=0;
+    for(let i=0;i<n;i++)if(D[i]<=R)id[i]=K++;
+    const cellOf=new Int32Array(K);for(let i=0;i<n;i++)if(id[i]>=0)cellOf[id[i]]=i;
+    return {D,id,cellOf,K};
+  }
+  /* Uphill: A* over (cell, heading sector) inside the corridor, so a kick turn has a cost and legs
+     that wander far from the centre line pay more. Without the turn cost every zigzag collapses into
+     a 1-cell alternation that is a straight line up the fall line at map scale. */
+  function searchUp(E,w,h,cell,S,T,s,t,boot,C,Q){
+    const {D,id,cellOf,K}=C,N=K*8,tx=t%w,ty=(t/w)|0;
+    const g=new Float32Array(N).fill(Infinity),from=new Int32Array(N).fill(-1),closed=new Uint8Array(N);Q.clear();
+    const H=hUp(E,w,cell,tx,ty,E[t]),si=id[s];
+    for(let d=0;d<8;d++){g[si*8+d]=0;Q.push(si*8+d,H(s))}
+    let found=-1,it=0;
+    while(Q.size()){
+      const st=Q.pop();if(closed[st])continue;closed[st]=1;
+      const c=cellOf[st>>3],hc=st&7;if(c===t){found=st;break}
+      if(++it>2e7)break;
+      const cx=c%w,cy=(c/w)|0,ec=E[c],sc=S[c],gc=g[st],turnable=sc>=16&&sc<boot&&c!==s;
+      for(let q=0;q<16;q++){
+        const nx=cx+NB[q][0],ny=cy+NB[q][1];
+        if(nx<0||ny<0||nx>=w||ny>=h)continue;
+        const nb=ny*w+nx,ni=id[nb];if(ni<0)continue;
+        // heading only matters where you would zigzag on skins (16° to boot); elsewhere it collapses and turning is free
+        const sn=S[nb],ns=ni*8+(sn<16||sn>=boot?0:SEC[q]);if(closed[ns])continue;
+        let sm=sc>sn?sc:sn;
+        if(q>=8){const m=(cy+MY[q])*w+cx+MX[q];if(S[m]>sm)sm=S[m]}
+        let cst=cost(true,LEN[q]*cell,E[nb]-ec,sm,E[nb],T?T[nb]:0,boot);
+        const u=D[nb]*cell;if(u>LAT0){const k=(u-LAT0)/LATK;cst*=1+k*k}
+        if(turnable&&sm<boot&&TURN[hc*16+q])cst+=KICK;
         const ng=gc+cst;
-        if(ng<g[ns]){g[ns]=ng;from[ns]=st;push(ns,ng+H(nb))}
+        if(ng<g[ns]){g[ns]=ng;from[ns]=st;Q.push(ns,ng+H(nb))}
       }
     }
     if(found<0)return null;
-    const p=[];for(let k=found;k!==-1;k=from[k])p.push(k>>3);p.reverse();
-    return {idx:Int32Array.from(p),s:Float32Array.from(p,k=>S[k])};
+    const p=[];for(let k=found;k!==-1;k=from[k])p.push(cellOf[k>>3]);p.reverse();
+    return Int32Array.from(p);
   }
   function run({E,w,h,cell,segs,T,av,boot}){
     boot=boot||30;
-    const n=w*h,S=slopes(E,w,h,cell);
-    const g=new Float64Array(n),from=new Int32Array(n),closed=new Uint8Array(n);
-    const U=segs.some(sg=>sg.mode==="up")?{g:new Float32Array(n*8),from:new Int32Array(n*8),closed:new Uint8Array(n*8),hi:new Int32Array(1<<20),hf:new Float32Array(1<<20)}:null;
+    const n=w*h,S=slopes(E,w,h,cell),Q=makeHeap();
+    const B={g:new Float64Array(n),from:new Int32Array(n),closed:new Uint8Array(n),Q};
     const paths=[];
     for(const sg of segs){
-      if(sg.mode==="up"){paths.push(searchUp(E,w,h,cell,S,T,sg.a,sg.b,boot,U));continue}
-      g.fill(Infinity);from.fill(-1);closed.fill(0);
-      const up=false,s=sg.a,t=sg.b,tx=t%w,ty=(t/w)|0,Et=E[t];
-      const H=i=>{const d=Math.hypot(i%w-tx,((i/w)|0)-ty)*cell;return up?d/1.1+Math.max(0,Et-E[i])/0.13:d*0.28};
-      let hi=[],hf=[];
-      const push=(i,f)=>{hi.push(i);hf.push(f);let k=hi.length-1;while(k>0){const p=(k-1)>>1;if(hf[p]<=hf[k])break;let ti=hi[p];hi[p]=hi[k];hi[k]=ti;let tf=hf[p];hf[p]=hf[k];hf[k]=tf;k=p}};
-      const pop=()=>{const top=hi[0],li=hi.pop(),lf=hf.pop();if(hi.length){hi[0]=li;hf[0]=lf;let k=0;const L=hi.length;for(;;){const l=2*k+1,r=l+1;let m=k;if(l<L&&hf[l]<hf[m])m=l;if(r<L&&hf[r]<hf[m])m=r;if(m===k)break;let ti=hi[m];hi[m]=hi[k];hi[k]=ti;let tf=hf[m];hf[m]=hf[k];hf[k]=tf;k=m}}return top};
-      g[s]=0;push(s,H(s));let found=s===t,it=0;
-      while(hi.length&&!found){
-        const c=pop();if(closed[c])continue;closed[c]=1;if(c===t){found=true;break}
-        if(++it>5e6)break;
-        const cx=c%w,cy=(c/w)|0,ec=E[c],sc=S[c],gc=g[c];
-        for(let q=0;q<16;q++){
-          const dx=NB[q][0],dy=NB[q][1],nx=cx+dx,ny=cy+dy;
-          if(nx<0||ny<0||nx>=w||ny>=h)continue;
-          const nb=ny*w+nx;if(closed[nb])continue;
-          let sm=sc>S[nb]?sc:S[nb];
-          if(q>=8){const m=(cy+Math.trunc(dy/2))*w+cx+Math.trunc(dx/2);if(S[m]>sm)sm=S[m]}
-          const cst=cost(up,Math.hypot(dx,dy)*cell,E[nb]-ec,sm,E[nb],T?T[nb]:0);
-          if(cst===Infinity)continue;
-          const ng=gc+cst;
-          if(ng<g[nb]){g[nb]=ng;from[nb]=c;push(nb,ng+H(nb))}
-        }
-      }
-      if(!found){paths.push(null);continue}
-      const p=[];for(let k=t;k!==-1;k=from[k])p.push(k);p.reverse();
-      paths.push({idx:Int32Array.from(p),s:Float32Array.from(p,k=>S[k])});
+      const up=sg.mode==="up";
+      let p=searchCell(E,w,h,cell,S,T,sg.a,sg.b,up,boot,B);
+      if(p&&up&&p.length>2){const z=searchUp(E,w,h,cell,S,T,sg.a,sg.b,boot,corridor(w,h,cell,p),Q);if(z)p=z}
+      paths.push(p?{idx:p,s:Float32Array.from(p,k=>S[k])}:null);
     }
     return {paths,av:av?aval(E,w,h,cell,S,paths):null};
   }
@@ -1634,7 +1659,7 @@ function calcStats(res){
     else{dnLen+=len;drop+=neg;gain+=pos;maxDn=Math.max(maxDn,mx);
       let k=0;while(k<L.cls.length){if(L.cls[k]==="ride"){k++;continue}let j=k,mot=0;
         while(j<L.cls.length&&L.cls[j]!=="ride"){if(L.cls[j]==="mot")mot+=L.d[j+1]-L.d[j];j++}
-        const l=L.d[j]-L.d[k];flat+=l;if(l>=60)flats.push({len:l,e0:L.e[k],e1:L.e[j],k:mot>l/2?"mot":"flat"});k=j}}
+        const l=L.d[j]-L.d[k];flat+=l;if(l>=FLAT_LABEL_M)flats.push({len:l,e0:L.e[k],e1:L.e[j],deg:Math.atan2(L.e[k]-L.e[j],l)*57.3,k:mot>l/2?"mot":"flat"});k=j}}
   });
   const Hh=(upLen)/4000,V=gain/400,tUp=Math.max(Hh,V)+Math.min(Hh,V)/2,tDn=drop/1500+flat/3000;
   return {steep,upLen,gain,dnLen,drop,flat,flats:flats.sort((a,b)=>b.len-a.len),maxUp,maxDn,time:tUp+tDn,board:!res.legs.some(L=>L.mode==="down")?null:flat<150?"bra":flat<500?"ok":"jobbig"};
@@ -1660,11 +1685,17 @@ document.addEventListener("click",e=>{const b=e.target.closest(".lgtog");if(!b)r
 const CALC_DISC="Beräknat från Kartverkets höjddata (ca 5 m rutnät). Uppför hålls spåret under ca 16–20° i färdriktningen och terräng över 30° undviks så långt det går. Nedför följer vägen fallinjen, och terräng över 35° undviks. Höjddata vet inget om skavlar, block, skog, glaciärsprickor eller dagens snö. Det här är beslutsstöd, inte beslut.";
 const fmtM=m=>m>=1000?(m/1000).toFixed(1).replace(".",",")+" km":Math.round(m/10)*10+" m";
 const fmtT=h=>{const m=Math.round(h*60/10)*10;return m<60?m+" min":Math.floor(m/60)+" h"+(m%60?" "+m%60+" min":"")};
+/* Flat stretches are pointed out, not avoided: how long and how flat (mean angle; negative = counter-slope) */
+const FLAT_LABEL_M=60;
+const fmtDeg=d=>(Math.abs(d)<1?Math.abs(d).toFixed(1):Math.round(Math.abs(d)))+"°";
+const flatLabel=(len,deg)=>`${fmtM(len)} ${deg<0?"uphill":"flat"} · ${fmtDeg(deg)}`;
 function resFeatures(res,rid){
   const f=[];
   res.legs.forEach(L=>{
     let k=0;while(k<L.cls.length){let j=k;while(j+1<L.cls.length&&rkey(L,j+1)===rkey(L,k))j++;
-      f.push({type:"Feature",properties:{k:rkey(L,k),rid},geometry:{type:"LineString",coordinates:L.c.slice(k,j+2)}});k=j+1}
+      const key=rkey(L,k),p={k:key,rid};
+      if(key==="flat"){const len=L.d[j+1]-L.d[k];if(len>=FLAT_LABEL_M)p.lab=flatLabel(len,Math.atan2(L.e[k]-L.e[j+1],len)*57.3)}
+      f.push({type:"Feature",properties:p,geometry:{type:"LineString",coordinates:L.c.slice(k,j+2)}});k=j+1}
   });
   return f;
 }
@@ -1680,6 +1711,9 @@ function addPathLayers(m,src,before){
   cls("boot",T.trackBootpack,PATH_W.boot,[0,2]);
   cls("flat",T.trackFlat,PATH_W.flat);
   cls("down",T.trackDescent,PATH_W.down);
+  m.addLayer({id:src+"-flatlab",type:"symbol",source:src,filter:["has","lab"],minzoom:11.5,
+    layout:{"symbol-placement":"line-center","text-field":["get","lab"],"text-font":["Open Sans Semibold"],"text-size":11.5,"text-offset":[0,-1.1],"text-keep-upright":true},
+    paint:{"text-color":T.trackFlat,"text-halo-color":T.trackHalo,"text-halo-width":1.6}},before);
 }
 const PATH_W={skin:4.2,boot:4.6,flat:6.7,down:4.2};
 function resHTML(res,cid){
@@ -1687,7 +1721,7 @@ function resHTML(res,cid){
   const hasDown=res.legs.some(L=>L.mode==="down");
   let flat="";
   if(hasDown){
-    flat=s.flats.length?`<b>${fmtM(s.flat)} flackt eller motlut</b> på nedfarten. Längst: ${s.flats.slice(0,3).map(f=>`${fmtM(f.len)} ${f.k==="mot"?"motlut":"flackt"} (${f.e0}→${f.e1} m)`).join(" · ")}.`
+    flat=s.flats.length?`<b>${fmtM(s.flat)} flackt eller motlut</b> på nedfarten. Längst: ${s.flats.slice(0,3).map(f=>`${fmtM(f.len)} ${f.k==="mot"?"motlut":"flackt"} ${fmtDeg(f.deg)} (${f.e0}→${f.e1} m)`).join(" · ")}.`
       :s.flat>0?`Bara korta flacka partier, ${fmtM(s.flat)} totalt.`:"Inga flacka partier hittades.";
     flat=`<div class="flatinfo"><span class="tag ${{bra:"tg",ok:"ty",jobbig:"tr"}[s.board]}">🏂 Bräda: ${s.board} (beräknat)</span><p class="p" style="margin-top:6px;font-size:13.5px">${flat}</p></div>`;
   }
