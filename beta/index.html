@@ -15,11 +15,12 @@
   --g:#2f8a57;--gbg:#e3f3ea;--y:#a07400;--ybg:#fbf0d2;--o:#c4561c;--obg:#fbe4d6;--r:#b3261e;--rbg:#f9dedb;--n:#6a7380;--nbg:#e8ebef;
   --radius:26px;
   /* spår-tokens (tokens/tokens.json): primitiver */
-  --color-green-track:#6DAE8A;--color-red-track:#E0504A;--color-yellow-track:#E8B24E;--color-blue-flat:#3B7DD8;--color-white:#ffffff;--color-violet-300:#B79AF2;--color-violet-700:#5A2BC4;
+  --color-green-track:#6DAE8A;--color-red-track:#E0504A;--color-yellow-track:#E8B24E;--color-blue-flat:#3B7DD8;--color-white:#ffffff;--color-violet-300:#B79AF2;--color-violet-700:#5A2BC4;--color-avalanche-2:#F2C200;--color-avalanche-3:#F07F1A;
   /* spår-tokens: semantiska, pekar på primitiverna ovan (eller på --ink för casing) */
   --track-skin:var(--color-green-track);--track-descent:var(--color-red-track);--track-flat:var(--color-blue-flat);
   --track-bootpack:var(--color-yellow-track);--track-casing:var(--ink);--track-halo:var(--color-white);
   --heat-low:var(--color-violet-300);--heat-high:var(--color-violet-700);
+  --aval-start:var(--color-avalanche-3);--aval-other:var(--color-avalanche-2);--aval-hatch:var(--ink);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Montserrat,system-ui,sans-serif;font-size:15px;line-height:1.45}
@@ -240,7 +241,10 @@ input[type=date]{font:inherit;border:1px solid var(--line);border-radius:10px;pa
 .avtog{margin-left:auto;font-size:12.5px;display:flex;align-items:center;gap:5px;color:var(--mut,#6b7480)}
 .avsum{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px}
 .avsum span{display:flex;align-items:center;gap:6px}
-.avsum i,.avrow i{width:12px;height:12px;border-radius:4px;flex:none;display:inline-block}
+.avsum i,.avrow i{width:14px;height:14px;border-radius:4px;flex:none;display:inline-block}
+.avsw{background:repeating-linear-gradient(-45deg,var(--aval-hatch) 0 1.6px,transparent 1.6px 5px),var(--aval-other);opacity:.6}
+.avsw.st{background:repeating-linear-gradient(-45deg,var(--aval-hatch) 0 1.6px,transparent 1.6px 5px),var(--aval-start)}
+.tracklegend .ti .avsw{width:18px;height:10px;border-radius:3px;flex:none}
 .avlist{display:flex;flex-direction:column;gap:4px;margin-top:6px}
 .avrow{display:flex;gap:9px;align-items:flex-start;text-align:left;background:rgba(17,22,29,.04);border:0;border-radius:12px;padding:8px 10px;font:inherit;font-size:13px;line-height:1.35;color:inherit;cursor:pointer}
 .avrow i{margin-top:3px}
@@ -594,7 +598,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const store={get(k,d){try{return JSON.parse(localStorage.getItem("ght-"+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem("ght-"+k,JSON.stringify(v))}catch(e){}}};
 /* MapLibre och canvas kan inte läsa CSS-variabler – läs spår-tokens en gång till ett JS-objekt */
 const T=(()=>{const s=getComputedStyle(document.documentElement),g=n=>s.getPropertyValue(n).trim();
-  return {trackSkin:g("--track-skin"),trackDescent:g("--track-descent"),trackFlat:g("--track-flat"),trackBootpack:g("--track-bootpack"),trackCasing:g("--track-casing"),trackHalo:g("--track-halo"),heatLow:g("--heat-low"),heatHigh:g("--heat-high")}})();
+  return {trackSkin:g("--track-skin"),trackDescent:g("--track-descent"),trackFlat:g("--track-flat"),trackBootpack:g("--track-bootpack"),trackCasing:g("--track-casing"),trackHalo:g("--track-halo"),heatLow:g("--heat-low"),heatHigh:g("--heat-high"),avalStart:g("--aval-start"),avalOther:g("--aval-other"),avalHatch:g("--aval-hatch")}})();
 const hexToRgb=h=>h.replace("#","").match(/.{2}/g).slice(0,3).map(x=>parseInt(x,16));
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("on"),2600)}
 const todayISO=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
@@ -910,11 +914,11 @@ async function showOnMap(r){
   map.getSource("route").setData({type:"Feature",geometry:{type:"LineString",coordinates:[st,top]}});
   markers.push(new maplibregl.Marker({element:mk(`<div style="background:#11161d;color:#fff;font:700 12px Montserrat;padding:6px 10px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.3);white-space:nowrap">▲ ${esc(r.name.split(" /")[0])} · ${d.topE} m</div>`),anchor:"bottom",offset:[0,-6]}).setLngLat(top).addTo(map));
   markers.push(new maplibregl.Marker({element:mk(`<div style="background:#D60000;color:#fff;font:700 11px Montserrat;padding:5px 9px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.3)">P Start</div>`),anchor:"bottom",offset:[0,-4]}).setLngLat(st).addTo(map));
-  map.getSource("calc").setData(EMPTY);
+  setPaths(map,"calc",[]);
   const kn=r.osm&&OSM_TRK[r.osm];map.getSource("known").setData(kn?{type:"Feature",geometry:{type:"LineString",coordinates:kn.map(p=>[p[1],p[0]])}}:EMPTY);
   $("#mapnote").textContent="Streckad linje = fågelvägen, inte spåret";
   drawGpx(r);
-  if(memCalc[r.id])drawCalcDetail(r,memCalc[r.id]);
+  if(memCalc[r.id]){drawCalcDetail(r,memCalc[r.id]);refreshAval(r)}
   fitRoute(r,d,true);
 }
 function fitRoute(r,d,instant){
@@ -1610,12 +1614,13 @@ const LEGEND_VAR={skin:"--track-skin",boot:"--track-bootpack",down:"--track-desc
 const trackSwatch=(v,w,dash)=>v==="--track-skin"
   ?`<svg viewBox="0 0 28 10"><g stroke="var(${v})" stroke-width="2" fill="none"><line x1="1" y1="2.8" x2="27" y2="2.8" stroke-dasharray="6,3"/><line x1="1" y1="7.2" x2="27" y2="7.2" stroke-dasharray="1.5,3,4.5,0"/></g></svg>`
   :`<svg viewBox="0 0 28 10"><line x1="2" y1="5" x2="26" y2="5" stroke="var(${v})" stroke-width="${w}" stroke-linecap="round"${dash?` stroke-dasharray="${dash}"`:""}/></svg>`;
-function trackLegendHTML(){
+function trackLegendHTML(el){
   const items=LEGEND_ITEMS.map(([k,label,w,dash])=>`<span class="ti">${trackSwatch(LEGEND_VAR[k],w,dash)}<b>${label}</b></span>`).join("");
   const kn=LYR.base==="heat"?`<span class="ti hm"><i></i><b>Heatmap: few → many tracks</b></span>`:"";
-  return `<button class="lgtog" aria-label="Toggle legend" aria-expanded="true">i</button><span class="ti-wrap">${items}${kn}</span>`;
+  const av=el&&el.id==="trackLegendD"&&cur?avOnMap.sort().reverse().map(c=>`<span class="ti">${avSw(c)}<b>${c===2?"Start zone":"Avalanche terrain"}</b></span>`).join(""):"";
+  return `<button class="lgtog" aria-label="Toggle legend" aria-expanded="true">i</button><span class="ti-wrap">${items}${av}${kn}</span>`;
 }
-function renderTrackLegend(){document.querySelectorAll(".tracklegend").forEach(el=>el.innerHTML=trackLegendHTML())}
+function renderTrackLegend(){document.querySelectorAll(".tracklegend").forEach(el=>el.innerHTML=trackLegendHTML(el))}
 document.addEventListener("click",e=>{const b=e.target.closest(".lgtog");if(!b)return;const box=b.closest(".tracklegend"),collapsed=box.classList.toggle("collapsed");b.setAttribute("aria-expanded",collapsed?"false":"true")});
 const CALC_DISC="Beräknat från Kartverkets höjddata (ca 5 m rutnät). Uppför hålls spåret under ca 16–20° i färdriktningen och terräng över 30° undviks så långt det går. Nedför följer vägen fallinjen, och terräng över 35° undviks. Höjddata vet inget om skavlar, block, skog, glaciärsprickor eller dagens snö. Det här är beslutsstöd, inte beslut.";
 const fmtM=m=>m>=1000?(m/1000).toFixed(1).replace(".",",")+" km":Math.round(m/10)*10+" m";
@@ -1644,6 +1649,10 @@ const TRACK_LAYERS=[
   {id:"boot",k:"boot",w:4.6,dash:[0,2]},
   {id:"flat",k:"flat",w:6.7},
   {id:"down",k:"down",w:4.2}];
+function setPaths(m,src,features){
+  m.getSource(src).setData({type:"FeatureCollection",features});
+  m.getSource(src+"-lab").setData({type:"FeatureCollection",features:features.filter(f=>f.properties.lab)});
+}
 function addPathLayers(m,src,before){
   m.addLayer({id:src+"-cas",type:"line",source:src,layout:{"line-join":"round","line-cap":"round"},
     paint:{"line-color":T.trackCasing,"line-width":["match",["get","k"],"flat",12,"skin",10.5,7.5],"line-opacity":.35}},before);
@@ -1651,7 +1660,9 @@ function addPathLayers(m,src,before){
   TRACK_LAYERS.forEach(L=>m.addLayer({id:src+"-"+L.id,type:"line",source:src,filter:["==",["get","k"],L.k],
     layout:{"line-join":"round","line-cap":L.cap||"round"},
     paint:Object.assign({"line-color":COL[L.k],"line-width":L.w},L.off?{"line-offset":L.off}:{},L.dash?{"line-dasharray":L.dash}:{})},before));
-  m.addLayer({id:src+"-flatlab",type:"symbol",source:src,filter:["has","lab"],minzoom:11.5,
+  // labels get their own source: if the glyphs fail to load, only the labels go, not the tracks
+  if(!m.getSource(src+"-lab"))m.addSource(src+"-lab",{type:"geojson",data:EMPTY});
+  m.addLayer({id:src+"-flatlab",type:"symbol",source:src+"-lab",minzoom:11.5,
     layout:{"symbol-placement":"line-center","text-field":["get","lab"],"text-font":["Open Sans Semibold"],"text-size":11.5,"text-offset":[0,-1.1],"text-keep-upright":true},
     paint:{"text-color":T.trackFlat,"text-halo-color":T.trackHalo,"text-halo-width":1.6}},before);
 }
@@ -1722,10 +1733,12 @@ function resBounds(res){const b=new maplibregl.LngLatBounds();res.legs.forEach(L
    3 = terrängfälla: under startzon OCH i en svacka/ravin
    Sträckorna jämförs sedan med Varsoms lavinproblem (väderstreck + höjd).
    ========================================================= */
-const AVK={2:["Startzon","#d62828","Vägen går i terräng brantare än 30°, där skred kan lossna."],
-  1:["Under startzon","#f08c00","Brant terräng ovanför lutar mot vägen – ett skred där uppe kan nå hit."],
-  3:["Terrängfälla","#7b2cbf","Svacka eller ravin under brant terräng – även ett litet skred kan begrava djupt."]};
-let avState={rid:null,date:null,w:null},avShow=store.get("avShow",true);
+/* Avalanche terrain is drawn as a hatched area: start zone orange, other avalanche terrain yellow */
+const AVK={2:["Startzon","st","Vägen går i terräng brantare än 30°, där skred kan lossna."],
+  1:["Under startzon","","Brant terräng ovanför lutar mot vägen – ett skred där uppe kan nå hit."],
+  3:["Terrängfälla","","Svacka eller ravin under brant terräng – även ett litet skred kan begrava djupt."]};
+const avSw=c=>`<i class="avsw ${AVK[c][1]}"></i>`;
+let avState={rid:null,date:null,w:null},avShow=store.get("avShow",true),avOnMap=[];
 function avSegs(res){
   const out=[];
   res.legs.forEach((L,li)=>{
@@ -1764,8 +1777,64 @@ function avHits(s,w){
   const asps=avAsps(s);
   return (w.AvalancheProblems||[]).filter(p=>{const am=!p.ValidExpositions||asps.some(i=>p.ValidExpositions[i]==="1");return am&&heightMatch(p,s.lo,s.hi).ok}).map(p=>p.AvalancheProblemTypeName||"Lavinproblem");
 }
+/* Avalanche terrain as areas within AV_BAND_M of the route. All stretches go on one grid so each
+   spot is drawn once: start zone wins over other terrain, and a stretch that hits today's forecast
+   wins over one that doesn't. Each group's outline is traced into clean polygons (a plain offset
+   line crosses itself at every switchback), simplified and rounded off. */
+const AV_BAND_M=30;
 function avFeatures(segs,w){
-  return segs.map((s,i)=>{const hits=avHits(s,w);return {type:"Feature",properties:{c:s.c,i,hit:hits?(hits.length?1:0):-1},geometry:{type:"LineString",coordinates:s.coords}}});
+  if(!segs.length)return [];
+  const r=AV_BAND_M,cs=3,all=segs.flatMap(s=>s.coords),lat0=all[0][1],lon0=all[0][0],kx=111320*Math.cos(lat0*Math.PI/180),ky=110540;
+  const xy=([lo,la])=>[(lo-lon0)*kx,(la-lat0)*ky];
+  let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;all.forEach(p=>{const [x,y]=xy(p);x0=Math.min(x0,x);y0=Math.min(y0,y);x1=Math.max(x1,x);y1=Math.max(y1,y)});
+  x0-=r+3*cs;y0-=r+3*cs;x1+=r+3*cs;y1+=r+3*cs;
+  const W=Math.ceil((x1-x0)/cs),H=Math.ceil((y1-y0)/cs),G=new Uint8Array(W*H);
+  // group code: 1 + 3*(start zone) + hit rank (no forecast 0, miss 1, hit 2); a higher code wins
+  segs.forEach(s=>{const hits=avHits(s,w),hr=hits?(hits.length?2:1):0,code=1+(s.c===2?3:0)+(hr===2?2:hr===0?1:0);
+    const P=s.coords.map(xy);
+    for(let k=1;k<P.length;k++){const [ax,ay]=P[k-1],[bx,by]=P[k],dx=bx-ax,dy=by-ay,L2=dx*dx+dy*dy||1;
+      const i0=Math.max(0,Math.floor((Math.min(ax,bx)-r-x0)/cs)),i1=Math.min(W-1,Math.ceil((Math.max(ax,bx)+r-x0)/cs));
+      const j0=Math.max(0,Math.floor((Math.min(ay,by)-r-y0)/cs)),j1=Math.min(H-1,Math.ceil((Math.max(ay,by)+r-y0)/cs));
+      for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++){const q=j*W+i;if(G[q]>=code)continue;const px=x0+(i+.5)*cs-ax,py=y0+(j+.5)*cs-ay,t=Math.max(0,Math.min(1,(px*dx+py*dy)/L2));
+        if((px-t*dx)**2+(py-t*dy)**2<=r*r)G[q]=code}}});
+  const toLL=R=>R.map(([i,j])=>[+(lon0+(x0+i*cs)/kx).toFixed(6),+(lat0+(y0+j*cs)/ky).toFixed(6)]);
+  const f=[];
+  for(const code of new Set(G))if(code){
+    const polys=traceAreas((i,j)=>i>=0&&j>=0&&i<W&&j<H&&G[j*W+i]===code,W,H);
+    if(polys.length)f.push({type:"Feature",properties:{c:code>3?2:1,hit:[0,-1,1][(code-1)%3]},geometry:{type:"MultiPolygon",coordinates:polys.map(P=>P.map(toLL))}});
+  }
+  return f;
+}
+/* Outline of the cells where on(i,j) is true, as polygons with holes (lattice coordinates) */
+function traceAreas(on,W,H){
+  const out=new Map(),key=(i,j)=>i*100003+j;
+  const add=(a,b)=>{const k=key(a[0],a[1]);if(!out.has(k))out.set(k,[]);out.get(k).push([a,b])};
+  for(let j=0;j<H;j++)for(let i=0;i<W;i++){if(!on(i,j))continue;
+    if(!on(i,j-1))add([i,j],[i+1,j]);if(!on(i+1,j))add([i+1,j],[i+1,j+1]);
+    if(!on(i,j+1))add([i+1,j+1],[i,j+1]);if(!on(i-1,j))add([i,j+1],[i,j])}
+  const rings=[];
+  for(const list of out.values())while(list.length){
+    let [a,b]=list.pop();const ring=[a];let prev=a;
+    for(let guard=0;guard<1e7;guard++){
+      ring.push(b);const cand=out.get(key(b[0],b[1]));if(!cand||!cand.length)break;
+      let pick=0;if(cand.length>1){const dx=b[0]-prev[0],dy=b[1]-prev[1];   // at a pinch point keep turning right
+        pick=cand.findIndex(([,c])=>(c[0]-b[0])*dy-(c[1]-b[1])*dx<0);if(pick<0)pick=0}
+      const [,c]=cand.splice(pick,1)[0];prev=b;b=c;if(b[0]===a[0]&&b[1]===a[1]){ring.push(b);break}}
+    if(ring.length>3)rings.push(ring)}
+  const area=R=>{let A=0;for(let k=1;k<R.length;k++)A+=R[k-1][0]*R[k][1]-R[k][0]*R[k-1][1];return A/2};
+  const dp=(P,tol)=>{if(P.length<3)return P;let m=0,ix=0;const [ax,ay]=P[0],[bx,by]=P[P.length-1],L=Math.hypot(bx-ax,by-ay)||1;
+    for(let k=1;k<P.length-1;k++){const d=Math.abs((bx-ax)*(ay-P[k][1])-(ax-P[k][0])*(by-ay))/L;if(d>m){m=d;ix=k}}
+    return m>tol?dp(P.slice(0,ix+1),tol).slice(0,-1).concat(dp(P.slice(ix),tol)):[P[0],P[P.length-1]]};
+  const smooth=R=>{const h=R.length>>1;let Q=dp(R.slice(0,h+1),0.9).slice(0,-1).concat(dp(R.slice(h),0.9).slice(0,-1));
+    if(Q.length<3)return null;
+    for(let it=0;it<3;it++){const N=[];for(let k=0;k<Q.length;k++){const a=Q[k],b=Q[(k+1)%Q.length];N.push([.75*a[0]+.25*b[0],.75*a[1]+.25*b[1]],[.25*a[0]+.75*b[0],.25*a[1]+.75*b[1]])}Q=N}
+    Q.push(Q[0]);return Q};
+  const inside=(pt,R)=>{let c=false;for(let k=0,m=R.length-1;k<R.length;m=k++){const [xi,yi]=R[k],[xj,yj]=R[m];if((yi>pt[1])!==(yj>pt[1])&&pt[0]<(xj-xi)*(pt[1]-yi)/(yj-yi)+xi)c=!c}return c};
+  if(!rings.length)return [];
+  const big=rings.reduce((a,R)=>Math.abs(area(R))>Math.abs(area(a))?R:a,rings[0]),sg=Math.sign(area(big));
+  const shells=rings.filter(R=>Math.sign(area(R))===sg).map(R=>[R]);
+  rings.filter(R=>Math.sign(area(R))!==sg).forEach(Hr=>{const sh=shells.find(S=>inside(Hr[0],S[0]));if(sh)sh.push(Hr)});
+  return shells.map(S=>S.map(smooth).filter(Boolean)).filter(S=>S.length);
 }
 function avHTML(r,res){
   const segs=avSegs(res),w=avState.rid===r.id?avState.w:null,hasW=!!(w&&+w.DangerLevel>0);
@@ -1773,25 +1842,27 @@ function avHTML(r,res){
   const tot={1:0,2:0,3:0};segs.forEach(s=>tot[s.c]+=s.len);
   const hitN=hasW?segs.filter(s=>avHits(s,w).length).length:0;
   const head=!segs.length?`<p class="p" style="margin:0">Ingen tydlig lavinterräng hittades längs vägen.</p>`
-    :`<div class="avsum">${[2,1,3].filter(c=>tot[c]).map(c=>`<span><i style="background:${AVK[c][1]}"></i>${AVK[c][0]} <b>${fmtM(tot[c])}</b></span>`).join("")}</div>`;
+    :`<div class="avsum">${[2,1,3].filter(c=>tot[c]).map(c=>`<span>${avSw(c)}${AVK[c][0]} <b>${fmtM(tot[c])}</b></span>`).join("")}</div>`;
   const vs=!segs.length?"":hasW?`<div class="verdict v-${hitN?"r":"g"}" style="margin:10px 0 4px"><b>${hitN?`${hitN} av ${segs.length} sträckor träffar ett lavinproblem`:"Ingen sträcka träffar dagens lavinproblem"}</b>Jämfört med Varsom (${esc(w.RegionName)}, faregrad ${w.DangerLevel}, ${esc(avState.date)}): väderstreck och höjd för varje sträcka mot prognosens utsatta sidor och höjder.</div>`
     :`<p class="small" style="margin:8px 0 4px">Ingen lavinprognos för valt datum, så bara terrängen visas. Välj ett datum med prognos i lavinrutan nedan (eller "Visa exempel") så jämförs varje sträcka med prognosen.</p>`;
   const rows=segs.map((s,i)=>{
     const hits=hasW?avHits(s,w):null,asp=avAsps(s).map(a=>ASP[a]).join("/");
     const ht=s.c===2?`${Math.round(Math.min(s.e0,s.e1))}–${Math.round(Math.max(s.e0,s.e1))} m`:`skred från ${Math.round(s.lo/10)*10}–${Math.round(s.hi/10)*10} m`;
-    return `<button class="avrow" data-i="${i}"><i style="background:${AVK[s.c][1]}"></i><span><b>${AVK[s.c][0]}</b> · ${fmtM(s.len)} · ${s.mode==="up"?"upp":"ned"} · ${asp}-sida · ${ht}
+    return `<button class="avrow" data-i="${i}">${avSw(s.c)}<span><b>${AVK[s.c][0]}</b> · ${fmtM(s.len)} · ${s.mode==="up"?"upp":"ned"} · ${asp}-sida · ${ht}
       ${hits?`<em class="${hits.length?"hit":"ok"}">${hits.length?"Träffar: "+hits.map(esc).join(", "):"Inget lavinproblem träffar"}</em>`:""}</span></button>`}).join("");
   return `<div class="avbox"><div class="avhead"><b>Lavinterräng längs vägen</b><span class="tag ty" style="margin:0">Test</span>
     <label class="avtog"><input type="checkbox" id="avTog" ${avShow?"checked":""}> Visa på kartan</label></div>
     ${head}${vs}<div class="avlist">${rows}</div>
-    <p class="disc">${[2,1,3].map(c=>`<b>${AVK[c][0]}:</b> ${AVK[c][2]}`).join(" ")} Beräknat från Kartverkets höjddata (ca 5 m rutnät) med en förenklad modell. Skog, snödjup, vind och skredstorlek ingår inte. Tonad färg på kartan = träffar inte dagens prognos. Beslutsstöd, inte beslut.</p></div>`;
+    <p class="disc">${[2,1,3].map(c=>`<b>${AVK[c][0]}:</b> ${AVK[c][2]}`).join(" ")} Beräknat från Kartverkets höjddata (ca 5 m rutnät) med en förenklad modell. Skog, snödjup, vind och skredstorlek ingår inte. Svagare skraffering på kartan = träffar inte dagens prognos. Beslutsstöd, inte beslut.</p></div>`;
 }
 function refreshAval(r){
   const res=memCalc[r.id];if(!res||cur!==r.id)return;
   const box=$("#avTerr");if(box){box.innerHTML=avHTML(r,res);wireAval(r,res)}
   if(map&&mapReady&&map.getSource("aval")){
     const w=avState.rid===r.id?avState.w:null;
-    map.getSource("aval").setData(avShow?{type:"FeatureCollection",features:avFeatures(avSegs(res),w)}:EMPTY);
+    const f=avShow?avFeatures(avSegs(res),w):[];
+    map.getSource("aval").setData({type:"FeatureCollection",features:f});
+    avOnMap=[...new Set(f.map(x=>x.properties.c))];renderTrackLegend();
   }
 }
 function wireAval(r,res){
@@ -1803,12 +1874,22 @@ function wireAval(r,res){
     map.fitBounds(bb,{padding:90,maxZoom:15.5,duration:900});document.querySelector(".mapwrap").scrollIntoView({behavior:"smooth"});
   });
 }
+/* Hatch pattern: the class colour with black diagonal stripes, drawn at 2× for sharp screens */
+function avPattern(m,id,col){
+  if(m.hasImage(id))return;
+  const S=32,c=document.createElement("canvas");c.width=c.height=S;const g=c.getContext("2d");
+  g.fillStyle=col;g.fillRect(0,0,S,S);g.strokeStyle=T.avalHatch;g.lineWidth=3.2;
+  for(let k=-1;k<=1;k++){g.beginPath();g.moveTo(k*S,S);g.lineTo(k*S+S,0);g.stroke()}
+  m.addImage(id,g.getImageData(0,0,S,S),{pixelRatio:2});
+}
 function addAvalLayer(m,before){
+  avPattern(m,"aval-start",T.avalStart);avPattern(m,"aval-other",T.avalOther);
   m.addSource("aval",{type:"geojson",data:EMPTY});
-  m.addLayer({id:"aval",type:"line",source:"aval",layout:{"line-join":"round","line-cap":"round"},
-    paint:{"line-color":["match",["get","c"],2,AVK[2][1],3,AVK[3][1],AVK[1][1]],
-      "line-width":["interpolate",["exponential",1.5],["zoom"],10,10,13,22,16,40],
-      "line-opacity":["match",["get","hit"],1,0.7,0,0.25,0.5],"line-blur":2}},before);
+  // fainter where today's forecast does not hit the stretch; the tracks are drawn on top
+  m.addLayer({id:"aval",type:"fill",source:"aval",
+    paint:{"fill-pattern":["match",["get","c"],2,"aval-start","aval-other"],"fill-opacity":["match",["get","hit"],1,0.55,0,0.25,0.45]}},before);
+  m.addLayer({id:"aval-edge",type:"line",source:"aval",layout:{"line-join":"round"},
+    paint:{"line-color":["match",["get","c"],2,T.avalStart,T.avalOther],"line-width":1.2,"line-opacity":["match",["get","hit"],0,0.35,0.8]}},before);
 }
 
 /* ---------- detaljvyn ---------- */
@@ -1825,9 +1906,9 @@ function renderCalcDetail(r,res){
 }
 function drawCalcDetail(r,res){
   if(!map||!mapReady||!map.getSource("calc")||cur!==r.id)return;
-  map.getSource("calc").setData({type:"FeatureCollection",features:resFeatures(res,r.id)});
+  setPaths(map,"calc",resFeatures(res,r.id));
   ["route","route-casing"].forEach(l=>map.setLayoutProperty(l,"visibility","none"));
-  if(!store.get("gpx-"+r.id,null)){$("#mapnote").textContent="Wide halo under the route = avalanche terrain";$("#mapnote").style.display=""}
+  $("#mapnote").style.display="none";
 }
 
 /* =========================================================
@@ -1912,7 +1993,7 @@ function refreshOvPaths(){
   const f=[];
   ROUTES.forEach(r=>{if(memCalc[r.id]&&(favs.has(r.id)||ovSel===r.id))f.push(...resFeatures(memCalc[r.id],r.id))});
   custom.forEach(c=>{if(c.res&&(ovSel===c.id))f.push(...resFeatures(c.res,c.id))});
-  omap.getSource("ov-paths").setData({type:"FeatureCollection",features:f});
+  setPaths(omap,"ov-paths",f);
   const sel=ovSel||"";
   const on=["==",["get","rid"],sel];
   TRACK_LAYERS.forEach(L=>{const id="ov-paths-"+L.id;
@@ -1974,7 +2055,7 @@ function applyMode(){
   if(drawMode&&omapReady&&omap.getPitch()<5){omap.setTerrain({source:"dem",exaggeration:1.3});omap.easeTo({pitch:55,duration:700});$("#ov3d").classList.add("on")}
   if(drawMode){rebuildDraftMarkers();if(plan.pts.length>=2&&!draftRes&&!draftBusy)scheduleDraft(0);drawDraft();
     if(plan.pts.length){const b=new maplibregl.LngLatBounds();plan.pts.forEach(p=>b.extend([p[1],p[0]]));setTimeout(()=>omap.fitBounds(b,{padding:padFor(),duration:700,maxZoom:14}),60)}}
-  else if(omapReady){omap.getSource("ov-plan").setData(EMPTY);omap.getSource("ov-plan-line").setData(EMPTY)}
+  else if(omapReady){setPaths(omap,"ov-plan",[]);omap.getSource("ov-plan-line").setData(EMPTY)}
   refreshOvPaths();renderPanel();
 }
 function rebuildDraftMarkers(){
@@ -2009,7 +2090,7 @@ function scheduleDraft(ms){
 }
 function drawDraft(){
   if(!omapReady)return;
-  omap.getSource("ov-plan").setData(draftRes?{type:"FeatureCollection",features:resFeatures(draftRes,"plan")}:EMPTY);
+  setPaths(omap,"ov-plan",draftRes?resFeatures(draftRes,"plan"):[]);
   omap.getSource("ov-plan-line").setData(!draftRes&&plan.pts.length>1?{type:"Feature",geometry:{type:"LineString",coordinates:plan.pts.map(p=>[p[1],p[0]])}}:EMPTY);
 }
 function draftModes(){
